@@ -1,0 +1,4 @@
+rootProject.name = 'roc-java'
+
+include ":native"
+

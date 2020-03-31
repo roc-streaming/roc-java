@@ -1,0 +1,33 @@
+plugins {
+    id 'cpp-library'
+}
+
+def getJavaPath() {
+    return System.getenv('JAVA_HOME') ?: System.properties['java.home'].toString()
+}
+
+def getJniPaths() {
+    return [getJavaPath() + "/include", getJavaPath() + "/include/${os}"]
+}
+
+ext {
+    rocIncludePath = System.getProperty('ROC_INCLUDE_PATH') ?: System.getenv('ROC_INCLUDE_PATH')
+    rocLibraryPath = System.getProperty('ROC_LIBRARY_PATH') ?: System.getenv('ROC_LIBRARY_PATH')
+    CFLAGS         = System.getProperty('CFLAGS') ? System.getProperty('CFLAGS').split(" ") : []
+    LDFLAGS        = System.getProperty('LDFLAGS') ? System.getProperty('LDFLAGS').split(" ") + "-lroc" : ['-lroc']
+}
+
+dependencies {
+    build.dependsOn rootProject.generateHeaders
+}
+
+tasks.withType(CppCompile).configureEach {
+    getJniPaths().each { compilerArgs.add '-I' + it }
+    compilerArgs.add "-I${rocIncludePath}"
+    CFLAGS.each { compilerArgs.add it }
+}
+
+tasks.withType(LinkSharedLibrary).configureEach {
+    linkerArgs.add "-L${rocLibraryPath}"
+    LDFLAGS.each { linkerArgs.add it }
+}

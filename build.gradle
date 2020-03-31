@@ -1,0 +1,98 @@
+plugins {
+    id 'java-library'
+}
+
+allprojects {
+    group 'com.rocproject'
+    version '0.0.1'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.1'
+}
+
+ext {
+    os = System.getProperty("os.name").toLowerCase(Locale.ENGLISH)
+    platform = System.getProperty("platform") ?: os
+    architecture = System.getProperty("host") ?: System.getProperty("os.arch")
+    targetLibraryPath = "${project.buildDir}/libs/${platform}/${architecture}"
+    nativeHeadersPath = "${project.rootDir}/native/src/main/public"
+}
+
+task generateHeaders(dependsOn: 'classes') {
+    description 'Generate JNI headers from Java classes'
+
+    def sourceDir = file("${project.rootDir}/src/main/java")
+    def classesDir = file("${project.buildDir}/classes/java/main")
+
+    if (!classesDir.exists())
+        classesDir.mkdirs()
+
+    sourceDir.eachFileRecurse { f ->
+        if (!f.directory && f.name.substring(f.name.lastIndexOf(".")+1) == "java") {
+            exec {
+                commandLine "javac", "-h", nativeHeadersPath, "-classpath", sourceDir, f, "-d", classesDir
+            }
+        }
+    }
+}
+
+task copyNativeDeps(type: Copy) {
+    from("${project.rootDir}/native/build/lib/main/debug")
+    into targetLibraryPath
+    dependsOn ':native:build'
+}
+
+jar.dependsOn copyNativeDeps
+
+test {
+    dependsOn assemble
+
+    systemProperty "java.library.path", targetLibraryPath
+
+    useJUnitPlatform {
+        includeEngines 'junit-jupiter'
+    }
+    testLogging {
+        showStandardStreams = true
+    }
+    def results = []
+    afterTest { desc, result ->
+        results << [className: "${desc.className}", methodName: "${desc.name}", result: "${result.resultType}"]
+    }
+    afterSuite{ desc, result ->
+        if (!desc.parent) {
+            def border = { text ->
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + text.length() + endItem.length()
+                return '\n' + ('-' * repeatLength) + '\n' + startItem + text + endItem + '\n' + ('-' * repeatLength)
+            }
+            def styler = 'black red green yellow blue magenta cyan white gray'
+                    .split().toList().withIndex(30)
+                    .collectEntries { key, val -> [(key) : { "\033[${val}m${it}\033[0m" }] }
+            def resultStr = ["SUCCESS": "${styler['green']('OK')}", "FAILURE": "${styler['red']('KO')}"]
+
+            def index = 1
+            results.groupBy { it.className }.each { k, v ->
+                println '\n' + "  ${index++}) ${k}"
+                v.each {
+                    println "        ${resultStr["${it.result}"]}  ${it.methodName}"
+                }
+            }
+            def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+            println border(output)
+        }
+    }
+}
+
+javadoc {
+    options.overview = "docs/javadoc/overview.html"
+}

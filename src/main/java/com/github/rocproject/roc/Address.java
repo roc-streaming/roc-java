@@ -18,7 +18,7 @@ public class Address {
      *
      * Parses an IP address from a string representation.
      *
-     * If <code>family</code> is {@link Family#ROC_AF_AUTO ROC_AF_AUTO}, the address
+     * If <code>family</code> is {@link Family#AUTO AUTO}, the address
      * family is auto-detected from the <code>ip</code> format. Otherwise, the
      * <code>ip</code> format should correspond to the <code>family</code> specified.
      *
@@ -28,8 +28,8 @@ public class Address {
      * ephemeral port.
      *
      *
-     * @param family    should be {@link Family#ROC_AF_AUTO ROC_AF_AUTO},
-     *                      {@link Family#ROC_AF_IPv4 ROC_AF_IPv4}, or {@link Family#ROC_AF_IPv6 ROC_AF_IPv6}
+     * @param family    should be {@link Family#AUTO AUTO},
+     *                      {@link Family#IPv4 IPv4}, or {@link Family#IPv6 IPv6}
      * @param ip        should be a string with a valid IPv4 or IPv6 address
      * @param port      should be a port number in range [0; 65536)
      *

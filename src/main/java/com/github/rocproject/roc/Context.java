@@ -33,7 +33,7 @@ public class Context extends NativeObject implements AutoCloseable {
      * @throws Exception if there are not enough resources.
      */
     public Context() throws Exception {
-        this(new ContextConfig());
+        this(new ContextConfig.Builder().build());
     }
 
     /**

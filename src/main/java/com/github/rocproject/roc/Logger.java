@@ -6,7 +6,7 @@ public class Logger {
      * Set maximum log level.
      *
      * Messages with log levels higher than param level will be dropped.
-     * By default the log level is set to {@link LogLevel#ROC_LOG_ERROR ROC_LOG_ERROR}.
+     * By default the log level is set to {@link LogLevel#ERROR ERROR}.
      *
      * @param level     maximum log level.
      */

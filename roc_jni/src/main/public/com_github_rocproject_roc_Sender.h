@@ -41,14 +41,6 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_connect
 
 /*
  * Class:     com_github_rocproject_roc_Sender
- * Method:    writeFloat
- * Signature: (F)V
- */
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_writeFloat
-  (JNIEnv *, jobject, jfloat);
-
-/*
- * Class:     com_github_rocproject_roc_Sender
  * Method:    writeFloats
  * Signature: ([F)V
  */

@@ -38,6 +38,7 @@ public class SenderTest {
                                                 .automaticTiming(1)
                                         .build();
         this.samples = new float[EXAMPLE_BUFFER_SIZE];
+        gensine(this.samples);
     }
 
     @BeforeEach
@@ -130,18 +131,6 @@ public class SenderTest {
     }
 
     @Test
-    public void TestValidSenderWriteSingleFloat() throws Exception {
-        try (
-                Sender sender = new Sender(context, config);
-        ) {
-            sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
-            sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
-            sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "127.0.0.1", 10002));
-            assertDoesNotThrow(() -> sender.write(2.0f));
-        }
-    }
-
-    @Test
     public void TestValidSenderWriteFloatArray() throws Exception {
         try (
             Sender sender = new Sender(context, config);
@@ -150,7 +139,6 @@ public class SenderTest {
             sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
             sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "127.0.0.1", 10002));
             for (int i = 0; i < EXAMPLE_SINE_SAMPLES / EXAMPLE_BUFFER_SIZE; i++) {
-                gensine(samples);
                 assertDoesNotThrow(() -> sender.write(samples));
             }
         }
@@ -161,7 +149,6 @@ public class SenderTest {
         try (
                 Sender sender = new Sender(context, config);
         ) {
-            gensine(samples);
             assertThrows(IOException.class, () -> sender.write(samples)); // write before bind
             sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
             assertThrows(IOException.class, () -> sender.write(samples)); // write before connect
@@ -180,7 +167,7 @@ public class SenderTest {
             assertThrows(IOException.class, () -> {
                 sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
                 sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "127.0.0.1", 10002));
-                sender.write(2.0f);
+                sender.write(samples);
                 sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
             });
         }

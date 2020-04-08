@@ -9,14 +9,6 @@ extern "C" {
 #endif
 /*
  * Class:     com_github_rocproject_roc_Receiver
- * Method:    readFloat
- * Signature: ()F
- */
-JNIEXPORT jfloat JNICALL Java_com_github_rocproject_roc_Receiver_readFloat
-  (JNIEnv *, jobject);
-
-/*
- * Class:     com_github_rocproject_roc_Receiver
  * Method:    close
  * Signature: ()V
  */

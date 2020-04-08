@@ -157,28 +157,6 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_connect(JNIEnv *env
     }
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_writeFloat(JNIEnv *env, jobject thisObj, jfloat sample) {
-    jclass      senderClass;
-    roc_sender* sender;
-    roc_frame   frame;
-    float       samples[2] = { sample, sample };
-
-    senderClass = env->FindClass(SENDER_CLASS);
-    assert(senderClass != NULL);
-
-    sender = (roc_sender*) get_native_pointer(env, senderClass, thisObj);
-
-    memset(&frame, 0, sizeof(frame));
-
-    frame.samples = samples;
-    frame.samples_size = 2 * sizeof(float);
-
-    if (roc_sender_write(sender, &frame) != 0) {
-        jclass exceptionClass = env->FindClass("java/io/IOException");
-        env->ThrowNew(exceptionClass, "Error sending frame");
-    }
-}
-
 JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_writeFloats(JNIEnv *env, jobject thisObj, jfloatArray jsamples) {
     jclass      senderClass;
     jfloat*     samples;

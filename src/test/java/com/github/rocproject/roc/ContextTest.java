@@ -21,7 +21,7 @@ public class ContextTest {
     @Test
     public void ContextWithInvalidConfigTest() {
         assertThrows(Exception.class, () -> {
-            Context context = new Context(new ContextConfig(-1, -1));
+            Context context = new Context(new ContextConfig.Builder().maxPacketSize(-1).maxFrameSize(-1).build());
             context.close();
         });
     }

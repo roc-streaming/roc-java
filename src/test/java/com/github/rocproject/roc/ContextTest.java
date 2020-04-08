@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class ContextTest {
     static {
-        System.loadLibrary("native");
+        System.loadLibrary("roc_jni");
     }
 
     @Test

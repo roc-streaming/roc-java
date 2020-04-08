@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SenderTest {
     static {
-        System.loadLibrary("native");
+        System.loadLibrary("roc_jni");
     }
 
     private final int EXAMPLE_SAMPLE_RATE = 44100;

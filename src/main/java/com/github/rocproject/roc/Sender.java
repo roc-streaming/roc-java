@@ -33,18 +33,18 @@ import java.io.IOException;
  * Currently, two configurations are possible:
  * <ul>
  *   <li>
- *     If FEC is disabled, a single port of type {@link PortType#ROC_PORT_AUDIO_SOURCE ROC_PORT_AUDIO_SOURCE}
+ *     If FEC is disabled, a single port of type {@link PortType#AUDIO_SOURCE AUDIO_SOURCE}
  *     should be connected. The only supported protocol in this case is
- *     {@link Protocol#ROC_PROTO_RTP ROC_PROTO_RTP}. This port will be used to send audio packets.
+ *     {@link Protocol#RTP RTP}. This port will be used to send audio packets.
  *   </li>
  *   <li>
- *     If FEC is enabled, two ports of types {@link PortType#ROC_PORT_AUDIO_SOURCE ROC_PORT_AUDIO_SOURCE}
- *     and {@link PortType#ROC_PORT_AUDIO_REPAIR ROC_PORT_AUDIO_REPAIR} should be connected. These ports
+ *     If FEC is enabled, two ports of types {@link PortType#AUDIO_SOURCE AUDIO_SOURCE}
+ *     and {@link PortType#AUDIO_REPAIR AUDIO_REPAIR} should be connected. These ports
  *     will be used to send audio packets and redundant data for audio packets, respectively. The supported
  *     protocols in this case depend on the selected FEC code. For example, if
- *     {@link FecCode#ROC_FEC_RS8M ROC_FEC_RS8M} is used, the corresponding protocols would be
- *     {@link Protocol#ROC_PROTO_RTP_RS8M_SOURCE ROC_PROTO_RTP_RSM8_SOURCE} and
- *     {@link Protocol#ROC_PROTO_RS8M_REPAIR ROC_PROTO_RSM8_REPAIR}.
+ *     {@link FecCode#RS8M RS8M} is used, the corresponding protocols would be
+ *     {@link Protocol#RTP_RS8M_SOURCE RTP_RSM8_SOURCE} and
+ *     {@link Protocol#RS8M_REPAIR RSM8_REPAIR}.
  *   </li>
  * </ul>
  *
@@ -86,22 +86,22 @@ import java.io.IOException;
  * <pre>
  * {@code
  * SenderConfig config = new SenderConfig.Builder(44100,
- *                                                    ChannelSet.ROC_CHANNEL_SET_STEREO,
- *                                                    FrameEncoding.ROC_FRAME_ENCODING_PCM_FLOAT)
+ *                                                    ChannelSet.STEREO,
+ *                                                    FrameEncoding.PCM_FLOAT)
  *                                                    .automaticTiming(1)
- *                                                    .resamplerProfile(ResamplerProfile.ROC_RESAMPLER_DISABLE)
- *                                                    .fecCode(FecCode.ROC_FEC_RS8M)
+ *                                                .resamplerProfile(ResamplerProfile.DISABLE)
+ *                                                .fecCode(FecCode.RS8M)
  *                                           .build();
  * try (
  *     Context context = new Context();
  *     Sender sender = new Sender(context, config);
  * ) {
- *     Address senderAddress         = new Address(Family.ROC_AF_AUTO, "0.0.0.0", 0);
- *     Address receiverSourceAddress = new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10001);
- *     Address receiverRepairAddress = new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10002);
+ *     Address senderAddress         = new Address(Family.AUTO, "0.0.0.0", 0);
+ *     Address receiverSourceAddress = new Address(Family.AUTO, "127.0.0.1", 10001);
+ *     Address receiverRepairAddress = new Address(Family.AUTO, "127.0.0.1", 10002);
  *     sender.bind(senderAddress);
- *     sender.connect(PortType.ROC_PORT_AUDIO_SOURCE, Protocol.ROC_PROTO_RTP_RS8M_SOURCE, receiverSourceAddress);
- *     sender.connect(PortType.ROC_PORT_AUDIO_REPAIR, Protocol.ROC_PROTO_RS8M_REPAIR, receiverRepairAddress);
+ *     sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, receiverSourceAddress);
+ *     sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, receiverRepairAddress);
  *     float[] samples = new float[] {2.0f, -2.0f};
  *     sender.write(samples);
  * }

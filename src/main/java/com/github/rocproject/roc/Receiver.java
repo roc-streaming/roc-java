@@ -32,10 +32,10 @@ import java.io.IOException;
  *
  * Senders can then be connected to some or all receiver ports to transmit one or several
  * packet streams. If a sender employs FEC, it needs to be connected to a pair of
- * {@link PortType#ROC_PORT_AUDIO_SOURCE ROC_PORT_AUDIO_SOURCE} and
- * {@link PortType#ROC_PORT_AUDIO_REPAIR ROC_PORT_AUDIO_REPAIR} ports which protocols correspond
+ * {@link PortType#AUDIO_SOURCE AUDIO_SOURCE} and
+ * {@link PortType#AUDIO_REPAIR AUDIO_REPAIR} ports which protocols correspond
  * to the employed FEC code. Otherwise, the sender needs to be connected to a single
- * {@link PortType#ROC_PORT_AUDIO_SOURCE ROC_PORT_AUDIO_SOURCE} port.
+ * {@link PortType#AUDIO_SOURCE AUDIO_SOURCE} port.
  *
  * <h3>Sessions</h3>
  * <p>
@@ -103,18 +103,18 @@ import java.io.IOException;
  * <pre>
  * {@code
  * ReceiverConfig config = new ReceiverConfig.Builder(44100,
- *                                                    ChannelSet.ROC_CHANNEL_SET_STEREO,
- *                                                    FrameEncoding.ROC_FRAME_ENCODING_PCM_FLOAT)
- *                                                    .automaticTiming(1)
+ *                                                    ChannelSet.STEREO,
+ *                                                    FrameEncoding.PCM_FLOAT)
+ *                                                .automaticTiming(1)
  *                                           .build();
  * try (
  *     Context context = new Context();
  *     Receiver receiver = new Receiver(context, config);
  * ) {
- *     Address receiverSourceAddress = new Address(Family.ROC_AF_AUTO, "0.0.0.0", 10001);
- *     Address receiverRepairAddress = new Address(Family.ROC_AF_AUTO, "0.0.0.0", 10002);
- *     receiver.bind(PortType.ROC_PORT_AUDIO_SOURCE, Protocol.ROC_PROTO_RTP_RS8M_SOURCE, receiverSourceAddress);
- *     receiver.bind(PortType.ROC_PORT_AUDIO_REPAIR, Protocol.ROC_PROTO_RS8M_REPAIR, receiverRepairAddress);
+ *     Address receiverSourceAddress = new Address(Family.AUTO, "0.0.0.0", 10001);
+ *     Address receiverRepairAddress = new Address(Family.AUTO, "0.0.0.0", 10002);
+ *     receiver.bind(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, receiverSourceAddress);
+ *     receiver.bind(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, receiverRepairAddress);
  *     float sample = receiver.readFloat();
  * }
  * }

@@ -13,11 +13,11 @@ public class LoggerTest {
     @Test
     public void TestValidLoggerSetLevel() {
         assertDoesNotThrow(() -> {
-            Logger.setLevel(LogLevel.ROC_LOG_NONE);
-            Logger.setLevel(LogLevel.ROC_LOG_ERROR);
-            Logger.setLevel(LogLevel.ROC_LOG_INFO);
-            Logger.setLevel(LogLevel.ROC_LOG_DEBUG);
-            Logger.setLevel(LogLevel.ROC_LOG_TRACE);
+            Logger.setLevel(LogLevel.NONE);
+            Logger.setLevel(LogLevel.ERROR);
+            Logger.setLevel(LogLevel.INFO);
+            Logger.setLevel(LogLevel.DEBUG);
+            Logger.setLevel(LogLevel.TRACE);
         });
     }
 
@@ -36,7 +36,7 @@ public class LoggerTest {
             PrintStream old = System.out;
             System.setOut(ps);
 
-            Logger.setLevel(LogLevel.ROC_LOG_INFO);
+            Logger.setLevel(LogLevel.INFO);
             Logger.setCallback((level, component, message) -> {
                 System.out.println("[level=\"" + level + "\", component=\"" + component + "\"]: \"" + message + "\"");
             });
@@ -48,8 +48,8 @@ public class LoggerTest {
             System.setOut(old);
             String[] lines = baos.toString().split(System.getProperty("line.separator"));
             assertEquals(2, lines.length);
-            assertEquals("[level=\"ROC_LOG_INFO\", component=\"roc_lib\"]: \"roc_context: opening context\"", lines[0]);
-            assertEquals("[level=\"ROC_LOG_INFO\", component=\"roc_lib\"]: \"roc_context: closed context\"", lines[1]);
+            assertEquals("[level=\"INFO\", component=\"roc_lib\"]: \"roc_context: opening context\"", lines[0]);
+            assertEquals("[level=\"INFO\", component=\"roc_lib\"]: \"roc_context: closed context\"", lines[1]);
         });
     }
 

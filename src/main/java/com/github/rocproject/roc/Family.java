@@ -8,22 +8,22 @@ public enum Family {
     /**
      * Invalid address.
      */
-    ROC_AF_INVALID( getRocAFInvalid() ),
+    INVALID( getRocAFInvalid() ),
 
     /**
      * Automatically detect address family from string format.
      */
-    ROC_AF_AUTO( getRocAFAuto() ),
+    AUTO( getRocAFAuto() ),
 
     /**
      * IPv4 address.
      */
-    ROC_AF_IPv4( getRocAFIPv4() ),
+    IPv4( getRocAFIPv4() ),
 
     /**
      * IPv6 address.
      */
-    ROC_AF_IPv6( getRocAFIPv6() );
+    IPv6( getRocAFIPv6() );
 
     private final int value;
     Family(int newValue ) {

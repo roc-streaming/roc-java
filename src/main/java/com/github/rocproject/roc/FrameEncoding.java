@@ -10,7 +10,7 @@ public enum FrameEncoding {
      * Uncompressed samples coded as floats in range [-1; 1].
      * Channels are interleaved, e.g. two channels are encoded as "L R L R ...".
      */
-    ROC_FRAME_ENCODING_PCM_FLOAT( getRocFrameEncodingPCMFloat() );
+    PCM_FLOAT( getRocFrameEncodingPCMFloat() );
 
     private final int value;
     FrameEncoding(int newValue ) {

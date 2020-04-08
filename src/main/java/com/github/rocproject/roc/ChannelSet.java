@@ -9,7 +9,7 @@ public enum ChannelSet {
      * Stereo.
      * Two channels: left and right.
      */
-    ROC_CHANNEL_SET_STEREO( getRocChannelSetStereo() );
+    STEREO( getRocChannelSetStereo() );
 
     private final int value;
     ChannelSet(int newValue ) {

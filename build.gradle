@@ -63,7 +63,7 @@ test {
         includeEngines 'junit-jupiter'
     }
     testLogging {
-        showStandardStreams = true
+        showStandardStreams = false
     }
     def results = []
     afterTest { desc, result ->

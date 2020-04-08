@@ -13,8 +13,8 @@ public class ReceiverTest {
 
     ReceiverTest() {
         this.config = new ReceiverConfig.Builder(44100,
-                                            ChannelSet.ROC_CHANNEL_SET_STEREO,
-                                            FrameEncoding.ROC_FRAME_ENCODING_PCM_FLOAT)
+                                            ChannelSet.STEREO,
+                                            FrameEncoding.PCM_FLOAT)
                                         .build();
     }
 
@@ -42,8 +42,8 @@ public class ReceiverTest {
                 Context context = new Context();
                 Receiver receiver = new Receiver(context, config);
         ) {
-            assertDoesNotThrow(() -> receiver.bind(PortType.ROC_PORT_AUDIO_SOURCE, Protocol.ROC_PROTO_RTP_RS8M_SOURCE, new Address(Family.ROC_AF_AUTO, "0.0.0.0", 10001)));
-            assertDoesNotThrow(() -> receiver.bind(PortType.ROC_PORT_AUDIO_REPAIR, Protocol.ROC_PROTO_RS8M_REPAIR, new Address(Family.ROC_AF_AUTO, "0.0.0.0", 10002)));
+            assertDoesNotThrow(() -> receiver.bind(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "0.0.0.0", 10001)));
+            assertDoesNotThrow(() -> receiver.bind(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "0.0.0.0", 10002)));
         }
     }
 
@@ -53,10 +53,10 @@ public class ReceiverTest {
                 Context context = new Context();
                 Receiver receiver = new Receiver(context, config);
         ) {
-            Address sourceAddress = new Address(Family.ROC_AF_AUTO, "0.0.0.0", 0);
-            Address repairAddress = new Address(Family.ROC_AF_AUTO, "0.0.0.0", 0);
-            receiver.bind(PortType.ROC_PORT_AUDIO_SOURCE, Protocol.ROC_PROTO_RTP_RS8M_SOURCE, sourceAddress);
-            receiver.bind(PortType.ROC_PORT_AUDIO_REPAIR, Protocol.ROC_PROTO_RS8M_REPAIR, repairAddress);
+            Address sourceAddress = new Address(Family.AUTO, "0.0.0.0", 0);
+            Address repairAddress = new Address(Family.AUTO, "0.0.0.0", 0);
+            receiver.bind(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, sourceAddress);
+            receiver.bind(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, repairAddress);
             assertNotEquals(0, sourceAddress.getPort());
             assertNotEquals(0, repairAddress.getPort());
         }
@@ -68,9 +68,9 @@ public class ReceiverTest {
                     Context context = new Context();
                     Receiver receiver = new Receiver(context, config);
         ) {
-            assertThrows(IllegalArgumentException.class, () -> receiver.bind(null, Protocol.ROC_PROTO_RTP, new Address(Family.ROC_AF_AUTO, "0.0.0.0", 10001)));
-            assertThrows(IllegalArgumentException.class, () -> receiver.bind(PortType.ROC_PORT_AUDIO_SOURCE, null, new Address(Family.ROC_AF_AUTO, "0.0.0.0", 10001)));
-            assertThrows(IllegalArgumentException.class, () -> receiver.bind(PortType.ROC_PORT_AUDIO_SOURCE, Protocol.ROC_PROTO_RTP, null));
+            assertThrows(IllegalArgumentException.class, () -> receiver.bind(null, Protocol.RTP, new Address(Family.AUTO, "0.0.0.0", 10001)));
+            assertThrows(IllegalArgumentException.class, () -> receiver.bind(PortType.AUDIO_SOURCE, null, new Address(Family.AUTO, "0.0.0.0", 10001)));
+            assertThrows(IllegalArgumentException.class, () -> receiver.bind(PortType.AUDIO_SOURCE, Protocol.RTP, null));
         }
     }
 
@@ -80,8 +80,8 @@ public class ReceiverTest {
                 Context context = new Context();
                 Receiver receiver = new Receiver(context, config);
         ) {
-            receiver.bind(PortType.ROC_PORT_AUDIO_SOURCE, Protocol.ROC_PROTO_RTP, new Address(Family.ROC_AF_AUTO, "0.0.0.0", 10001));
-            receiver.bind(PortType.ROC_PORT_AUDIO_REPAIR, Protocol.ROC_PROTO_RS8M_REPAIR, new Address(Family.ROC_AF_AUTO, "0.0.0.0", 10002));
+            receiver.bind(PortType.AUDIO_SOURCE, Protocol.RTP, new Address(Family.AUTO, "0.0.0.0", 10001));
+            receiver.bind(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "0.0.0.0", 10002));
             assertThrows(IllegalArgumentException.class, () -> receiver.read(null));
         }
     }

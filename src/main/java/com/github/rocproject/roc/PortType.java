@@ -11,14 +11,14 @@ public enum PortType {
      * If FEC is used, this type of port is used to send or receive FEC source packets
      * containing audio data plus some FEC headers.
      */
-    ROC_PORT_AUDIO_SOURCE( getRocPortAudioSource() ),
+    AUDIO_SOURCE( getRocPortAudioSource() ),
 
     /**
      * Network port for audio repair packets.
      * If FEC is used, this type of port is used to send or receive FEC repair packets
      * containing redundant data for audio plus some FEC headers.
      */
-    ROC_PORT_AUDIO_REPAIR( getRocPortAudioRepair() );
+    AUDIO_REPAIR( getRocPortAudioRepair() );
 
     private final int value;
     PortType(int newValue ) {

@@ -8,28 +8,28 @@ public enum ResamplerProfile {
     /**
      * No resampling.
      */
-    ROC_RESAMPLER_DISABLE( getRocResamplerDisable() ),
+    DISABLE( getRocResamplerDisable() ),
 
     /**
      * Default profile.
-     * Current default is {@link ResamplerProfile#ROC_RESAMPLER_MEDIUM ROC_RESAMPLER_MEDIUM}.
+     * Current default is {@link ResamplerProfile#MEDIUM MEDIUM}.
      */
-    ROC_RESAMPLER_DEFAULT( getRocResamplerDefault() ),
+    DEFAULT( getRocResamplerDefault() ),
 
     /**
      * High quality, low speed.
      */
-    ROC_RESAMPLER_HIGH( getRocResamplerHigh() ),
+    HIGH( getRocResamplerHigh() ),
 
     /**
      * Medium quality, medium speed.
      */
-    ROC_RESAMPLER_MEDIUM( getRocResamplerMedium() ),
+    MEDIUM( getRocResamplerMedium() ),
 
     /**
      * Low quality, high speed.
      */
-    ROC_RESAMPLER_LOW( getRocResamplerLow() );
+    LOW( getRocResamplerLow() );
 
     private final int value;
     ResamplerProfile(int newValue ) {

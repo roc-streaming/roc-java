@@ -89,7 +89,7 @@ void address_set_roc_family(JNIEnv *env, jobject address, roc_family family) {
     attrId = env->GetFieldID(addressClass, "family", "L" FAMILY_CLASS ";");
     assert(attrId != NULL);
 
-    familyValue = ROC_AF_IPv4 == family ? "ROC_AF_IPv4" : (ROC_AF_IPv6 == family ? "ROC_AF_IPv6" : "ROC_AF_INVALID");
+    familyValue = ROC_AF_IPv4 == family ? "IPv4" : (ROC_AF_IPv6 == family ? "IPv6" : "INVALID");
     familyField = env->GetStaticFieldID(familyClass, familyValue, "L" FAMILY_CLASS ";");
     assert(familyField != NULL);
 

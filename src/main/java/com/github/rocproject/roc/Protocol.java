@@ -8,27 +8,27 @@ public enum Protocol {
     /**
      * Bare RTP (RFC 3550).
      */
-    ROC_PROTO_RTP( getRocProtoRTP() ),
+    RTP( getRocProtoRTP() ),
 
     /**
      * RTP source packet (RFC 3550) + FECFRAME Reed-Solomon footer (RFC 6865) with m=8.
      */
-    ROC_PROTO_RTP_RS8M_SOURCE( getRocProtoRTPRS8MSOURCE() ),
+    RTP_RS8M_SOURCE( getRocProtoRTPRS8MSOURCE() ),
 
     /**
      * FEC repair packet + FECFRAME Reed-Solomon header (RFC 6865) with m=8.
      */
-    ROC_PROTO_RS8M_REPAIR( getRocProtoRS8MREPAIR() ),
+    RS8M_REPAIR( getRocProtoRS8MREPAIR() ),
 
     /**
      * RTP source packet (RFC 3550) + FECFRAME LDPC-Staircase footer (RFC 6816).
      */
-    ROC_PROTO_RTP_LDPC_SOURCE( getRocProtoRTPLDPCSOURCE() ),
+    RTP_LDPC_SOURCE( getRocProtoRTPLDPCSOURCE() ),
 
     /**
      * FEC repair packet + FECFRAME LDPC-Staircase header (RFC 6816).
      */
-    ROC_PROTO_LDPC_REPAIR( getRocProtoLDPCREPAIR() );
+    LDPC_REPAIR( getRocProtoLDPCREPAIR() );
 
     private final int value;
     Protocol(int newValue ) {

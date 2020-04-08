@@ -33,8 +33,8 @@ public class SenderTest {
 
     SenderTest() {
         this.config = new SenderConfig.Builder(EXAMPLE_SAMPLE_RATE,
-                                                ChannelSet.ROC_CHANNEL_SET_STEREO,
-                                                FrameEncoding.ROC_FRAME_ENCODING_PCM_FLOAT)
+                                                ChannelSet.STEREO,
+                                                FrameEncoding.PCM_FLOAT)
                                                 .automaticTiming(1)
                                         .build();
         this.samples = new float[EXAMPLE_BUFFER_SIZE];
@@ -70,7 +70,7 @@ public class SenderTest {
         try (
                 Sender sender = new Sender(context, config);
         ) {
-            assertDoesNotThrow(() -> sender.bind(new Address(Family.ROC_AF_AUTO, "0.0.0.0", 0)));
+            assertDoesNotThrow(() -> sender.bind(new Address(Family.AUTO, "0.0.0.0", 0)));
         }
     }
 
@@ -79,7 +79,7 @@ public class SenderTest {
         try (
                 Sender sender = new Sender(context, config);
         ) {
-            Address senderAddress = new Address(Family.ROC_AF_AUTO, "0.0.0.0", 0);
+            Address senderAddress = new Address(Family.AUTO, "0.0.0.0", 0);
             sender.bind(senderAddress);
             assertNotEquals(0, senderAddress.getPort());
         }
@@ -92,8 +92,8 @@ public class SenderTest {
         ) {
             assertThrows(IllegalArgumentException.class, () -> sender.bind(null));
             assertThrows(IOException.class, () -> {
-                sender.bind(new Address(Family.ROC_AF_AUTO, "0.0.0.0", 0));
-                sender.bind(new Address(Family.ROC_AF_AUTO, "0.0.0.0", 0));
+                sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
+                sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
             });
         }
     }
@@ -104,9 +104,9 @@ public class SenderTest {
                 Sender sender = new Sender(context, config);
         ) {
             assertDoesNotThrow(() -> {
-                sender.bind(new Address(Family.ROC_AF_AUTO, "0.0.0.0", 0));
-                sender.connect(PortType.ROC_PORT_AUDIO_SOURCE, Protocol.ROC_PROTO_RTP_RS8M_SOURCE, new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10001));
-                sender.connect(PortType.ROC_PORT_AUDIO_REPAIR, Protocol.ROC_PROTO_RS8M_REPAIR, new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10002));
+                sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
+                sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
+                sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "127.0.0.1", 10002));
             });
         }
     }
@@ -116,15 +116,15 @@ public class SenderTest {
         try (
             Sender sender = new Sender(context, config);
         ) {
-            sender.bind(new Address(Family.ROC_AF_AUTO, "0.0.0.0", 0));
+            sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
             assertThrows(IllegalArgumentException.class, () -> {
-                sender.connect(null, Protocol.ROC_PROTO_RTP_RS8M_SOURCE, new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10001));
+                sender.connect(null, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
             });
             assertThrows(IllegalArgumentException.class, () -> {
-                sender.connect(PortType.ROC_PORT_AUDIO_SOURCE, null, new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10001));
+                sender.connect(PortType.AUDIO_SOURCE, null, new Address(Family.AUTO, "127.0.0.1", 10001));
             });
             assertThrows(IllegalArgumentException.class, () -> {
-                sender.connect(PortType.ROC_PORT_AUDIO_SOURCE, Protocol.ROC_PROTO_RTP_RS8M_SOURCE, null);
+                sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, null);
             });
         }
     }
@@ -134,9 +134,9 @@ public class SenderTest {
         try (
                 Sender sender = new Sender(context, config);
         ) {
-            sender.bind(new Address(Family.ROC_AF_AUTO, "0.0.0.0", 0));
-            sender.connect(PortType.ROC_PORT_AUDIO_SOURCE, Protocol.ROC_PROTO_RTP_RS8M_SOURCE, new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10001));
-            sender.connect(PortType.ROC_PORT_AUDIO_REPAIR, Protocol.ROC_PROTO_RS8M_REPAIR, new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10002));
+            sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
+            sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
+            sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "127.0.0.1", 10002));
             assertDoesNotThrow(() -> sender.write(2.0f));
         }
     }
@@ -146,9 +146,9 @@ public class SenderTest {
         try (
             Sender sender = new Sender(context, config);
         ) {
-            sender.bind(new Address(Family.ROC_AF_AUTO, "0.0.0.0", 0));
-            sender.connect(PortType.ROC_PORT_AUDIO_SOURCE, Protocol.ROC_PROTO_RTP_RS8M_SOURCE, new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10001));
-            sender.connect(PortType.ROC_PORT_AUDIO_REPAIR, Protocol.ROC_PROTO_RS8M_REPAIR, new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10002));
+            sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
+            sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
+            sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "127.0.0.1", 10002));
             for (int i = 0; i < EXAMPLE_SINE_SAMPLES / EXAMPLE_BUFFER_SIZE; i++) {
                 gensine(samples);
                 assertDoesNotThrow(() -> sender.write(samples));
@@ -163,10 +163,10 @@ public class SenderTest {
         ) {
             gensine(samples);
             assertThrows(IOException.class, () -> sender.write(samples)); // write before bind
-            sender.bind(new Address(Family.ROC_AF_AUTO, "0.0.0.0", 0));
+            sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
             assertThrows(IOException.class, () -> sender.write(samples)); // write before connect
-            sender.connect(PortType.ROC_PORT_AUDIO_SOURCE, Protocol.ROC_PROTO_RTP_RS8M_SOURCE, new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10001));
-            sender.connect(PortType.ROC_PORT_AUDIO_REPAIR, Protocol.ROC_PROTO_RS8M_REPAIR, new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10002));
+            sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
+            sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "127.0.0.1", 10002));
             assertThrows(IllegalArgumentException.class, () -> sender.write(null));
         }
     }
@@ -176,12 +176,12 @@ public class SenderTest {
         try (
                 Sender sender = new Sender(context, config);
         ) {
-            sender.bind(new Address(Family.ROC_AF_AUTO, "0.0.0.0", 0));
+            sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
             assertThrows(IOException.class, () -> {
-                sender.connect(PortType.ROC_PORT_AUDIO_SOURCE, Protocol.ROC_PROTO_RTP_RS8M_SOURCE, new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10001));
-                sender.connect(PortType.ROC_PORT_AUDIO_REPAIR, Protocol.ROC_PROTO_RS8M_REPAIR, new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10002));
+                sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
+                sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "127.0.0.1", 10002));
                 sender.write(2.0f);
-                sender.connect(PortType.ROC_PORT_AUDIO_SOURCE, Protocol.ROC_PROTO_RTP_RS8M_SOURCE, new Address(Family.ROC_AF_AUTO, "127.0.0.1", 10001));
+                sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
             });
         }
     }

@@ -17,22 +17,22 @@ static struct {
 } handler_args = {0};
 
 static const char* logLevelMapping(roc_log_level level) {
-    const char* ret = "ROC_LOG_ERROR";
+    const char* ret = "ERROR";
     switch (level) {
         case ROC_LOG_NONE:
-            ret = "ROC_LOG_NONE";
+            ret = "NONE";
             break;
         case ROC_LOG_ERROR:
-            ret = "ROC_LOG_ERROR";
+            ret = "ERROR";
             break;
         case ROC_LOG_INFO:
-            ret = "ROC_LOG_INFO";
+            ret = "INFO";
             break;
         case ROC_LOG_DEBUG:
-            ret = "ROC_LOG_DEBUG";
+            ret = "DEBUG";
             break;
         case ROC_LOG_TRACE:
-            ret = "ROC_LOG_TRACE";
+            ret = "TRACE";
             break;
         default: break;
     }

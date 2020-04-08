@@ -11,7 +11,7 @@ public enum PacketEncoding {
      * Uncompressed samples coded as interleaved 16-bit signed big-endian
      * integers in two's complement notation.
      */
-    ROC_PACKET_ENCODING_AVP_L16( getRocPacketEncodingAVPL16() );
+    AVP_L16( getRocPacketEncodingAVPL16() );
 
     private final int value;
     PacketEncoding(int newValue ) {

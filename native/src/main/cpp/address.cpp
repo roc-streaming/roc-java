@@ -1,12 +1,12 @@
-#include "com_rocproject_roc_address_Address.h"
+#include "com_github_rocproject_roc_Address.h"
 #include "common.h"
 #include "address.h"
 
 #include <cassert>
 #include <cstring>
 
-#define ADDRESS_CLASS               "com/rocproject/roc/address/Address"
-#define FAMILY_CLASS                "com/rocproject/roc/address/Family"
+#define ADDRESS_CLASS               "com/github/rocproject/roc/Address"
+#define FAMILY_CLASS                "com/github/rocproject/roc/Family"
 
 roc_family address_get_family(JNIEnv *env, jobject address) {
     jclass       addressClass;
@@ -97,12 +97,7 @@ void address_set_roc_family(JNIEnv *env, jobject address, roc_family family) {
     env->SetObjectField(address, attrId, familyObj);
 }
 
-/*
- * Class:     com_rocproject_roc_address_Address
- * Method:    init
- * Signature: (Lcom/rocproject/roc/address/Family;Ljava/lang/String;I)V
- */
-JNIEXPORT void JNICALL Java_com_rocproject_roc_address_Address_init(JNIEnv *env, jobject thisObj, jobject jfamily, jstring jip, jint port) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Address_init(JNIEnv *env, jobject thisObj, jobject jfamily, jstring jip, jint port) {
     jclass          familyClass;
     roc_address     address;
     roc_family      family;

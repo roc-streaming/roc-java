@@ -8,7 +8,7 @@ extern "C" {
 
 #include <roc/config.h>
 
-#define FEC_CODE_CLASS              "com/rocproject/roc/config/FecCode"
+#define FEC_CODE_CLASS              "com/github/rocproject/roc/FecCode"
 
 roc_fec_code get_fec_code(JNIEnv *env, jobject jfec_code);
 

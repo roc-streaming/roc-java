@@ -1,12 +1,12 @@
-#include "com_rocproject_roc_context_Context.h"
+#include "com_github_rocproject_roc_Context.h"
 #include "common.h"
 #include "context.h"
 
 #include <cstring>
 #include <cassert>
 
-#define CONTEXT_CLASS               "com/rocproject/roc/context/Context"
-#define CONTEXT_CONFIG_CLASS        "com/rocproject/roc/config/ContextConfig"
+#define CONTEXT_CLASS               "com/github/rocproject/roc/Context"
+#define CONTEXT_CONFIG_CLASS        "com/github/rocproject/roc/ContextConfig"
 
 void context_config_unmarshall(JNIEnv *env, roc_context_config* conf, jobject jconfig) {
     jclass contextConfigClass;
@@ -20,7 +20,7 @@ void context_config_unmarshall(JNIEnv *env, roc_context_config* conf, jobject jc
     conf->max_frame_size = (unsigned int) get_int_field_value(env, contextConfigClass, jconfig, "maxFrameSize");
 }
 
-JNIEXPORT void JNICALL Java_com_rocproject_roc_context_Context_rocContextOpen(JNIEnv *env, jobject thisObj, jobject config) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_rocContextOpen(JNIEnv *env, jobject thisObj, jobject config) {
     roc_context*        context;
     roc_context_config  context_config;
     jclass              contextClass;
@@ -51,12 +51,7 @@ JNIEXPORT void JNICALL Java_com_rocproject_roc_context_Context_rocContextOpen(JN
     set_native_pointer(env, contextClass, thisObj, context);
 }
 
-/*
- * Class:     com_rocproject_roc_context_Context
- * Method:    rocContextClose
- * Signature: (J)V
- */
-JNIEXPORT void JNICALL Java_com_rocproject_roc_context_Context_rocContextClose(JNIEnv *env, jobject thisObj) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_rocContextClose(JNIEnv *env, jobject thisObj) {
     roc_context*    context;
     jclass          contextClass;
 

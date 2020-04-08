@@ -1,4 +1,4 @@
-#include "com_rocproject_roc_receiver_Receiver.h"
+#include "com_github_rocproject_roc_Receiver.h"
 
 #include "common.h"
 #include "channel_set.h"
@@ -12,8 +12,8 @@
 
 #include <roc/receiver.h>
 
-#define RECEIVER_CLASS              "com/rocproject/roc/receiver/Receiver"
-#define RECEIVER_CONFIG_CLASS       "com/rocproject/roc/config/ReceiverConfig"
+#define RECEIVER_CLASS              "com/github/rocproject/roc/Receiver"
+#define RECEIVER_CONFIG_CLASS       "com/github/rocproject/roc/ReceiverConfig"
 
 void receiver_config_unmarshall(JNIEnv *env, roc_receiver_config* config, jobject jconfig) {
     jobject tempObject;
@@ -43,7 +43,7 @@ void receiver_config_unmarshall(JNIEnv *env, roc_receiver_config* config, jobjec
     config->breakage_detection_window = (unsigned long long) get_long_field_value(env, receiverConfigClass, jconfig, "breakageDetectionWindow");
 }
 
-JNIEXPORT void JNICALL Java_com_rocproject_roc_receiver_Receiver_receiverOpen(JNIEnv * env, jobject thisObj,
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_receiverOpen(JNIEnv * env, jobject thisObj,
                     jobject jcontext, jobject jconfig) {
     roc_context*            context;
     roc_receiver_config     receiverConfig;
@@ -72,12 +72,7 @@ JNIEXPORT void JNICALL Java_com_rocproject_roc_receiver_Receiver_receiverOpen(JN
     set_native_pointer(env, receiverClass, thisObj, receiver);
 }
 
-/*
- * Class:     com_rocproject_roc_receiver_Receiver
- * Method:    bind
- * Signature: (Lcom/rocproject/roc/config/PortType;Lcom/rocproject/roc/config/Protocol;Lcom/rocproject/roc/address/Address;)V
- */
-JNIEXPORT void JNICALL Java_com_rocproject_roc_receiver_Receiver_bind(JNIEnv * env, jobject thisObj,
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_bind(JNIEnv * env, jobject thisObj,
                     jint type, jint protocol, jobject jaddress) {
     roc_receiver*   receiver    = NULL;
     roc_address     address;
@@ -114,12 +109,7 @@ JNIEXPORT void JNICALL Java_com_rocproject_roc_receiver_Receiver_bind(JNIEnv * e
     }
 }
 
-/*
- * Class:     com_rocproject_roc_receiver_Receiver
- * Method:    readFloat
- * Signature: ()F
- */
-JNIEXPORT jfloat JNICALL Java_com_rocproject_roc_receiver_Receiver_readFloat(JNIEnv *env, jobject thisObj) {
+JNIEXPORT jfloat JNICALL Java_com_github_rocproject_roc_Receiver_readFloat(JNIEnv *env, jobject thisObj) {
     roc_receiver*   receiver;
     float           recv_sample;
     roc_frame       frame;
@@ -142,12 +132,7 @@ JNIEXPORT jfloat JNICALL Java_com_rocproject_roc_receiver_Receiver_readFloat(JNI
     return recv_sample;
 }
 
-/*
- * Class:     com_rocproject_roc_receiver_Receiver
- * Method:    readFloats
- * Signature: ([F)V
- */
-JNIEXPORT void JNICALL Java_com_rocproject_roc_receiver_Receiver_readFloats(JNIEnv *env, jobject thisObj, jfloatArray jsamples) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_readFloats(JNIEnv *env, jobject thisObj, jfloatArray jsamples) {
     roc_receiver*       receiver;
     roc_frame           frame;
     jfloat*             samples;
@@ -181,12 +166,7 @@ JNIEXPORT void JNICALL Java_com_rocproject_roc_receiver_Receiver_readFloats(JNIE
     env->ReleaseFloatArrayElements(jsamples, samples, 0);
 }
 
-/*
- * Class:     com_rocproject_roc_receiver_Receiver
- * Method:    close
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_com_rocproject_roc_receiver_Receiver_close(JNIEnv *env, jobject thisObj) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_close(JNIEnv *env, jobject thisObj) {
     jclass receiverClass;
 
     receiverClass = env->FindClass(RECEIVER_CLASS);

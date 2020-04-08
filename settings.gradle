@@ -1,4 +1,3 @@
 rootProject.name = 'roc-java'
 
-include ":native"
-
+include ":roc_jni"

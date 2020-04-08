@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LoggerTest {
     static {
-        System.loadLibrary("native");
+        System.loadLibrary("roc_jni");
     }
 
     @Test

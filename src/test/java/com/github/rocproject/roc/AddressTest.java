@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AddressTest {
     static {
-        System.loadLibrary("native");
+        System.loadLibrary("roc_jni");
     }
 
     @Test

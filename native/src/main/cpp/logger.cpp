@@ -1,4 +1,4 @@
-#include "com_rocproject_roc_log_Logger.h"
+#include "com_github_rocproject_roc_Logger.h"
 #include "common.h"
 
 #include <cassert>
@@ -6,8 +6,8 @@
 
 #include <roc/log.h>
 
-#define LOG_LEVEL_CLASS             "com/rocproject/roc/log/LogLevel"
-#define LOG_HANDLER_CLASS           "com/rocproject/roc/log/LogHandler"
+#define LOG_LEVEL_CLASS             "com/github/rocproject/roc/LogLevel"
+#define LOG_HANDLER_CLASS           "com/github/rocproject/roc/LogHandler"
 
 static struct {
     JavaVM*     vm;
@@ -81,12 +81,7 @@ void logger_handler(roc_log_level level, const char* component, const char* mess
     handler_args.vm->DetachCurrentThread();
 }
 
-/*
- * Class:     com_rocproject_roc_log_Logger
- * Method:    setLevel
- * Signature: (Lcom/rocproject/roc/log/LogLevel;)V
- */
-JNIEXPORT void JNICALL Java_com_rocproject_roc_log_Logger_setLevel(JNIEnv *env, jclass clazz, jobject jlevel) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Logger_setLevel(JNIEnv *env, jclass clazz, jobject jlevel) {
     jclass          logLevelClass;
     roc_log_level   level;
 
@@ -103,12 +98,7 @@ JNIEXPORT void JNICALL Java_com_rocproject_roc_log_Logger_setLevel(JNIEnv *env, 
     roc_log_set_level(level);
 }
 
-/*
- * Class:     com_rocproject_roc_log_Logger
- * Method:    setCallback
- * Signature: (Lcom/rocproject/roc/log/LogHandler;)V
- */
-JNIEXPORT void JNICALL Java_com_rocproject_roc_log_Logger_setCallback(JNIEnv *env, jclass clazz, jobject jhandler) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Logger_setCallback(JNIEnv *env, jclass clazz, jobject jhandler) {
     jclass      logHandlerClass;
     jmethodID   tmpMethodID;
 

@@ -1,4 +1,4 @@
-#include "com_rocproject_roc_sender_Sender.h"
+#include "com_github_rocproject_roc_Sender.h"
 #include "common.h"
 #include "context.h"
 #include "channel_set.h"
@@ -14,8 +14,8 @@
 #include <roc/sender.h>
 #include <roc/frame.h>
 
-#define SENDER_CLASS                "com/rocproject/roc/sender/Sender"
-#define SENDER_CONFIG_CLASS         "com/rocproject/roc/config/SenderConfig"
+#define SENDER_CLASS                "com/github/rocproject/roc/Sender"
+#define SENDER_CONFIG_CLASS         "com/github/rocproject/roc/SenderConfig"
 
 void sender_config_unmarshall(JNIEnv *env, roc_sender_config* config, jobject jconfig) {
     jobject tempObject;
@@ -54,12 +54,7 @@ void sender_config_unmarshall(JNIEnv *env, roc_sender_config* config, jobject jc
     config->fec_block_repair_packets = (unsigned int) get_int_field_value(env, senderConfigClass, jconfig, "fecBlockRepairPackets");
 }
 
-/*
- * Class:     com_rocproject_roc_sender_Sender
- * Method:    senderOpen
- * Signature: (Lcom/rocproject/roc/context/Context;Lcom/rocproject/roc/config/SenderConfig;)V
- */
-JNIEXPORT void JNICALL Java_com_rocproject_roc_sender_Sender_senderOpen(JNIEnv *env, jobject thisObj, jobject jcontext, jobject jconfig) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_senderOpen(JNIEnv *env, jobject thisObj, jobject jcontext, jobject jconfig) {
     roc_context*            context;
     roc_sender_config       config;
     roc_sender*             sender;
@@ -86,7 +81,7 @@ JNIEXPORT void JNICALL Java_com_rocproject_roc_sender_Sender_senderOpen(JNIEnv *
     set_native_pointer(env, senderClass, thisObj, sender);
 }
 
-JNIEXPORT void JNICALL Java_com_rocproject_roc_sender_Sender_close(JNIEnv *env, jobject thisObj) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_close(JNIEnv *env, jobject thisObj) {
     jclass      senderClass;
     roc_sender* sender;
 
@@ -101,7 +96,7 @@ JNIEXPORT void JNICALL Java_com_rocproject_roc_sender_Sender_close(JNIEnv *env, 
     }
 }
 
-JNIEXPORT void JNICALL Java_com_rocproject_roc_sender_Sender_bind(JNIEnv *env, jobject thisObj, jobject jaddress) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_bind(JNIEnv *env, jobject thisObj, jobject jaddress) {
     roc_address     address;
     roc_sender*     sender;
     int             port;
@@ -139,7 +134,7 @@ JNIEXPORT void JNICALL Java_com_rocproject_roc_sender_Sender_bind(JNIEnv *env, j
     }
 }
 
-JNIEXPORT void JNICALL Java_com_rocproject_roc_sender_Sender_connect(JNIEnv *env, jobject thisObj, jint portType, jint protocol, jobject jaddress) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_connect(JNIEnv *env, jobject thisObj, jint portType, jint protocol, jobject jaddress) {
     roc_address     address;
     roc_sender*     sender;
     jclass          senderClass;
@@ -162,7 +157,7 @@ JNIEXPORT void JNICALL Java_com_rocproject_roc_sender_Sender_connect(JNIEnv *env
     }
 }
 
-JNIEXPORT void JNICALL Java_com_rocproject_roc_sender_Sender_writeFloat(JNIEnv *env, jobject thisObj, jfloat sample) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_writeFloat(JNIEnv *env, jobject thisObj, jfloat sample) {
     jclass      senderClass;
     roc_sender* sender;
     roc_frame   frame;
@@ -184,7 +179,7 @@ JNIEXPORT void JNICALL Java_com_rocproject_roc_sender_Sender_writeFloat(JNIEnv *
     }
 }
 
-JNIEXPORT void JNICALL Java_com_rocproject_roc_sender_Sender_writeFloats(JNIEnv *env, jobject thisObj, jfloatArray jsamples) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_writeFloats(JNIEnv *env, jobject thisObj, jfloatArray jsamples) {
     jclass      senderClass;
     jfloat*     samples;
     jsize       len;

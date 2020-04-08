@@ -8,7 +8,7 @@ extern "C" {
 
 #include <roc/config.h>
 
-#define RESAMPLER_PROFILE_CLASS     "com/rocproject/roc/config/ResamplerProfile"
+#define RESAMPLER_PROFILE_CLASS     "com/github/rocproject/roc/ResamplerProfile"
 
 roc_resampler_profile get_resampler_profile(JNIEnv *env, jobject jresampler_profile);
 

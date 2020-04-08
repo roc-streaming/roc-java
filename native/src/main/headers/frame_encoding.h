@@ -8,7 +8,7 @@ extern "C" {
 
 #include <roc/config.h>
 
-#define FRAME_ENCODING_CLASS        "com/rocproject/roc/config/FrameEncoding"
+#define FRAME_ENCODING_CLASS        "com/github/rocproject/roc/FrameEncoding"
 
 void frame_encoding_JNI_OnLoad(JNIEnv *env);
 void frame_encoding_JNI_OnUnload(JNIEnv *env);

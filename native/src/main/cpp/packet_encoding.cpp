@@ -1,4 +1,4 @@
-#include "com_rocproject_roc_config_PacketEncoding.h"
+#include "com_github_rocproject_roc_PacketEncoding.h"
 
 #include "packet_encoding.h"
 #include "common.h"
@@ -14,6 +14,6 @@ roc_packet_encoding get_packet_encoding(JNIEnv *env, jobject jpacket_encoding) {
     return (roc_packet_encoding) get_enum_value(env, packetEncodingClass, jpacket_encoding);
 }
 
-JNIEXPORT jint JNICALL Java_com_rocproject_roc_config_PacketEncoding_getRocPacketEncodingAVPL16(JNIEnv *, jclass) {
+JNIEXPORT jint JNICALL Java_com_github_rocproject_roc_PacketEncoding_getRocPacketEncodingAVPL16(JNIEnv *, jclass) {
     return ROC_PACKET_ENCODING_AVP_L16;
 }

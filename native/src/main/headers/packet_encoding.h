@@ -8,7 +8,7 @@ extern "C" {
 
 #include <roc/config.h>
 
-#define PACKET_ENCODING_CLASS        "com/rocproject/roc/config/PacketEncoding"
+#define PACKET_ENCODING_CLASS        "com/github/rocproject/roc/PacketEncoding"
 
 roc_packet_encoding get_packet_encoding(JNIEnv *env, jobject jpacket_encoding);
 

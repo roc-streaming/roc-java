@@ -8,7 +8,7 @@ extern "C" {
 
 #include <roc/config.h>
 
-#define CHANNEL_SET_CLASS           "com/rocproject/roc/config/ChannelSet"
+#define CHANNEL_SET_CLASS           "com/github/rocproject/roc/ChannelSet"
 
 roc_channel_set get_channel_set(JNIEnv *env, jobject jchannel_set);
 

@@ -115,7 +115,8 @@ import java.io.IOException;
  *     Address receiverRepairAddress = new Address(Family.AUTO, "0.0.0.0", 10002);
  *     receiver.bind(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, receiverSourceAddress);
  *     receiver.bind(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, receiverRepairAddress);
- *     float sample = receiver.readFloat();
+ *     float[] samples = new float[2];
+ *     receiver.read(samples);
  * }
  * }
  * </pre>
@@ -188,18 +189,6 @@ public class Receiver extends NativeObject implements AutoCloseable {
         if (samples == null) throw new IllegalArgumentException();
         readFloats(samples);
     }
-
-    /**
-     * Read a single float sample from the receiver.
-     *
-     * If the automatic timing is enabled, the function blocks until it's time to decode the
-     * samples according to the configured sample rate.
-     *
-     * @return      the float sample read from the receiver.
-     *
-     * @throws IOException              if there are not enough resources.
-     */
-    public native float readFloat() throws IOException;
 
     /**
      * Close the receiver.

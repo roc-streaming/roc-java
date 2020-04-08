@@ -109,29 +109,6 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_bind(JNIEnv * env
     }
 }
 
-JNIEXPORT jfloat JNICALL Java_com_github_rocproject_roc_Receiver_readFloat(JNIEnv *env, jobject thisObj) {
-    roc_receiver*   receiver;
-    float           recv_sample;
-    roc_frame       frame;
-    jclass          receiverClass;
-
-    receiverClass = env->FindClass(RECEIVER_CLASS);
-    assert(receiverClass != NULL);
-
-    receiver = (roc_receiver*) get_native_pointer(env, receiverClass, thisObj);
-
-    memset(&frame, 0, sizeof(frame));
-    frame.samples = &recv_sample;
-    frame.samples_size = sizeof(float);
-
-    if (roc_receiver_read(receiver, &frame) != 0) {
-        jclass exceptionClass = env->FindClass("java/io/IOException");
-        env->ThrowNew(exceptionClass, "Error with receiver read");
-        return 0.0f;
-    }
-    return recv_sample;
-}
-
 JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_readFloats(JNIEnv *env, jobject thisObj, jfloatArray jsamples) {
     roc_receiver*       receiver;
     roc_frame           frame;

@@ -181,26 +181,6 @@ public class Sender extends NativeObject implements AutoCloseable {
      * samples according to the configured sample rate. The function returns after encoding
      * and enqueuing the packets, without waiting when the packets are actually transmitted.
      *
-     * @param sample        sample to send.
-     *
-     * @throws IOException  if the sender is not bound or connected or if there are not
-     *                      enough resources.
-     */
-    public void write(float sample) throws IOException {
-        writeFloat(sample);
-    }
-
-    /**
-     * Encode samples to packets and transmit them to the receiver.
-     *
-     * Encodes samples to packets and enqueues them for transmission by the context network
-     * worker thread. Should be called after {@link Sender#bind bind()} and
-     * {@link Sender#connect connect()}.
-     *
-     * If the automatic timing is enabled, the function blocks until it's time to encode the
-     * samples according to the configured sample rate. The function returns after encoding
-     * and enqueuing the packets, without waiting when the packets are actually transmitted.
-     *
      * @param samples       array of samples to send.
      *
      * @throws IllegalArgumentException if the arguments are invalid.
@@ -226,6 +206,5 @@ public class Sender extends NativeObject implements AutoCloseable {
 
     private native void senderOpen(Context context, SenderConfig config) throws IOException;
     private native void connect(int portType, int protocol, Address address) throws IOException;
-    private native void writeFloat(float sample) throws IOException;
     private native void writeFloats(float[] samples) throws IOException;
 }

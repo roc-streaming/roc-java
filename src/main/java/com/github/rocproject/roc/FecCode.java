@@ -46,4 +46,8 @@ public enum FecCode {
     private static native int getRocFecCodeDefault();
     private static native int getRocFecCodeRS8M();
     private static native int getRocFecCodeLDPCSTAIRCASE();
+
+    static {
+        RocLibrary.loadLibrary();
+    }
 }

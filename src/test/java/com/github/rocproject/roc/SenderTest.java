@@ -8,9 +8,6 @@ import static java.lang.Math.sin;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SenderTest {
-    static {
-        System.loadLibrary("roc_jni");
-    }
 
     private final int EXAMPLE_SAMPLE_RATE = 44100;
     private final int EXAMPLE_SINE_RATE = 440;

@@ -9,6 +9,10 @@ package com.github.rocproject.roc;
  * @see SenderConfig.Builder
  */
 public class SenderConfig {
+    static {
+        RocLibrary.loadLibrary();
+    }
+
     private int frameSampleRate;
     private ChannelSet frameChannels;
     private FrameEncoding frameEncoding;

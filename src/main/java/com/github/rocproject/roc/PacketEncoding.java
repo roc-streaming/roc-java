@@ -22,4 +22,8 @@ public enum PacketEncoding {
     }
 
     private static native int getRocPacketEncodingAVPL16();
+
+    static {
+        RocLibrary.loadLibrary();
+    }
 }

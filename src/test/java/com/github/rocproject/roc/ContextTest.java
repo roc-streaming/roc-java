@@ -6,9 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class ContextTest {
-    static {
-        System.loadLibrary("roc_jni");
-    }
 
     @Test
     public void ContextDefaultConfigTest() {

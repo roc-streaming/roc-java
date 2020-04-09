@@ -5,9 +5,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ReceiverTest {
-    static {
-        System.loadLibrary("roc_jni");
-    }
 
     private ReceiverConfig config;
 

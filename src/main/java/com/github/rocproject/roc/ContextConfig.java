@@ -8,6 +8,9 @@ package com.github.rocproject.roc;
  * @see Context
  */
 public class ContextConfig {
+    static {
+        RocLibrary.loadLibrary();
+    }
 
     private int maxPacketSize;
     private int maxFrameSize;

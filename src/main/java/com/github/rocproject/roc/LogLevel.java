@@ -51,4 +51,8 @@ public enum LogLevel {
     private static native int getRocLogInfo();
     private static native int getRocLogDebug();
     private static native int getRocLogTrace();
+
+    static {
+        RocLibrary.loadLibrary();
+    }
 }

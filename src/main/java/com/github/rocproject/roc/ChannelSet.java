@@ -20,4 +20,8 @@ public enum ChannelSet {
     }
 
     private static native int getRocChannelSetStereo();
+
+    static {
+        RocLibrary.loadLibrary();
+    }
 }

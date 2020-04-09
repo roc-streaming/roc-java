@@ -6,9 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AddressTest {
-    static {
-        System.loadLibrary("roc_jni");
-    }
 
     @Test
     public void IPv4AddressTest() {

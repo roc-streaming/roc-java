@@ -30,4 +30,8 @@ public enum PortType {
 
     private static native int getRocPortAudioSource();
     private static native int getRocPortAudioRepair();
+
+    static {
+        RocLibrary.loadLibrary();
+    }
 }

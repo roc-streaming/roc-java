@@ -37,4 +37,8 @@ public enum Family {
     private static native int getRocAFAuto();
     private static native int getRocAFIPv4();
     private static native int getRocAFIPv6();
+
+    static {
+        RocLibrary.loadLibrary();
+    }
 }

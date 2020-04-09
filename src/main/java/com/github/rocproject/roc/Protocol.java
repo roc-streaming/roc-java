@@ -43,4 +43,8 @@ public enum Protocol {
     private static native int getRocProtoRS8MREPAIR();
     private static native int getRocProtoRTPLDPCSOURCE();
     private static native int getRocProtoLDPCREPAIR();
+
+    static {
+        RocLibrary.loadLibrary();
+    }
 }

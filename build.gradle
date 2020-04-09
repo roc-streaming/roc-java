@@ -24,8 +24,7 @@ ext {
     platform = System.getProperty("platform") ?: os
     architecture = System.getProperty("host") ?: System.getProperty("os.arch")
     targetLibraryPath = "${project.buildDir}/libs/${platform}/${architecture}"
-    nativeLibraryName = "roc_jni"
-    nativeHeadersPath = "${project.rootDir}/${nativeLibraryName}/src/main/public"
+    nativeHeadersPath = "${project.rootDir}/${System.properties["rocJniLibraryName"]}/src/main/public"
 }
 
 task generateHeaders(dependsOn: 'classes') {
@@ -47,9 +46,9 @@ task generateHeaders(dependsOn: 'classes') {
 }
 
 task copyNativeDeps(type: Copy) {
-    from("${project.rootDir}/${nativeLibraryName}/build/lib/main/debug")
+    from("${project.rootDir}/${System.properties["rocJniLibraryName"]}/build/lib/main/debug")
     into targetLibraryPath
-    dependsOn ":${nativeLibraryName}:build"
+    dependsOn ":${System.properties["rocJniLibraryName"]}:build"
 }
 
 jar.dependsOn copyNativeDeps

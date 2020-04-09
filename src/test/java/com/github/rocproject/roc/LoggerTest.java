@@ -6,9 +6,6 @@ import java.io.PrintStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LoggerTest {
-    static {
-        System.loadLibrary("roc_jni");
-    }
 
     @Test
     public void TestValidLoggerSetLevel() {

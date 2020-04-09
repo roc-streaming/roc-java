@@ -44,4 +44,8 @@ public enum ResamplerProfile {
     private static native int getRocResamplerHigh();
     private static native int getRocResamplerMedium();
     private static native int getRocResamplerLow();
+
+    static {
+        RocLibrary.loadLibrary();
+    }
 }

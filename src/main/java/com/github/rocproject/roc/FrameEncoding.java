@@ -21,4 +21,8 @@ public enum FrameEncoding {
     }
 
     private static native int getRocFrameEncodingPCMFloat();
+
+    static {
+        RocLibrary.loadLibrary();
+    }
 }

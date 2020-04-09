@@ -7,7 +7,7 @@ package com.github.rocproject.roc;
  *
  * @see Family
  */
-public class Address {
+public class Address extends NativeObject {
 
     private Family family;
     private String ip;

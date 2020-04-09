@@ -7,4 +7,8 @@ public class NativeObject {
     public NativeObject() {
         ptr = 0L;
     }
+
+    static {
+        RocLibrary.loadLibrary();
+    }
 }

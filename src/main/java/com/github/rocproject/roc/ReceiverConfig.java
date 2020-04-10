@@ -9,9 +9,6 @@ package com.github.rocproject.roc;
  * @see ReceiverConfig.Builder
  */
 public class ReceiverConfig {
-    static {
-        RocLibrary.loadLibrary();
-    }
 
     private int frameSampleRate;
     private ChannelSet frameChannels;

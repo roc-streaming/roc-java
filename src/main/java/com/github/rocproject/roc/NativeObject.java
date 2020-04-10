@@ -1,10 +1,10 @@
 package com.github.rocproject.roc;
 
-public class NativeObject {
+class NativeObject {
 
     private long ptr;
 
-    public NativeObject() {
+    NativeObject() {
         ptr = 0L;
     }
 

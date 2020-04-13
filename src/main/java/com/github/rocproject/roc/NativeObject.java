@@ -8,6 +8,10 @@ class NativeObject {
         ptr = 0L;
     }
 
+    long getPtr() {
+        return this.ptr;
+    }
+
     static {
         RocLibrary.loadLibrary();
     }

@@ -5,8 +5,8 @@
 #include <cassert>
 #include <cstring>
 
-#define ADDRESS_CLASS               "com/github/rocproject/roc/Address"
-#define FAMILY_CLASS                "com/github/rocproject/roc/Family"
+#define ADDRESS_CLASS               PACKAGE_BASE_NAME "/Address"
+#define FAMILY_CLASS                PACKAGE_BASE_NAME "/Family"
 
 roc_family address_get_family(JNIEnv *env, jobject address) {
     jclass       addressClass;
@@ -30,6 +30,7 @@ int address_unmarshall(JNIEnv *env, roc_address* address, jobject jaddress) {
     jstring     jstr;
     const char* ip;
     int         port;
+    char        err = 0;
 
     if (jaddress == NULL)
         return -1;
@@ -42,14 +43,15 @@ int address_unmarshall(JNIEnv *env, roc_address* address, jobject jaddress) {
 
     memset(address, 0, sizeof(roc_address));
 
+    port = get_int_field_value(env, addressClass, jaddress, "port", &err);
+    if (err) return -1;
+
     tempObject = get_object_field(env, addressClass, jaddress, "family", "L" FAMILY_CLASS ";");
     roc_family family = (roc_family) get_enum_value(env, familyClass, tempObject);
 
     jstr = (jstring) get_object_field(env, addressClass, jaddress, "ip", "Ljava/lang/String;");
     ip = env->GetStringUTFChars(jstr, 0);
     assert(ip != NULL);
-
-    port = get_int_field_value(env, addressClass, jaddress, "port");
 
     if (roc_address_init(address, family, ip, port) != 0) {
         env->ReleaseStringUTFChars(jstr, ip);
@@ -104,7 +106,7 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Address_init(JNIEnv *env, 
     const char*     ip;
 
     if (jfamily == NULL || jip == NULL || port < 0) {
-        jclass exceptionClass = env->FindClass("java/lang/IllegalArgumentException");
+        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
         env->ThrowNew(exceptionClass, "Bad address arguments");
         return;
     }
@@ -119,7 +121,7 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Address_init(JNIEnv *env, 
     ip = env->GetStringUTFChars(jip, 0);
     if (roc_address_init(&address, family, ip, port) != 0) {
         env->ReleaseStringUTFChars(jip, ip);
-        jclass exceptionClass = env->FindClass("java/lang/IllegalArgumentException");
+        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
         env->ThrowNew(exceptionClass, "Bad address arguments");
         return;
     }

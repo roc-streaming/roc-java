@@ -1,32 +1,36 @@
 #include "com_github_rocproject_roc_Context.h"
 #include "common.h"
-#include "context.h"
 
 #include <cstring>
 #include <cassert>
 
-#define CONTEXT_CLASS               "com/github/rocproject/roc/Context"
-#define CONTEXT_CONFIG_CLASS        "com/github/rocproject/roc/ContextConfig"
+#include <roc/context.h>
 
-void context_config_unmarshall(JNIEnv *env, roc_context_config* conf, jobject jconfig) {
+#define CONTEXT_CLASS               PACKAGE_BASE_NAME "/Context"
+#define CONTEXT_CONFIG_CLASS        PACKAGE_BASE_NAME "/ContextConfig"
+
+char context_config_unmarshall(JNIEnv *env, roc_context_config* conf, jobject jconfig) {
     jclass contextConfigClass;
+    char err = 0;
 
     contextConfigClass = env->FindClass(CONTEXT_CONFIG_CLASS);
     assert(contextConfigClass != NULL);
 
     memset(conf, 0, sizeof(roc_context_config));
 
-    conf->max_packet_size = (unsigned int) get_int_field_value(env, contextConfigClass, jconfig, "maxPacketSize");
-    conf->max_frame_size = (unsigned int) get_int_field_value(env, contextConfigClass, jconfig, "maxFrameSize");
+    conf->max_packet_size = get_uint_field_value(env, contextConfigClass, jconfig, "maxPacketSize", &err);
+    if (err) return err;
+    conf->max_frame_size = get_uint_field_value(env, contextConfigClass, jconfig, "maxFrameSize", &err);
+    return err;
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_rocContextOpen(JNIEnv *env, jobject thisObj, jobject config) {
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_open(JNIEnv *env, jobject thisObj, jobject config) {
     roc_context*        context;
     roc_context_config  context_config;
     jclass              contextClass;
 
     if (config == NULL) {
-        jclass exceptionClass = env->FindClass("java/lang/IllegalArgumentException");
+        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
         env->ThrowNew(exceptionClass, "Wrong context configuration values");
         return;
     }
@@ -34,16 +38,14 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_rocContextOpen(JNI
     contextClass = env->FindClass(CONTEXT_CLASS);
     assert(contextClass != NULL);
 
-    context_config_unmarshall(env, &context_config, config);
-
-    if ((int)context_config.max_packet_size < 0 || (int)context_config.max_frame_size < 0) {
-        jclass exceptionClass = env->FindClass("java/lang/IllegalArgumentException");
+    if (context_config_unmarshall(env, &context_config, config) != 0) {
+        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
         env->ThrowNew(exceptionClass, "Wrong context configuration values");
         return;
     }
 
     if ((context = roc_context_open(&context_config)) == NULL) {
-        jclass exceptionClass = env->FindClass("java/lang/Exception");
+        jclass exceptionClass = env->FindClass(EXCEPTION);
         env->ThrowNew(exceptionClass, "Error opening context");
         return;
     }
@@ -51,29 +53,12 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_rocContextOpen(JNI
     set_native_pointer(env, contextClass, thisObj, context);
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_rocContextClose(JNIEnv *env, jobject thisObj) {
-    roc_context*    context;
-    jclass          contextClass;
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_close(JNIEnv *env, jobject thisObj, jlong nativePtr) {
 
-    contextClass = env->FindClass(CONTEXT_CLASS);
-    assert(contextClass != NULL);
-
-    context = (roc_context*) get_native_pointer(env, contextClass, thisObj);
+    roc_context* context = (roc_context*) nativePtr;
 
     if (roc_context_close(context) != 0) {
-        jclass exceptionClass = env->FindClass("java/io/IOException");
+        jclass exceptionClass = env->FindClass(EXCEPTION);
         env->ThrowNew(exceptionClass, "Error closing context");
     }
-}
-
-roc_context* get_context(JNIEnv *env, jobject jcontext) {
-    if (jcontext == NULL)
-        return NULL;
-
-    jclass contextClass;
-
-    contextClass = env->FindClass(CONTEXT_CLASS);
-    assert(contextClass != NULL);
-
-    return (roc_context*) get_native_pointer(env, contextClass, jcontext);
 }

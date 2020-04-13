@@ -9,35 +9,35 @@ extern "C" {
 #endif
 /*
  * Class:     com_github_rocproject_roc_Receiver
- * Method:    close
- * Signature: ()V
+ * Method:    open
+ * Signature: (JLcom/github/rocproject/roc/ReceiverConfig;)V
  */
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_close
-  (JNIEnv *, jobject);
-
-/*
- * Class:     com_github_rocproject_roc_Receiver
- * Method:    receiverOpen
- * Signature: (Lcom/github/rocproject/roc/Context;Lcom/github/rocproject/roc/ReceiverConfig;)V
- */
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_receiverOpen
-  (JNIEnv *, jobject, jobject, jobject);
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_open
+  (JNIEnv *, jobject, jlong, jobject);
 
 /*
  * Class:     com_github_rocproject_roc_Receiver
  * Method:    bind
- * Signature: (IILcom/github/rocproject/roc/Address;)V
+ * Signature: (JIILcom/github/rocproject/roc/Address;)V
  */
 JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_bind
-  (JNIEnv *, jobject, jint, jint, jobject);
+  (JNIEnv *, jobject, jlong, jint, jint, jobject);
 
 /*
  * Class:     com_github_rocproject_roc_Receiver
  * Method:    readFloats
- * Signature: ([F)V
+ * Signature: (J[F)V
  */
 JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_readFloats
-  (JNIEnv *, jobject, jfloatArray);
+  (JNIEnv *, jobject, jlong, jfloatArray);
+
+/*
+ * Class:     com_github_rocproject_roc_Receiver
+ * Method:    close
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_close
+  (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus
 }

@@ -18,35 +18,39 @@ public class ContextTest {
 
     @Test
     public void ContextWithInvalidConfigTest() {
-        assertThrows(Exception.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             try (Context context = new Context(new ContextConfig.Builder().maxPacketSize(-1).maxFrameSize(-1).build())) {}
         });
     }
 
     @Test
     public void ContextCloseWithAttachedSender() {
-        assertThrows(IOException.class, () -> {
+        assertThrows(Exception.class, () -> {
+            Sender sender = null;
             try (Context context = new Context()) {
                 SenderConfig config = new SenderConfig.Builder(44100,
                                                             ChannelSet.STEREO,
                                                             FrameEncoding.PCM_FLOAT)
-                                                            .automaticTiming(1)
                                                         .build();
-                Sender sender = new Sender(context, config);
+                sender = new Sender(context, config);
+            } finally {
+                if (sender != null) sender.close();
             }
         });
     }
 
     @Test
     public void ContextCloseWithAttachedReceiver() {
-        assertThrows(IOException.class, () -> {
+        assertThrows(Exception.class, () -> {
+            Receiver receiver = null;
             try (Context context = new Context()) {
                 ReceiverConfig config = new ReceiverConfig.Builder(44100,
-                        ChannelSet.STEREO,
-                        FrameEncoding.PCM_FLOAT)
-                        .automaticTiming(1)
-                        .build();
-                Receiver receiver = new Receiver(context, config);
+                                                                    ChannelSet.STEREO,
+                                                                    FrameEncoding.PCM_FLOAT)
+                                                            .build();
+                receiver = new Receiver(context, config);
+            } finally {
+                if (receiver != null) receiver.close();
             }
         });
     }

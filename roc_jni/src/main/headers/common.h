@@ -6,13 +6,24 @@
 extern "C" {
 #endif
 
-#define JNI_VERSION                 JNI_VERSION_1_8
+#define JNI_VERSION                     JNI_VERSION_1_8
 
-int get_int_field_value(JNIEnv *env, jclass clazz, jobject obj, const char* attr_name);
-void* get_native_pointer(JNIEnv *env, jclass clazz, jobject native_obj);
+#define PACKAGE_BASE_NAME               "com/github/rocproject/roc"
+#define EXCEPTION                       "java/lang/Exception"
+#define ILLEGAL_ARGUMENTS_EXCEPTION     "java/lang/IllegalArgumentException"
+#define IO_EXCEPTION                    "java/io/IOException"
+
+int get_boolean_field_value(JNIEnv *env, jclass clazz, jobject obj, const char* attr_name, char* error);
+
+int get_int_field_value(JNIEnv *env, jclass clazz, jobject obj, const char* attr_name, char* error);
+unsigned int get_uint_field_value(JNIEnv *env, jclass clazz, jobject obj, const char* attr_name, char* error);
+
+long long get_llong_field_value(JNIEnv *env, jclass clazz, jobject obj, const char* attr_name, char* error);
+unsigned long long get_ullong_field_value(JNIEnv *env, jclass clazz, jobject obj, const char* attr_name, char* error);
+
 void set_native_pointer(JNIEnv *env, jclass clazz, jobject native_obj, void* ptr);
 void set_int_field_value(JNIEnv *env, jclass clazz, jobject obj, const char* attr_name, int value);
-int get_long_field_value(JNIEnv *env, jclass clazz, jobject obj, const char* attr_name);
+
 int get_enum_value(JNIEnv *env, jclass clazz, jobject enumObj);
 jobject get_object_field(JNIEnv *env, jclass clazz, jobject obj, const char* attr_name, const char* attr_class_name);
 

@@ -88,7 +88,7 @@ import java.io.IOException;
  * SenderConfig config = new SenderConfig.Builder(44100,
  *                                                    ChannelSet.STEREO,
  *                                                    FrameEncoding.PCM_FLOAT)
- *                                                    .automaticTiming(1)
+ *                                                    .automaticTiming(true)
  *                                                .resamplerProfile(ResamplerProfile.DISABLE)
  *                                                .fecCode(FecCode.RS8M)
  *                                           .build();
@@ -113,8 +113,6 @@ import java.io.IOException;
  * @see java.lang.AutoCloseable
  */
 public class Sender extends NativeObject implements AutoCloseable {
-    private Context context;
-    private SenderConfig config;
 
     /**
      * Open a new sender.
@@ -129,9 +127,7 @@ public class Sender extends NativeObject implements AutoCloseable {
     public Sender(Context context, SenderConfig config) throws IllegalArgumentException, IOException {
         super();
         if (context == null || config == null) throw new IllegalArgumentException();
-        this.context = context;
-        this.config = config;
-        senderOpen(context, config);
+        open(context.getPtr(), config);
     }
 
     /**
@@ -148,7 +144,9 @@ public class Sender extends NativeObject implements AutoCloseable {
      * @throws IOException              if the sender is already bound, or the address can't be bound
      *                                  or there are not enough resources.
      */
-    public native void bind(Address address) throws IllegalArgumentException, IOException;
+    public void bind(Address address) throws IllegalArgumentException, IOException {
+        bind(getPtr(), address);
+    }
 
     /**
      * Connect the sender to a remote receiver port.
@@ -167,7 +165,7 @@ public class Sender extends NativeObject implements AutoCloseable {
     public void connect(PortType portType, Protocol protocol, Address address) throws IllegalArgumentException,
                                                                                       IOException {
         if (portType == null || protocol == null || address == null) throw new IllegalArgumentException();
-        connect(portType.getValue(), protocol.getValue(), address);
+        connect(getPtr(), portType.getValue(), protocol.getValue(), address);
     }
 
     /**
@@ -189,7 +187,7 @@ public class Sender extends NativeObject implements AutoCloseable {
      */
     public void write(float[] samples) throws IllegalArgumentException, IOException {
         if (samples == null) throw new IllegalArgumentException();
-        writeFloats(samples);
+        writeFloats(getPtr(), samples);
     }
 
     /**
@@ -202,9 +200,13 @@ public class Sender extends NativeObject implements AutoCloseable {
      * @throws IOException if there was an error closing the sender.
      */
     @Override
-    public native void close() throws IOException;
+    public void close() throws IOException {
+        close(getPtr());
+    }
 
-    private native void senderOpen(Context context, SenderConfig config) throws IOException;
-    private native void connect(int portType, int protocol, Address address) throws IOException;
-    private native void writeFloats(float[] samples) throws IOException;
+    private native void open(long contextPtr, SenderConfig config) throws IOException;
+    private native void bind(long senderPtr, Address address) throws IllegalArgumentException, IOException;
+    private native void connect(long senderPtr, int portType, int protocol, Address address) throws IOException;
+    private native void writeFloats(long senderPtr, float[] samples) throws IOException;
+    private native void close(long senderPtr) throws IOException;
 }

@@ -9,19 +9,19 @@ extern "C" {
 #endif
 /*
  * Class:     com_github_rocproject_roc_Context
- * Method:    rocContextOpen
+ * Method:    open
  * Signature: (Lcom/github/rocproject/roc/ContextConfig;)V
  */
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_rocContextOpen
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_open
   (JNIEnv *, jobject, jobject);
 
 /*
  * Class:     com_github_rocproject_roc_Context
- * Method:    rocContextClose
- * Signature: ()V
+ * Method:    close
+ * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_rocContextClose
-  (JNIEnv *, jobject);
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_close
+  (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus
 }

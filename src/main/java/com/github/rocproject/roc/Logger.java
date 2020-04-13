@@ -1,6 +1,9 @@
 package com.github.rocproject.roc;
 
 public class Logger {
+    static {
+        RocLibrary.loadLibrary();
+    }
 
     /**
      * Set maximum log level.

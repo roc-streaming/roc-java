@@ -105,7 +105,7 @@ import java.io.IOException;
  * ReceiverConfig config = new ReceiverConfig.Builder(44100,
  *                                                    ChannelSet.STEREO,
  *                                                    FrameEncoding.PCM_FLOAT)
- *                                                .automaticTiming(1)
+ *                                                .automaticTiming(true)
  *                                           .build();
  * try (
  *     Context context = new Context();
@@ -126,9 +126,6 @@ import java.io.IOException;
  * @see java.lang.AutoCloseable
  */
 public class Receiver extends NativeObject implements AutoCloseable {
-    private Context context;
-    private ReceiverConfig config;
-
 
     /**
      * Open a new receiver.
@@ -144,9 +141,7 @@ public class Receiver extends NativeObject implements AutoCloseable {
     public Receiver(Context context, ReceiverConfig config) throws IllegalArgumentException, IOException {
         super();
         if (context == null || config == null) throw new IllegalArgumentException();
-        this.context = context;
-        this.config = config;
-        receiverOpen(context, config);
+        open(context.getPtr(), config);
     }
 
     /**
@@ -166,7 +161,7 @@ public class Receiver extends NativeObject implements AutoCloseable {
      */
     public void bind(PortType type, Protocol protocol, Address address) throws IllegalArgumentException, IOException {
         if (type == null || protocol == null || address == null) throw new IllegalArgumentException();
-        bind(type.getValue(), protocol.getValue(), address);
+        bind(getPtr(), type.getValue(), protocol.getValue(), address);
     }
 
     /**
@@ -187,7 +182,7 @@ public class Receiver extends NativeObject implements AutoCloseable {
      */
     public void read(float[] samples) throws IllegalArgumentException, IOException {
         if (samples == null) throw new IllegalArgumentException();
-        readFloats(samples);
+        readFloats(getPtr(), samples);
     }
 
     /**
@@ -200,9 +195,12 @@ public class Receiver extends NativeObject implements AutoCloseable {
      * @throws IOException if there was an error closing the receiver.
      */
     @Override
-    public native void close() throws IOException;
+    public void close() throws IOException {
+        close(getPtr());
+    }
 
-    private native void receiverOpen(Context context, ReceiverConfig config) throws IllegalArgumentException, IOException;
-    private native void bind(int type, int protocol, Address address) throws IllegalArgumentException, IOException;
-    private native void readFloats(float[] samples) throws IOException;
+    private native void open(long contextPtr, ReceiverConfig config) throws IllegalArgumentException, IOException;
+    private native void bind(long receiverPtr, int type, int protocol, Address address) throws IllegalArgumentException, IOException;
+    private native void readFloats(long receiverPtr, float[] samples) throws IOException;
+    private native void close(long receiverPtr) throws IOException;
 }

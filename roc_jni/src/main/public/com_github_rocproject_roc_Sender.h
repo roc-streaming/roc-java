@@ -9,43 +9,43 @@ extern "C" {
 #endif
 /*
  * Class:     com_github_rocproject_roc_Sender
+ * Method:    open
+ * Signature: (JLcom/github/rocproject/roc/SenderConfig;)V
+ */
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_open
+  (JNIEnv *, jobject, jlong, jobject);
+
+/*
+ * Class:     com_github_rocproject_roc_Sender
  * Method:    bind
- * Signature: (Lcom/github/rocproject/roc/Address;)V
+ * Signature: (JLcom/github/rocproject/roc/Address;)V
  */
 JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_bind
-  (JNIEnv *, jobject, jobject);
-
-/*
- * Class:     com_github_rocproject_roc_Sender
- * Method:    close
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_close
-  (JNIEnv *, jobject);
-
-/*
- * Class:     com_github_rocproject_roc_Sender
- * Method:    senderOpen
- * Signature: (Lcom/github/rocproject/roc/Context;Lcom/github/rocproject/roc/SenderConfig;)V
- */
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_senderOpen
-  (JNIEnv *, jobject, jobject, jobject);
+  (JNIEnv *, jobject, jlong, jobject);
 
 /*
  * Class:     com_github_rocproject_roc_Sender
  * Method:    connect
- * Signature: (IILcom/github/rocproject/roc/Address;)V
+ * Signature: (JIILcom/github/rocproject/roc/Address;)V
  */
 JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_connect
-  (JNIEnv *, jobject, jint, jint, jobject);
+  (JNIEnv *, jobject, jlong, jint, jint, jobject);
 
 /*
  * Class:     com_github_rocproject_roc_Sender
  * Method:    writeFloats
- * Signature: ([F)V
+ * Signature: (J[F)V
  */
 JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_writeFloats
-  (JNIEnv *, jobject, jfloatArray);
+  (JNIEnv *, jobject, jlong, jfloatArray);
+
+/*
+ * Class:     com_github_rocproject_roc_Sender
+ * Method:    close
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_close
+  (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus
 }

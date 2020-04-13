@@ -18,7 +18,7 @@ public class SenderConfig {
     private PacketEncoding packetEncoding;
     private long packetLength;
     private int packetInterleaving;
-    private int automaticTiming;
+    private boolean automaticTiming;
     private ResamplerProfile resamplerProfile;
     private FecCode fecCode;
     private int fecBlockSourcePackets;
@@ -26,7 +26,7 @@ public class SenderConfig {
 
     private SenderConfig(int frameSampleRate, ChannelSet frameChannels, FrameEncoding frameEncoding,
                          int packetSampleRate, ChannelSet packetChannels, PacketEncoding packetEncoding,
-                         long packetLength, int packetInterleaving, int automaticTiming,
+                         long packetLength, int packetInterleaving, boolean automaticTiming,
                          ResamplerProfile resamplerProfile, FecCode fecCode, int fecBlockSourcePackets,
                          int fecBlockRepairPackets) {
         this.frameSampleRate = frameSampleRate;
@@ -58,7 +58,7 @@ public class SenderConfig {
         private PacketEncoding packetEncoding;
         private long packetLength;
         private int packetInterleaving;
-        private int automaticTiming;
+        private boolean automaticTiming;
         private ResamplerProfile resamplerProfile;
         private FecCode fecCode;
         private int fecBlockSourcePackets;
@@ -138,12 +138,12 @@ public class SenderConfig {
 
         /**
          * @param automaticTiming   Enable automatic timing.
-         *                          If non-zero, the sender write operation restricts the write rate
-         *                          according to the frame_sample_rate parameter. If zero, no
+         *                          If true, the sender write operation restricts the write rate
+         *                          according to the <code>frameSampleRate</code> parameter. If false, no
          *                          restrictions are applied.
          * @return this Builder
          */
-        public Builder automaticTiming(int automaticTiming) {
+        public Builder automaticTiming(boolean automaticTiming) {
             this.automaticTiming = automaticTiming;
             return this;
         }
@@ -272,11 +272,11 @@ public class SenderConfig {
         this.packetInterleaving = packetInterleaving;
     }
 
-    public int getAutomaticTiming() {
+    public boolean getAutomaticTiming() {
         return automaticTiming;
     }
 
-    public void setAutomaticTiming(int automaticTiming) {
+    public void setAutomaticTiming(boolean automaticTiming) {
         this.automaticTiming = automaticTiming;
     }
 

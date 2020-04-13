@@ -13,7 +13,7 @@ public class ReceiverConfig {
     private int frameSampleRate;
     private ChannelSet frameChannels;
     private FrameEncoding frameEncoding;
-    private int automaticTiming;
+    private boolean automaticTiming;
     private ResamplerProfile resamplerProfile;
     private long targetLatency;
     private long maxLatencyOverrun;
@@ -25,7 +25,7 @@ public class ReceiverConfig {
     private ReceiverConfig(int frameSampleRate,
                            ChannelSet frameChannels,
                            FrameEncoding frameEncoding,
-                           int automaticTiming,
+                           boolean automaticTiming,
                            ResamplerProfile resamplerProfile,
                            long targetLatency,
                            long maxLatencyOverrun,
@@ -54,7 +54,7 @@ public class ReceiverConfig {
         private int frameSampleRate;
         private ChannelSet frameChannels;
         private FrameEncoding frameEncoding;
-        private int automaticTiming;
+        private boolean automaticTiming;
         private ResamplerProfile resamplerProfile;
         private long targetLatency;
         private long maxLatencyOverrun;
@@ -84,7 +84,7 @@ public class ReceiverConfig {
          *                          If zero, no restrictions are applied.
          * @return this Builder
          */
-        public Builder automaticTiming(int automaticTiming) {
+        public Builder automaticTiming(boolean automaticTiming) {
             this.automaticTiming = automaticTiming;
             return this;
         }
@@ -227,11 +227,11 @@ public class ReceiverConfig {
         this.frameEncoding = frameEncoding;
     }
 
-    public int getAutomaticTiming() {
+    public boolean getAutomaticTiming() {
         return automaticTiming;
     }
 
-    public void setAutomaticTiming(int automaticTiming) {
+    public void setAutomaticTiming(boolean automaticTiming) {
         this.automaticTiming = automaticTiming;
     }
 

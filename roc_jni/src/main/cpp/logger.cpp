@@ -6,8 +6,8 @@
 
 #include <roc/log.h>
 
-#define LOG_LEVEL_CLASS             "com/github/rocproject/roc/LogLevel"
-#define LOG_HANDLER_CLASS           "com/github/rocproject/roc/LogHandler"
+#define LOG_LEVEL_CLASS             PACKAGE_BASE_NAME "/LogLevel"
+#define LOG_HANDLER_CLASS           PACKAGE_BASE_NAME "/LogHandler"
 
 static struct {
     JavaVM*     vm;
@@ -42,7 +42,7 @@ static const char* logLevelMapping(roc_log_level level) {
 void JNI_OnUnload(JavaVM *vm, void *reserved) {
     JNIEnv* env;
 
-    vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION);
+    vm->GetEnv((void**) &env, JNI_VERSION);
 
     handler_args.mutex.lock();
     if (handler_args.callback != NULL) {
@@ -76,9 +76,10 @@ void logger_handler(roc_log_level level, const char* component, const char* mess
     jmess = env->NewStringUTF(message);
 
     env->CallVoidMethod(handler_args.callback, handler_args.methID, levelObj, jcomp, jmess);
-    handler_args.mutex.unlock();
 
     handler_args.vm->DetachCurrentThread();
+
+    handler_args.mutex.unlock();
 }
 
 JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Logger_setLevel(JNIEnv *env, jclass clazz, jobject jlevel) {
@@ -86,7 +87,7 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Logger_setLevel(JNIEnv *en
     roc_log_level   level;
 
     if (jlevel == NULL) {
-        jclass exceptionClass = env->FindClass("java/lang/IllegalArgumentException");
+        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
         env->ThrowNew(exceptionClass, "no logger level provided");
         return;
     }
@@ -102,9 +103,8 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Logger_setCallback(JNIEnv 
     jclass      logHandlerClass;
     jmethodID   tmpMethodID;
 
-    if (jhandler == NULL) {
-        jclass exceptionClass = env->FindClass("java/lang/IllegalArgumentException");
-        env->ThrowNew(exceptionClass, "no logger callback provided");
+    if (jhandler == NULL) { // reset default callback (write to stderr)
+        roc_log_set_handler(NULL);
         return;
     }
 

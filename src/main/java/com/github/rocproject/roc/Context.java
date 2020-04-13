@@ -48,7 +48,7 @@ public class Context extends NativeObject implements AutoCloseable {
      */
     public Context(ContextConfig config) throws Exception {
         super();
-        rocContextOpen(config);
+        open(config);
     }
 
     /**
@@ -59,14 +59,14 @@ public class Context extends NativeObject implements AutoCloseable {
      *
      * If this function fails, the context is kept opened.
      *
-     * @throws IOException if there are objects attached to the context.
+     * @throws Exception if there are objects attached to the context.
      */
     @Override
-    public void close() throws IOException {
-        rocContextClose();
+    public void close() throws Exception {
+        close(getPtr());
     }
 
-    private native void rocContextOpen(ContextConfig config) throws Exception;
-    private native void rocContextClose() throws IOException;
+    private native void open(ContextConfig config) throws Exception;
+    private native void close(long nativePtr) throws Exception;
 }
 

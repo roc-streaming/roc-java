@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SenderTest {
 
-    private final int EXAMPLE_SAMPLE_RATE = 44100;
-    private final int EXAMPLE_SINE_RATE = 440;
-    private final int EXAMPLE_SINE_SAMPLES = (EXAMPLE_SAMPLE_RATE * 5);
-    private final int EXAMPLE_BUFFER_SIZE = 100;
+    private final int SAMPLE_RATE = 44100;
+    private final int SINE_RATE = 440;
+    private final int SINE_SAMPLES = (SAMPLE_RATE * 5);
+    private final int BUFFER_SIZE = 100;
     private SenderConfig config;
     private float[] samples;
     private Context context;
@@ -20,7 +20,7 @@ public class SenderTest {
     private void gensine(float[] samples) {
         double t = 0d;
         for (int i = 0; i < samples.length / 2; i++) {
-            float s = (float) sin(2 * 3.14159265359 * EXAMPLE_SINE_RATE / EXAMPLE_SAMPLE_RATE * t);
+            float s = (float) sin(2 * 3.14159265359 * SINE_RATE / SAMPLE_RATE * t);
             /* Fill samples for left and right channels. */
             samples[i * 2] = s;
             samples[i * 2 + 1] = -s;
@@ -29,12 +29,12 @@ public class SenderTest {
     }
 
     SenderTest() {
-        this.config = new SenderConfig.Builder(EXAMPLE_SAMPLE_RATE,
+        this.config = new SenderConfig.Builder(SAMPLE_RATE,
                                                 ChannelSet.STEREO,
                                                 FrameEncoding.PCM_FLOAT)
-                                                .automaticTiming(1)
+                                                .automaticTiming(true)
                                         .build();
-        this.samples = new float[EXAMPLE_BUFFER_SIZE];
+        this.samples = new float[BUFFER_SIZE];
         gensine(this.samples);
     }
 
@@ -61,6 +61,19 @@ public class SenderTest {
     public void TestInvalidSenderCreation() {
         assertThrows(IllegalArgumentException.class, () -> new Sender(null, config));
         assertThrows(IllegalArgumentException.class, () -> new Sender(context, null));
+        assertThrows(IllegalArgumentException.class, () -> {
+            SenderConfig config = new SenderConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
+            new Sender(context, config);
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            SenderConfig config = new SenderConfig.Builder(SAMPLE_RATE, null, FrameEncoding.PCM_FLOAT).build();
+            new Sender(context, config);
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            SenderConfig config = new SenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, null).build();
+            new Sender(context, config);
+        });
     }
 
     @Test
@@ -135,7 +148,7 @@ public class SenderTest {
             sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
             sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
             sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "127.0.0.1", 10002));
-            for (int i = 0; i < EXAMPLE_SINE_SAMPLES / EXAMPLE_BUFFER_SIZE; i++) {
+            for (int i = 0; i < SINE_SAMPLES / BUFFER_SIZE; i++) {
                 assertDoesNotThrow(() -> sender.write(samples));
             }
         }

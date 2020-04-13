@@ -3,6 +3,7 @@ package com.github.rocproject.roc;
 import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LoggerTest {
@@ -22,6 +23,13 @@ public class LoggerTest {
     public void TestInvalidLoggerSetLevel() {
         assertThrows(IllegalArgumentException.class, () -> {
             Logger.setLevel(null);
+        });
+    }
+
+    @Test
+    public void TestLoggerSetNullCallback() {
+        assertDoesNotThrow(() -> {
+            Logger.setCallback(null);
         });
     }
 
@@ -47,13 +55,6 @@ public class LoggerTest {
             assertEquals(2, lines.length);
             assertEquals("[level=\"INFO\", component=\"roc_lib\"]: \"roc_context: opening context\"", lines[0]);
             assertEquals("[level=\"INFO\", component=\"roc_lib\"]: \"roc_context: closed context\"", lines[1]);
-        });
-    }
-
-    @Test
-    public void TestInvalidLoggerSetCallback() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            Logger.setCallback(null);
         });
     }
 }

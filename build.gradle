@@ -3,7 +3,7 @@ plugins {
 }
 
 allprojects {
-    group 'com.rocproject'
+    group 'com.github.rocproject'
     version '0.0.1'
 }
 

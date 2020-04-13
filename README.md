@@ -18,7 +18,7 @@ Build (native code and Java code):
 
 Build only native code:
 ```
-./gradlew native:build
+./gradlew roc_jni:build
 ```
 
 Run tests:

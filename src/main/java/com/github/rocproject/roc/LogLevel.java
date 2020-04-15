@@ -1,5 +1,7 @@
 package com.github.rocproject.roc;
 
+import java.util.function.Supplier;
+
 /**
  * Log level.
  * @see Logger#setLevel(LogLevel)
@@ -10,37 +12,38 @@ public enum LogLevel {
      * No messages.
      * Setting this level disables logging completely.
      */
-    NONE( getRocLogNone() ),
+    NONE( LogLevel::getRocLogNone ),
 
     /**
      * Error messages.
      * Setting this level enables logging only when something goes wrong, e.g. a user
      * operation can't be completed, or there is not enough memory for a new session.
      */
-    ERROR( getRocLogError() ),
+    ERROR( LogLevel::getRocLogError ),
 
     /**
      * Informational messages.
      * Setting this level enables logging of important high-level events, like binding
      * a new port or creating a new session.
      */
-    INFO( getRocLogInfo() ),
+    INFO( LogLevel::getRocLogInfo ),
 
     /**
      * Debug messages.
      * Setting this level enables logging of debug messages. Doesn't affect performance.
      */
-    DEBUG( getRocLogDebug() ),
+    DEBUG( LogLevel::getRocLogDebug ),
 
     /**
      * Debug messages (extra verbosity).
      * Setting this level enables verbose tracing. May cause significant slow down.
      */
-    TRACE( getRocLogTrace() );
+    TRACE( LogLevel::getRocLogTrace );
 
     private final int value;
-    LogLevel(int newValue ) {
-        this.value = newValue;
+    LogLevel(Supplier<Integer> value) {
+        RocLibrary.loadLibrary();
+        this.value = value.get();
     }
     public int getValue() {
         return( this.value );
@@ -51,8 +54,4 @@ public enum LogLevel {
     private static native int getRocLogInfo();
     private static native int getRocLogDebug();
     private static native int getRocLogTrace();
-
-    static {
-        RocLibrary.loadLibrary();
-    }
 }

@@ -1,5 +1,7 @@
 package com.github.rocproject.roc;
 
+import java.util.function.Supplier;
+
 /**
  *  Network address family.
  */
@@ -8,26 +10,27 @@ public enum Family {
     /**
      * Invalid address.
      */
-    INVALID( getRocAFInvalid() ),
+    INVALID( Family::getRocAFInvalid ),
 
     /**
      * Automatically detect address family from string format.
      */
-    AUTO( getRocAFAuto() ),
+    AUTO( Family::getRocAFAuto ),
 
     /**
      * IPv4 address.
      */
-    IPv4( getRocAFIPv4() ),
+    IPv4( Family::getRocAFIPv4 ),
 
     /**
      * IPv6 address.
      */
-    IPv6( getRocAFIPv6() );
+    IPv6( Family::getRocAFIPv6 );
 
     private final int value;
-    Family(int newValue ) {
-        this.value = newValue;
+    Family(Supplier<Integer> value) {
+        RocLibrary.loadLibrary();
+        this.value = value.get();
     }
     public int getValue() {
         return( this.value );
@@ -37,8 +40,4 @@ public enum Family {
     private static native int getRocAFAuto();
     private static native int getRocAFIPv4();
     private static native int getRocAFIPv6();
-
-    static {
-        RocLibrary.loadLibrary();
-    }
 }

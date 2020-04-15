@@ -1,5 +1,7 @@
 package com.github.rocproject.roc;
 
+import java.util.function.Supplier;
+
 /**
  * Forward Error Correction code.
  */
@@ -8,13 +10,13 @@ public enum FecCode {
     /** No FEC code.
      * Compatible with {@link Protocol#RTP RTP} protocol.
      */
-    DISABLE( getRocFecCodeDisable() ),
+    DISABLE( FecCode::getRocFecCodeDisable ),
 
     /**
      * Default FEC code.
      * Current default is {@link FecCode#RS8M RS8M}.
      */
-    DEFAULT( getRocFecCodeDefault() ),
+    DEFAULT( FecCode::getRocFecCodeDefault ),
 
     /**
      * Reed-Solomon FEC code (RFC 6865) with m=8.
@@ -23,7 +25,7 @@ public enum FecCode {
      * and {@link Protocol#RS8M_REPAIR RS8M_REPAIR} protocols for source
      * and repair ports.
      */
-    RS8M( getRocFecCodeRS8M() ),
+    RS8M( FecCode::getRocFecCodeRS8M ),
 
     /**
      * LDPC-Staircase FEC code (RFC 6816).
@@ -32,11 +34,12 @@ public enum FecCode {
      * and {@link Protocol#LDPC_REPAIR LDPC_REPAIR} protocols for source
      * and repair ports.
      */
-    LDPC_STAIRCASE( getRocFecCodeLDPCSTAIRCASE() );
+    LDPC_STAIRCASE( FecCode::getRocFecCodeLDPCSTAIRCASE );
 
     private final int value;
-    FecCode(int newValue ) {
-        this.value = newValue;
+    FecCode(Supplier<Integer> value) {
+        RocLibrary.loadLibrary();
+        this.value = value.get();
     }
     public int getValue() {
         return( this.value );
@@ -46,8 +49,4 @@ public enum FecCode {
     private static native int getRocFecCodeDefault();
     private static native int getRocFecCodeRS8M();
     private static native int getRocFecCodeLDPCSTAIRCASE();
-
-    static {
-        RocLibrary.loadLibrary();
-    }
 }

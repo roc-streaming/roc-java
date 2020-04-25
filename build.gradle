@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     id 'java-library'
 }
@@ -20,7 +22,7 @@ dependencies {
 }
 
 ext {
-    os = System.getProperty("os.name").toLowerCase(Locale.ENGLISH)
+    os = getOsName()
     platform = System.getProperty("platform") ?: os
     architecture = System.getProperty("host") ?: System.getProperty("os.arch")
     targetLibraryPath = "${project.buildDir}/libs/${platform}/${architecture}"
@@ -37,7 +39,7 @@ task generateHeaders(dependsOn: 'classes') {
         classesDir.mkdirs()
 
     sourceDir.eachFileRecurse { f ->
-        if (!f.directory && f.name.substring(f.name.lastIndexOf(".")+1) == "java") {
+        if (!f.directory && f.name.endsWith("java")) {
             exec {
                 commandLine "javac", "-h", nativeHeadersPath, "-classpath", sourceDir, f, "-d", classesDir
             }
@@ -95,4 +97,20 @@ test {
 
 javadoc {
     options.overview = "docs/javadoc/overview.html"
+}
+
+static def getOsName() {
+    final def currentOs = OperatingSystem.current()
+    if (currentOs.isMacOsX()) {
+        return "darwin"
+    } else if (currentOs.isLinux()) {
+        return "linux"
+    } else if (currentOs.isWindows()) {
+        return "win32"
+    } else if (currentOs.is(OperatingSystem.FREE_BSD)) {
+        return "freebsd"
+    } else if (currentOs.is(OperatingSystem.SOLARIS)) {
+        return "solaris"
+    }
+    return System.getProperty("os.name").toLowerCase(Locale.ENGLISH)
 }

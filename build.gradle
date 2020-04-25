@@ -39,7 +39,7 @@ task generateHeaders(dependsOn: 'classes') {
         classesDir.mkdirs()
 
     sourceDir.eachFileRecurse { f ->
-        if (!f.directory && f.name.endsWith("java")) {
+        if (!f.directory && f.name.endsWith(".java")) {
             exec {
                 commandLine "javac", "-h", nativeHeadersPath, "-classpath", sourceDir, f, "-d", classesDir
             }

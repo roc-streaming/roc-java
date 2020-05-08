@@ -1,0 +1,39 @@
+language: java
+dist: bionic
+
+jdk:
+  - openjdk10
+  - openjdk11
+
+jobs:
+  include:
+    - dist: xenial
+      jdk: openjdk10
+    - dist: xenial
+      jdk: openjdk11
+    - os: osx
+      osx_image: xcode10.1
+      jdk: openjdk10
+    - os: osx
+      osx_image: xcode10.1
+      jdk: openjdk11
+    - os: osx
+      osx_image: xcode11.3
+      jdk: openjdk10
+    - os: osx
+      osx_image: xcode11.3
+      jdk: openjdk11
+    - name: "android"
+      jdk: openjdk11
+      sudo: required
+      services:
+        - docker
+      env:
+        - DIST=android ANDROID_API=28 ANDROID_NDK_VERSION=21.1.6352462 ANDROID_BUILD_TOOLS_VERSION=28.0.3 ROC_BASE_DIR=$HOME/roc
+
+before_install:
+  - if [ ! -z $DIST ]; then source scripts/travis/$DIST/env.sh && scripts/travis/$DIST/before_install.sh; else scripts/travis/$TRAVIS_OS_NAME/before_install.sh; fi
+install:
+  - if [ ! -z $DIST ]; then scripts/travis/$DIST/install.sh; else scripts/travis/$TRAVIS_OS_NAME/install.sh; fi
+script:
+  - if [ ! -z $DIST ]; then scripts/travis/$DIST/script.sh; else scripts/travis/$TRAVIS_OS_NAME/script.sh; fi

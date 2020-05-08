@@ -13,7 +13,7 @@ def getJniPaths() {
 ext {
     rocIncludePath = System.getProperty('ROC_INCLUDE_PATH') ?: System.getenv('ROC_INCLUDE_PATH')
     rocLibraryPath = System.getProperty('ROC_LIBRARY_PATH') ?: System.getenv('ROC_LIBRARY_PATH')
-    CFLAGS         = System.getProperty('CFLAGS') ? System.getProperty('CFLAGS').split(" ") : []
+    CFLAGS         = System.getProperty('CFLAGS') ? System.getProperty('CFLAGS').split(" ") + "-std=c++11": ["-std=c++11"]
     LDFLAGS        = System.getProperty('LDFLAGS') ? System.getProperty('LDFLAGS').split(" ") + "-lroc" : ['-lroc']
 }
 

@@ -1,0 +1,74 @@
+apply plugin: 'com.android.library'
+apply plugin: "de.mannodermaus.android-junit5"
+
+ext {
+    apiLevel = System.getProperty('ANDROID_API') ?: System.getenv('ANDROID_API')
+    buildToolsVersion = System.getProperty('ANDROID_BUILD_TOOLS_VERSION') ?: System.getenv('ANDROID_BUILD_TOOLS_VERSION')
+    androidNdkVersion = System.getProperty('ANDROID_NDK_VERSION') ?: System.getenv('ANDROID_NDK_VERSION')
+    ROC_BASE_DIR = System.getProperty('ROC_BASE_DIR') ?: System.getenv('ROC_BASE_DIR')
+}
+
+android {
+    compileSdkVersion "${apiLevel}".toInteger()
+    buildToolsVersion "${buildToolsVersion}"
+    ndkVersion "${androidNdkVersion}"
+
+    defaultConfig {
+        minSdkVersion 26
+        targetSdkVersion "${apiLevel}".toInteger()
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArgument "runnerBuilder", "de.mannodermaus.junit5.AndroidJUnit5Builder"
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DROC_BASE_DIR=${ROC_BASE_DIR}"
+            }
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    packagingOptions {
+        exclude "META-INF/LICENSE*"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main {
+            java.srcDirs = ["${rootProject.projectDir.absolutePath}/../src/main/java", "src/main/java"]
+            // pack roc shared library into aar
+            jniLibs.srcDirs = ["${ROC_BASE_DIR}/lib"]
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+
+        androidTest {
+            java.srcDirs = [ "${rootProject.projectDir.absolutePath}/../src/test/java", "src/test/java" ]
+            setRoot "${rootProject.projectDir.absolutePath}/../src/test"
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    androidTestImplementation "androidx.test:runner:1.2.0"
+    androidTestImplementation "org.junit.jupiter:junit-jupiter-api:5.6.2"
+    androidTestImplementation "de.mannodermaus.junit5:android-test-core:1.2.0"
+    androidTestRuntimeOnly "de.mannodermaus.junit5:android-test-runner:1.2.0"
+}

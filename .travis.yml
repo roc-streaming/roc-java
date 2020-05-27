@@ -1,17 +1,31 @@
 language: java
+
 dist: bionic
 
-jdk:
-  - openjdk8
-  - openjdk11
+branches:
+  only:
+    - master
+    - develop
+
+stages:
+  - name: Linux
+  - name: macOS
+  - name: Android
 
 jobs:
   include:
-    - dist: xenial
+    - stage: Linux
       jdk: openjdk8
-    - dist: xenial
+    - stage: Linux
       jdk: openjdk11
-    - os: osx
+    - stage: Linux
+      dist: xenial
+      jdk: openjdk8
+    - stage: Linux
+      dist: xenial
+      jdk: openjdk11
+    - stage: macOS
+      os: osx
       osx_image: xcode10.1
       language: generic
       env:
@@ -21,10 +35,12 @@ jobs:
           taps: adoptopenjdk/openjdk
           casks: adoptopenjdk8
           update: true
-    - os: osx
+    - stage: macOS
+      os: osx
       osx_image: xcode10.1
       jdk: openjdk11
-    - os: osx
+    - stage: macOS
+      os: osx
       osx_image: xcode11.3
       language: generic
       env:
@@ -34,16 +50,19 @@ jobs:
           taps: adoptopenjdk/openjdk
           casks: adoptopenjdk8
           update: true
-    - os: osx
+    - stage: macOS
+      os: osx
       osx_image: xcode11.3
       jdk: openjdk11
     - name: "android jdk8"
+      stage: Android
       sudo: required
       services:
         - docker
       env:
         - DIST=android JAVA_VERSION=8 ANDROID_API=28 ANDROID_BUILD_TOOLS_VERSION=28.0.3 ANDROID_NDK_VERSION=21.1.6352462 ROC_BASE_DIR=$HOME/roc
     - name: "android jdk11"
+      stage: Android
       sudo: required
       services:
         - docker

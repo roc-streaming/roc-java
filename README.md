@@ -1,5 +1,7 @@
 # JNI bindings for Roc
 
+[![Build Status](https://travis-ci.org/roc-project/roc-java.svg?branch=master)](https://travis-ci.org/roc-project/roc-java)
+
 _Work in progress!_
 
 ## Dependencies

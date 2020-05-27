@@ -1,46 +1,22 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euxo pipefail
 
-roc_build_dir=/tmp/roc
-install_prefix_dir=$ROC_BASE_DIR/install
-
-target_arch=("aarch64" "arm" "i686" "x86_64")
+target_host=("aarch64-linux-android" "armv7a-linux-androideabi" "i686-linux-android" "x86_64-linux-android")
 target_abi=("arm64-v8a" "armeabi-v7a" "x86" "x86_64")
 
-git clone https://github.com/roc-project/roc.git $roc_build_dir
-cd $roc_build_dir
+working_dir=$(pwd)
 
-git checkout 61d9cafd5e916413280dbb40f997a71ffdd28ac6 # resolve libuv build issue on master tag
+git clone https://github.com/roc-project/roc.git /tmp/roc
+cd /tmp/roc
 
-for i in "${!target_arch[@]}"; do
-    arch="${target_arch[i]}"
+for i in "${!target_host[@]}"; do
+    host="${target_host[i]}${ANDROID_API}"
     abi="${target_abi[i]}"
-    docker run -t --rm -v "${PWD}:${PWD}" -v $ROC_BASE_DIR:$ROC_BASE_DIR -w "${PWD}" \
-        cross-linux-android:api$ANDROID_API \
-        /bin/bash -c \
-        "scons --compiler=clang \
-            --host=$arch-linux-android \
-            --libdir=${ROC_BASE_DIR}/lib/$abi \
-            --incdir=${ROC_BASE_DIR}/include/$abi \
-            --disable-tools \
-            --disable-examples \
-            --disable-tests \
-            --build-3rdparty=libuv,openfec && \
-        scons --compiler=clang \
-            --host=$arch-linux-android \
-            --libdir=${ROC_BASE_DIR}/lib/$abi \
-            --incdir=${ROC_BASE_DIR}/include/$abi \
-            --disable-tools \
-            --disable-examples \
-            --disable-tests \
-            --build-3rdparty=libuv,openfec install"
+    docker run -t --rm --env API=$ANDROID_API --env BUILD_TOOLS_VERSION=$ANDROID_BUILD_TOOLS_VERSION \
+        --env NDK_VERSION=$ANDROID_NDK_VERSION --env ROC_BASE_DIR=$ROC_BASE_DIR \
+        -v "${PWD}:${PWD}" -v $ROC_BASE_DIR:$ROC_BASE_DIR \
+        -v $working_dir/scripts/travis/android/entrypoint/install.sh:/opt/install.sh \
+        -v android-sdk:/sdk -w "${PWD}" \
+            rocproject/java-android:jdk$JAVA_VERSION \
+                /opt/install.sh $host $abi
 done
-
-find $ROC_BASE_DIR -type d -print
-
-echo y | sdkmanager --licenses &> /dev/null
-echo y | sdkmanager "platforms;android-${ANDROID_API}" &> /dev/null
-echo y | sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}" &> /dev/null
-echo y | sdkmanager "ndk-bundle" &> /dev/null
-echo y | sdkmanager "ndk;${ANDROID_NDK_VERSION}" &> /dev/null
-echo y | sdkmanager "cmake;3.10.2.4988404" &> /dev/null

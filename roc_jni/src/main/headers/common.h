@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#define JNI_VERSION                     JNI_VERSION_1_8
+#define JNI_VERSION                     JNI_VERSION_1_6
 
 #define PACKAGE_BASE_NAME               "com/github/rocproject/roc"
 #define EXCEPTION                       "java/lang/Exception"

@@ -1,10 +1,12 @@
-apply plugin: 'com.android.library'
-apply plugin: "de.mannodermaus.android-junit5"
+plugins {
+    id 'com.android.library'
+    id 'de.mannodermaus.android-junit5'
+}
 
 ext {
-    apiLevel = System.getProperty('ANDROID_API') ?: System.getenv('ANDROID_API')
-    buildToolsVersion = System.getProperty('ANDROID_BUILD_TOOLS_VERSION') ?: System.getenv('ANDROID_BUILD_TOOLS_VERSION')
-    androidNdkVersion = System.getProperty('ANDROID_NDK_VERSION') ?: System.getenv('ANDROID_NDK_VERSION')
+    apiLevel = System.getProperty('API') ?: System.getenv('API')
+    buildToolsVersion = System.getProperty('BUILD_TOOLS_VERSION') ?: System.getenv('BUILD_TOOLS_VERSION')
+    androidNdkVersion = System.getProperty('NDK_VERSION') ?: System.getenv('NDK_VERSION')
     ROC_BASE_DIR = System.getProperty('ROC_BASE_DIR') ?: System.getenv('ROC_BASE_DIR')
 }
 

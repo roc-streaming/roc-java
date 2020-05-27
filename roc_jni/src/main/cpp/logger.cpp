@@ -65,7 +65,11 @@ void logger_handler(roc_log_level level, const char* component, const char* mess
         return;
     }
 
+#ifdef __ANDROID__
+    handler_args.vm->AttachCurrentThread(&env, 0);
+#else
     handler_args.vm->AttachCurrentThread((void**) &env, 0);
+#endif
 
     logLevelClass = env->FindClass(LOG_LEVEL_CLASS);
 

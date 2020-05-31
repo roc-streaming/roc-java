@@ -15,7 +15,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # Gradle automatically packages shared libraries with your APK.
 
 add_library( # Sets the name of the library.
-             roc-java
+             roc_jni
 
              # Sets the library as a shared library.
              SHARED
@@ -42,7 +42,7 @@ include_directories(${ROC_JNI_BASE_DIR}/src/main/headers/
                     ${ROC_JNI_BASE_DIR}/src/main/public/
                     )
 
-target_include_directories(roc-java PRIVATE
+target_include_directories(roc_jni PRIVATE
         ${ROC_BASE_DIR}/include/${ANDROID_ABI}
         )
 
@@ -66,7 +66,7 @@ set_target_properties(lib_roc PROPERTIES IMPORTED_LOCATION
         ${ROC_BASE_DIR}/lib/${ANDROID_ABI}/libroc.so)
 
 target_link_libraries( # Specifies the target library.
-                       roc-java
+                       roc_jni
 
                         lib_roc
                        # Links the target library to the log library

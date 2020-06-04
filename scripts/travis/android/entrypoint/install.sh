@@ -5,7 +5,9 @@ host=$1
 abi=$2
 
 scons -Q clean
-scons -Q --compiler=clang \
+
+# remove soversion from soname (for gradle android plugin)
+LDFLAGS="-Wl,-soname,libroc.so" scons -Q --compiler=clang \
     --host=$host \
     --libdir=${ROC_BASE_DIR}/lib/$abi \
     --incdir=${ROC_BASE_DIR}/include/$abi \
@@ -15,6 +17,7 @@ scons -Q --compiler=clang \
     --disable-pulseaudio \
     --disable-sox \
     --build-3rdparty=libuv,openfec
+
 scons -Q --compiler=clang \
     --host=$host \
     --libdir=${ROC_BASE_DIR}/lib/$abi \
@@ -25,3 +28,9 @@ scons -Q --compiler=clang \
     --disable-pulseaudio \
     --disable-sox \
     --build-3rdparty=libuv,openfec install
+
+# remove symlink from libroc.so (let gradle android plugin packs full library instead of symlink)
+cd ${ROC_BASE_DIR}/lib/$abi && \
+    target=$(readlink -f libroc.so) && \
+    rm libroc.so && \
+    cp $target libroc.so

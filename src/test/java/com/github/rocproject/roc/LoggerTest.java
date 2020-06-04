@@ -11,11 +11,11 @@ public class LoggerTest {
     @Test
     public void TestValidLoggerSetLevel() {
         assertDoesNotThrow(() -> {
-            Logger.setLevel(LogLevel.NONE);
-            Logger.setLevel(LogLevel.ERROR);
-            Logger.setLevel(LogLevel.INFO);
-            Logger.setLevel(LogLevel.DEBUG);
             Logger.setLevel(LogLevel.TRACE);
+            Logger.setLevel(LogLevel.DEBUG);
+            Logger.setLevel(LogLevel.INFO);
+            Logger.setLevel(LogLevel.ERROR);
+            Logger.setLevel(LogLevel.NONE);
         });
     }
 

@@ -7,9 +7,6 @@
 #include "fec_code.h"
 #include "address.h"
 
-#include <cassert>
-#include <cstring>
-
 #include <roc/sender.h>
 #include <roc/frame.h>
 

@@ -6,9 +6,6 @@
 #include "resampler_profile.h"
 #include "address.h"
 
-#include <cstring>
-#include <cassert>
-
 #include <roc/receiver.h>
 
 #define RECEIVER_CLASS              PACKAGE_BASE_NAME "/Receiver"

@@ -21,7 +21,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArgument "runnerBuilder", "de.mannodermaus.junit5.AndroidJUnit5Builder"
 
         externalNativeBuild {
@@ -47,15 +47,14 @@ android {
     }
     sourceSets {
         main {
-            java.srcDirs = ["${rootProject.projectDir.absolutePath}/../src/main/java", "src/main/java"]
+            java.srcDirs +=  "../../src/main/java" 
             // pack roc shared library into aar
-            jniLibs.srcDirs = ["${ROC_BASE_DIR}/lib"]
+            jniLibs.srcDirs += "${ROC_BASE_DIR}/lib"
             manifest.srcFile 'AndroidManifest.xml'
         }
-
         androidTest {
-            java.srcDirs = [ "${rootProject.projectDir.absolutePath}/../src/test/java", "src/test/java" ]
-            setRoot "${rootProject.projectDir.absolutePath}/../src/test"
+            java.srcDirs += "../../src/test/java"
+            manifest.srcFile 'src/androidTest/AndroidManifest.xml'
         }
     }
 
@@ -73,4 +72,7 @@ dependencies {
     androidTestImplementation "org.junit.jupiter:junit-jupiter-api:5.6.2"
     androidTestImplementation "de.mannodermaus.junit5:android-test-core:1.2.0"
     androidTestRuntimeOnly "de.mannodermaus.junit5:android-test-runner:1.2.0"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.2"
 }

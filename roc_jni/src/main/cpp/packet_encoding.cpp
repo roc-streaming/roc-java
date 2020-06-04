@@ -3,8 +3,6 @@
 #include "packet_encoding.h"
 #include "common.h"
 
-#include <cassert>
-
 roc_packet_encoding get_packet_encoding(JNIEnv *env, jobject jpacket_encoding) {
     jclass packetEncodingClass;
 

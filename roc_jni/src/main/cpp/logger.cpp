@@ -1,7 +1,6 @@
 #include "com_github_rocproject_roc_Logger.h"
 #include "common.h"
 
-#include <cassert>
 #include <mutex>
 
 #include <roc/log.h>
@@ -12,6 +11,7 @@
 static struct {
     JavaVM*     vm;
     jobject     callback;
+    jclass      logLevelClass;
     jmethodID   methID;
     std::mutex  mutex;
 } handler_args = {0};
@@ -39,12 +39,27 @@ static const char* logLevelMapping(roc_log_level level) {
     return ret;
 };
 
+jint JNI_OnLoad(JavaVM *vm, void *reserved) {
+    JNIEnv* env;
+    jclass tempLocalClassRef;
+
+    if (vm->GetEnv((void**) &env, JNI_VERSION) != JNI_OK) {
+        return JNI_ERR;
+    }
+
+    tempLocalClassRef = env->FindClass(LOG_LEVEL_CLASS);
+    handler_args.logLevelClass = (jclass) env->NewGlobalRef(tempLocalClassRef); // cache LogLevel class
+    env->DeleteLocalRef(tempLocalClassRef);
+    return JNI_VERSION;
+}
+
 void JNI_OnUnload(JavaVM *vm, void *reserved) {
     JNIEnv* env;
 
     vm->GetEnv((void**) &env, JNI_VERSION);
 
     handler_args.mutex.lock();
+    env->DeleteGlobalRef(handler_args.logLevelClass);
     if (handler_args.callback != NULL) {
         env->DeleteGlobalRef(handler_args.callback);
     }
@@ -53,7 +68,6 @@ void JNI_OnUnload(JavaVM *vm, void *reserved) {
 
 void logger_handler(roc_log_level level, const char* component, const char* message) {
     JNIEnv*     env;
-    jclass      logLevelClass;
     jfieldID    field;
     jobject     levelObj;
     jstring     jcomp;
@@ -65,23 +79,32 @@ void logger_handler(roc_log_level level, const char* component, const char* mess
         return;
     }
 
+    jint res;
+    int attached = 0; // know if detaching at the end is necessary
+    // checks if current env is already attached
+    if ((res = handler_args.vm->GetEnv((void**) &env, JNI_VERSION)) == JNI_EDETACHED) {
 #ifdef __ANDROID__
-    handler_args.vm->AttachCurrentThread(&env, 0);
+        if (handler_args.vm->AttachCurrentThread(&env, 0) == JNI_OK)
 #else
-    handler_args.vm->AttachCurrentThread((void**) &env, 0);
+        if (handler_args.vm->AttachCurrentThread((void**) &env, 0) == JNI_OK)
 #endif
+            attached = 1;
+    } else if (res != JNI_OK) {
+        // cannot get env
+        handler_args.mutex.unlock();
+        return;
+    }
 
-    logLevelClass = env->FindClass(LOG_LEVEL_CLASS);
-
-    field = env->GetStaticFieldID(logLevelClass, logLevelMapping(level), "L" LOG_LEVEL_CLASS ";");
-    levelObj = env->GetStaticObjectField(logLevelClass, field);
+    field = env->GetStaticFieldID(handler_args.logLevelClass, logLevelMapping(level), "L" LOG_LEVEL_CLASS ";");
+    levelObj = env->GetStaticObjectField(handler_args.logLevelClass, field);
 
     jcomp = env->NewStringUTF(component);
     jmess = env->NewStringUTF(message);
 
     env->CallVoidMethod(handler_args.callback, handler_args.methID, levelObj, jcomp, jmess);
 
-    handler_args.vm->DetachCurrentThread();
+    if (attached)
+        handler_args.vm->DetachCurrentThread();
 
     handler_args.mutex.unlock();
 }
@@ -96,10 +119,7 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Logger_setLevel(JNIEnv *en
         return;
     }
 
-    logLevelClass = env->FindClass(LOG_LEVEL_CLASS);
-    assert(logLevelClass);
-
-    level = (roc_log_level) get_enum_value(env, logLevelClass, jlevel);
+    level = (roc_log_level) get_enum_value(env, handler_args.logLevelClass, jlevel);
     roc_log_set_level(level);
 }
 

@@ -3,8 +3,6 @@
 #include "frame_encoding.h"
 #include "common.h"
 
-#include <cassert>
-
 roc_frame_encoding get_frame_encoding(JNIEnv *env, jobject jframe_encoding) {
     jclass frameEncodingClass;
 

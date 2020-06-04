@@ -6,6 +6,9 @@
 extern "C" {
 #endif
 
+#include <string.h>
+#include <assert.h>
+
 #define JNI_VERSION                     JNI_VERSION_1_6
 
 #define PACKAGE_BASE_NAME               "com/github/rocproject/roc"

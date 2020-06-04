@@ -2,9 +2,6 @@
 #include "common.h"
 #include "address.h"
 
-#include <cassert>
-#include <cstring>
-
 #define ADDRESS_CLASS               PACKAGE_BASE_NAME "/Address"
 #define FAMILY_CLASS                PACKAGE_BASE_NAME "/Family"
 

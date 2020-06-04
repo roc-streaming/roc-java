@@ -3,7 +3,6 @@
 #include "fec_code.h"
 #include "common.h"
 
-#include <cassert>
 #include <roc/config.h>
 
 roc_fec_code get_fec_code(JNIEnv *env, jobject jfec_code) {

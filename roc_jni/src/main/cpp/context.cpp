@@ -1,9 +1,6 @@
 #include "com_github_rocproject_roc_Context.h"
 #include "common.h"
 
-#include <cstring>
-#include <cassert>
-
 #include <roc/context.h>
 
 #define CONTEXT_CLASS               PACKAGE_BASE_NAME "/Context"

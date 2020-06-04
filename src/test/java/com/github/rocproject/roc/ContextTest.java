@@ -1,12 +1,19 @@
 package com.github.rocproject.roc;
 
 import java.io.IOException;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class ContextTest {
+
+    @BeforeAll
+    public static void beforeAll() {
+        Logger.setLevel(LogLevel.NONE);
+    }
 
     @Test
     public void ContextDefaultConfigTest() {

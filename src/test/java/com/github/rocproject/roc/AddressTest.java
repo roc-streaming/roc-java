@@ -5,7 +5,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.BeforeAll;
+
 public class AddressTest {
+
+    @BeforeAll
+    public static void beforeAll() {
+        Logger.setLevel(LogLevel.NONE);
+    }
 
     @Test
     public void IPv4AddressTest() {

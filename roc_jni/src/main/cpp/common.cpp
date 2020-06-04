@@ -1,7 +1,6 @@
 #include "common.h"
 
-#include <cassert>
-#include <climits>
+#include <limits.h>
 
 int get_boolean_field_value(JNIEnv *env, jclass clazz, jobject obj, const char* attr_name, char* error) {
     jfieldID attrId = env->GetFieldID(clazz, attr_name, "Z");

@@ -1,6 +1,7 @@
 package com.github.rocproject.roc;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
@@ -36,6 +37,11 @@ public class SenderTest {
                                         .build();
         this.samples = new float[BUFFER_SIZE];
         gensine(this.samples);
+    }
+
+    @BeforeAll
+    public static void beforeAll() {
+        Logger.setLevel(LogLevel.NONE);
     }
 
     @BeforeEach

@@ -1,6 +1,7 @@
 package com.github.rocproject.roc;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,11 @@ public class ReceiverTest {
                                             FrameEncoding.PCM_FLOAT)
                                             .automaticTiming(true)
                                         .build();
+    }
+
+    @BeforeAll
+    public static void beforeAll() {
+        Logger.setLevel(LogLevel.NONE);
     }
 
     @BeforeEach

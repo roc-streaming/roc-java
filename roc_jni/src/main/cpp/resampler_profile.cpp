@@ -3,7 +3,6 @@
 #include "resampler_profile.h"
 #include "common.h"
 
-#include <cassert>
 #include <roc/config.h>
 
 roc_resampler_profile get_resampler_profile(JNIEnv *env, jobject jresampler_profile) {

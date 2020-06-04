@@ -3,7 +3,6 @@
 #include "channel_set.h"
 #include "common.h"
 
-#include <cassert>
 #include <roc/config.h>
 
 roc_channel_set get_channel_set(JNIEnv *env, jobject jchannel_set) {

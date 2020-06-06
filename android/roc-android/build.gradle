@@ -54,7 +54,6 @@ android {
         }
         androidTest {
             java.srcDirs += "../../src/test/java"
-            manifest.srcFile 'src/androidTest/AndroidManifest.xml'
         }
     }
 

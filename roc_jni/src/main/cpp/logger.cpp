@@ -81,7 +81,7 @@ void logger_handler(roc_log_level level, const char* component, const char* mess
 
     jint res;
     int attached = 0; // know if detaching at the end is necessary
-    // checks if current env is already attached
+    // check if it is needed to attach current thread
     if ((res = handler_args.vm->GetEnv((void**) &env, JNI_VERSION)) == JNI_EDETACHED) {
 #ifdef __ANDROID__
         if (handler_args.vm->AttachCurrentThread(&env, 0) == JNI_OK)
@@ -89,6 +89,11 @@ void logger_handler(roc_log_level level, const char* component, const char* mess
         if (handler_args.vm->AttachCurrentThread((void**) &env, 0) == JNI_OK)
 #endif
             attached = 1;
+        else {
+            // cannot attach current thread
+            handler_args.mutex.unlock();
+            return;
+        }
     } else if (res != JNI_OK) {
         // cannot get env
         handler_args.mutex.unlock();

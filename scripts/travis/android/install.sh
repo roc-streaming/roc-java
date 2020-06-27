@@ -6,7 +6,7 @@ target_abi=("arm64-v8a" "armeabi-v7a" "x86" "x86_64")
 
 working_dir=$(pwd)
 
-git clone https://github.com/roc-project/roc.git /tmp/roc
+git clone https://github.com/roc-streaming/roc-toolkit.git /tmp/roc
 cd /tmp/roc
 
 for i in "${!target_host[@]}"; do

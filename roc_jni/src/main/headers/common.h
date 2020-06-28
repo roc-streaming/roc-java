@@ -11,7 +11,7 @@ extern "C" {
 
 #define JNI_VERSION                     JNI_VERSION_1_6
 
-#define PACKAGE_BASE_NAME               "com/github/rocproject/roc"
+#define PACKAGE_BASE_NAME               "org/rocstreaming/roctoolkit"
 #define EXCEPTION                       "java/lang/Exception"
 #define ILLEGAL_ARGUMENTS_EXCEPTION     "java/lang/IllegalArgumentException"
 #define IO_EXCEPTION                    "java/io/IOException"

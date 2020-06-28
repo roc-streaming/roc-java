@@ -1,4 +1,4 @@
-#include "com_github_rocproject_roc_Context.h"
+#include "org_rocstreaming_roctoolkit_Context.h"
 #include "common.h"
 
 #include <roc/context.h>
@@ -21,7 +21,7 @@ char context_config_unmarshall(JNIEnv *env, roc_context_config* conf, jobject jc
     return err;
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_open(JNIEnv *env, jobject thisObj, jobject config) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Context_open(JNIEnv *env, jobject thisObj, jobject config) {
     roc_context*        context;
     roc_context_config  context_config;
     jclass              contextClass;
@@ -50,7 +50,7 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_open(JNIEnv *env, 
     set_native_pointer(env, contextClass, thisObj, context);
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Context_close(JNIEnv *env, jobject thisObj, jlong nativePtr) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Context_close(JNIEnv *env, jobject thisObj, jlong nativePtr) {
 
     roc_context* context = (roc_context*) nativePtr;
 

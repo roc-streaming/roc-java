@@ -1,4 +1,4 @@
-#include "com_github_rocproject_roc_Receiver.h"
+#include "org_rocstreaming_roctoolkit_Receiver.h"
 
 #include "common.h"
 #include "channel_set.h"
@@ -50,7 +50,7 @@ char receiver_config_unmarshall(JNIEnv *env, roc_receiver_config* config, jobjec
     return err;
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_open(JNIEnv * env, jobject thisObj,
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_open(JNIEnv * env, jobject thisObj,
                     jlong contextPtr, jobject jconfig) {
     roc_context*            context;
     roc_receiver_config     receiverConfig;
@@ -83,7 +83,7 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_open(JNIEnv * env
     set_native_pointer(env, receiverClass, thisObj, receiver);
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_bind(JNIEnv * env, jobject thisObj, jlong receiverPtr,
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(JNIEnv * env, jobject thisObj, jlong receiverPtr,
                     jint type, jint protocol, jobject jaddress) {
     roc_receiver*   receiver    = NULL;
     roc_address     address;
@@ -116,7 +116,7 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_bind(JNIEnv * env
     }
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_readFloats(JNIEnv *env, jobject thisObj, jlong receiverPtr, jfloatArray jsamples) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_readFloats(JNIEnv *env, jobject thisObj, jlong receiverPtr, jfloatArray jsamples) {
     roc_receiver*       receiver;
     roc_frame           frame;
     jfloat*             samples;
@@ -146,7 +146,7 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_readFloats(JNIEnv
     env->ReleaseFloatArrayElements(jsamples, samples, 0);
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Receiver_close(JNIEnv *env, jobject thisObj, jlong receiverPtr) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_close(JNIEnv *env, jobject thisObj, jlong receiverPtr) {
 
     roc_receiver* receiver = (roc_receiver*) receiverPtr;
 

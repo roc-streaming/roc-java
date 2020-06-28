@@ -1,4 +1,4 @@
-#include "com_github_rocproject_roc_FrameEncoding.h"
+#include "org_rocstreaming_roctoolkit_FrameEncoding.h"
 
 #include "frame_encoding.h"
 #include "common.h"
@@ -12,6 +12,6 @@ roc_frame_encoding get_frame_encoding(JNIEnv *env, jobject jframe_encoding) {
     return (roc_frame_encoding) get_enum_value(env, frameEncodingClass, jframe_encoding);
 }
 
-JNIEXPORT jint JNICALL Java_com_github_rocproject_roc_FrameEncoding_getRocFrameEncodingPCMFloat(JNIEnv *env, jclass thisObj) {
+JNIEXPORT jint JNICALL Java_org_rocstreaming_roctoolkit_FrameEncoding_getRocFrameEncodingPCMFloat(JNIEnv *env, jclass thisObj) {
     return ROC_FRAME_ENCODING_PCM_FLOAT;
 }

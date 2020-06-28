@@ -1,4 +1,4 @@
-#include "com_github_rocproject_roc_Logger.h"
+#include "org_rocstreaming_roctoolkit_Logger.h"
 #include "common.h"
 
 #include <mutex>
@@ -114,7 +114,7 @@ void logger_handler(roc_log_level level, const char* component, const char* mess
     handler_args.mutex.unlock();
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Logger_setLevel(JNIEnv *env, jclass clazz, jobject jlevel) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setLevel(JNIEnv *env, jclass clazz, jobject jlevel) {
     jclass          logLevelClass;
     roc_log_level   level;
 
@@ -128,7 +128,7 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Logger_setLevel(JNIEnv *en
     roc_log_set_level(level);
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Logger_setCallback(JNIEnv *env, jclass clazz, jobject jhandler) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setCallback(JNIEnv *env, jclass clazz, jobject jhandler) {
     jclass      logHandlerClass;
     jmethodID   tmpMethodID;
 

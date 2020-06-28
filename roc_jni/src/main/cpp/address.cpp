@@ -1,4 +1,4 @@
-#include "com_github_rocproject_roc_Address.h"
+#include "org_rocstreaming_roctoolkit_Address.h"
 #include "common.h"
 #include "address.h"
 
@@ -96,7 +96,7 @@ void address_set_roc_family(JNIEnv *env, jobject address, roc_family family) {
     env->SetObjectField(address, attrId, familyObj);
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Address_init(JNIEnv *env, jobject thisObj, jobject jfamily, jstring jip, jint port) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Address_init(JNIEnv *env, jobject thisObj, jobject jfamily, jstring jip, jint port) {
     jclass          familyClass;
     roc_address     address;
     roc_family      family;

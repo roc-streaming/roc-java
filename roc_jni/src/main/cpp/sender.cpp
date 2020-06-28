@@ -1,4 +1,4 @@
-#include "com_github_rocproject_roc_Sender.h"
+#include "org_rocstreaming_roctoolkit_Sender.h"
 #include "common.h"
 #include "channel_set.h"
 #include "frame_encoding.h"
@@ -60,7 +60,7 @@ char sender_config_unmarshall(JNIEnv *env, roc_sender_config* config, jobject jc
     return err;
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_open(JNIEnv *env, jobject thisObj, jlong contextPtr, jobject jconfig) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_open(JNIEnv *env, jobject thisObj, jlong contextPtr, jobject jconfig) {
     roc_context*            context;
     roc_sender_config       config;
     roc_sender*             sender;
@@ -92,7 +92,7 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_open(JNIEnv *env, j
     set_native_pointer(env, senderClass, thisObj, sender);
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_close(JNIEnv *env, jobject thisObj, jlong senderPtr) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_close(JNIEnv *env, jobject thisObj, jlong senderPtr) {
 
     roc_sender* sender = (roc_sender*) senderPtr;
 
@@ -102,7 +102,7 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_close(JNIEnv *env, 
     }
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_bind(JNIEnv *env, jobject thisObj, jlong senderPtr, jobject jaddress) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_bind(JNIEnv *env, jobject thisObj, jlong senderPtr, jobject jaddress) {
     roc_address     address;
     roc_sender*     sender;
     int             port;
@@ -136,7 +136,7 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_bind(JNIEnv *env, j
     }
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_connect(JNIEnv *env, jobject thisObj, jlong senderPtr, jint portType, jint protocol, jobject jaddress) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_connect(JNIEnv *env, jobject thisObj, jlong senderPtr, jint portType, jint protocol, jobject jaddress) {
     roc_address     address;
     roc_sender*     sender;
 
@@ -155,7 +155,7 @@ JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_connect(JNIEnv *env
     }
 }
 
-JNIEXPORT void JNICALL Java_com_github_rocproject_roc_Sender_writeFloats(JNIEnv *env, jobject thisObj, jlong senderPtr, jfloatArray jsamples) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_writeFloats(JNIEnv *env, jobject thisObj, jlong senderPtr, jfloatArray jsamples) {
     jfloat*     samples;
     jsize       len;
     roc_frame   frame;

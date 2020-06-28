@@ -6,7 +6,7 @@ plugins {
 }
 
 allprojects {
-    group 'com.github.rocproject'
+    group 'org.rocstreaming.roctoolkit'
     version '0.0.1'
 }
 

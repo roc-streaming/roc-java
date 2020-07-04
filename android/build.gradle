@@ -13,15 +13,18 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.palantir.git-version' version '0.12.3'
+}
+
 allprojects {
     group 'org.rocstreaming.roctoolkit'
-    version '0.0.1'
+    version gitVersion(prefix:'v-')
 
     repositories {
         google()
         jcenter()
         mavenCentral()
-        
     }
 }
 

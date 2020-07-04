@@ -6,7 +6,7 @@ branches:
   only:
     - master
     - develop
-    - /^v\d+\.\d+\.\d+$/
+    - /^v-\d+\.\d+\.\d+$/
 
 stages:
   - name: Linux

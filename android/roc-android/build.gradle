@@ -1,5 +1,7 @@
 plugins {
     id 'com.android.library'
+    id 'com.github.dcendents.android-maven'
+    id 'com.jfrog.bintray'
     id 'de.mannodermaus.android-junit5'
 }
 
@@ -8,6 +10,10 @@ ext {
     buildToolsVersion = System.getProperty('BUILD_TOOLS_VERSION') ?: System.getenv('BUILD_TOOLS_VERSION')
     androidNdkVersion = System.getProperty('NDK_VERSION') ?: System.getenv('NDK_VERSION')
     ROC_BASE_DIR = System.getProperty('ROC_BASE_DIR') ?: System.getenv('ROC_BASE_DIR')
+    bintrayUser = System.getProperty('BINTRAY_USER') ?: System.getenv('BINTRAY_USER')
+    bintrayKey = System.getProperty('BINTRAY_KEY') ?: System.getenv('BINTRAY_KEY')
+    bintrayRepo = System.getProperty('BINTRAY_REPO') ?: System.getenv('BINTRAY_REPO')
+    bintrayRepoOrg = System.getProperty('BINTRAY_REPO_ORG') ?: System.getenv('BINTRAY_REPO_ORG')
 }
 
 android {
@@ -74,4 +80,69 @@ dependencies {
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.2"
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set('javadoc')
+    from javadoc.destinationDir
+}
+
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+
+    pkg {
+        repo = bintrayRepo
+        name = project.name
+        userOrg = bintrayRepoOrg
+        configurations = ['archives']
+        desc = 'Android library for Roc Toolkit'
+        websiteUrl = 'https://github.com/roc-streaming/roc-java'
+        issueTrackerUrl = 'https://github.com/roc-streaming/roc-java/issues'
+        vcsUrl = 'https://github.com/roc-streaming/roc-java.git'
+        licenses = ["MIT"]
+        publish = true
+        publicDownloadNumbers = true
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'roc-android'
+                description 'Android library for Roc Toolkit'
+                url 'https://github.com/roc-streaming/roc-java'
+
+                licenses {
+                    license {
+                        name 'MIT'
+                    }
+                }
+
+                scm {
+                    connection 'scm:git:https://github.com/roc-streaming/roc-java.git'
+                    developerConnection 'scm:git:https://github.com/roc-streaming/roc-java.git'
+                    url 'https://github.com/roc-streaming/roc-java'
+                }
+            }
+        }
+    }
 }

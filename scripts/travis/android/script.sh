@@ -5,5 +5,5 @@ docker run -t --rm --privileged --device /dev/kvm --env API=$ANDROID_API --env B
     --env NDK_VERSION=$ANDROID_NDK_VERSION --env ROC_BASE_DIR=$ROC_BASE_DIR \
     -v "${PWD}:${PWD}" -v $ROC_BASE_DIR:$ROC_BASE_DIR \
     -v android-sdk:/sdk -w "${PWD}" \
-        rocproject/java-android:jdk$JAVA_VERSION \
+        rocstreaming/env-android:jdk$JAVA_VERSION \
             $PWD/scripts/travis/android/entrypoint/script.sh

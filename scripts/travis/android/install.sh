@@ -17,6 +17,6 @@ for i in "${!target_host[@]}"; do
         -v "${PWD}:${PWD}" -v $ROC_BASE_DIR:$ROC_BASE_DIR \
         -v $working_dir/scripts/travis/android/entrypoint/install.sh:/opt/install.sh \
         -v android-sdk:/sdk -w "${PWD}" \
-            rocproject/java-android:jdk$JAVA_VERSION \
+            rocstreaming/env-android:jdk$JAVA_VERSION \
                 /opt/install.sh $host $abi
 done

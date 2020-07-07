@@ -46,7 +46,7 @@ Additional compilation and linking flags can be specified respectively with `CFL
 #### Android Release
 
 Release workflow:
- * make github release with tag version `v-x.x.x`, e.g. `v-0.0.1`
+ * make github release with tag version, e.g. `v0.0.1`
  * travis will run release stage and publish artifacts to bintray
 
 Followed env variables should be set in travis:

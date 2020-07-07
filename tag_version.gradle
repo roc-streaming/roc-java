@@ -1,0 +1,17 @@
+def getTagVersion = {
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine "git", "describe", "--tags", "--match", "v*"
+            standardOutput = stdout
+        }
+        def tag = stdout.toString().trim()
+        return tag.substring(1)
+    } catch (exception) {
+        return "SNAPSHOT"
+    }
+}
+
+ext {
+    tagVersion = getTagVersion()
+}

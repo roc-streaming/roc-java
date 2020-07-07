@@ -12,5 +12,5 @@ docker run -t --rm --privileged --device /dev/kvm \
     --env BINTRAY_REPO_ORG=$BINTRAY_REPO_ORG \
     -v "${PWD}:${PWD}" -v $ROC_BASE_DIR:$ROC_BASE_DIR \
     -v android-sdk:/sdk -w "${PWD}" \
-        rocproject/java-android:jdk$JAVA_VERSION \
+        rocstreaming/env-android:jdk$JAVA_VERSION \
             $PWD/scripts/travis/android/entrypoint/publish.sh

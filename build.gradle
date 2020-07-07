@@ -5,9 +5,11 @@ plugins {
     id 'com.adarshr.test-logger' version '2.0.0'
 }
 
+apply from: 'tag_version.gradle'
+
 allprojects {
     group 'org.rocstreaming.roctoolkit'
-    version '0.0.1'
+    version tagVersion
 }
 
 repositories {

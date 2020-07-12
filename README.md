@@ -1,12 +1,26 @@
 # JNI bindings for Roc Toolkit
 
 [![Build Status](https://travis-ci.org/roc-streaming/roc-java.svg?branch=master)](https://travis-ci.org/roc-streaming/roc-java)
+[![Download](https://api.bintray.com/packages/roc-streaming/maven/roc-android/images/download.svg) ](https://bintray.com/roc-streaming/maven/roc-android/_latestVersion)
 
 _Work in progress!_
 
 ## Dependencies
 
 You will need to have libroc and libroc-devel (headers) installed. Refer to official build [instructions](https://roc-streaming.org/toolkit/docs/building.html) on how to install libroc. There is no official distribution for any OS as of now, you will need to install from source.
+
+## Quickstart
+_At the moment we release only android library_
+
+Add jcenter repository in `build.gradle` file:
+
+    repositories {
+        jcenter()
+    }
+    
+Add dependency to project ([last version](https://bintray.com/roc-streaming/maven/roc-android/_latestVersion)):
+
+    implementation 'org.rocstreaming.roctoolkit:roc-android:0.0.1'
 
 ## Development
 

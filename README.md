@@ -1,7 +1,7 @@
 # JNI bindings for Roc Toolkit
 
 [![Build Status](https://travis-ci.org/roc-streaming/roc-java.svg?branch=master)](https://travis-ci.org/roc-streaming/roc-java)
-[![Download](https://api.bintray.com/packages/roc-streaming/maven/roc-android/images/download.svg) ](https://bintray.com/roc-streaming/maven/roc-android/_latestVersion)
+![Android release](https://img.shields.io/bintray/v/roc-streaming/maven/roc-android?color=blue&label=android)
 
 _Work in progress!_
 

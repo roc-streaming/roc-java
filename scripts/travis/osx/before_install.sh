@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 brew unlink python@2
-brew list | grep -vE 'pkg-config|automake|libtool|cmake|xz|readline|openssl|sqlite|python' | xargs brew pin
+brew list | grep -vE 'pkg-config|automake|libtool|cmake|xz|readline|openssl|sqlite|python|gdbm' | xargs brew pin
 
 brew install "scons"
 brew install "ragel"

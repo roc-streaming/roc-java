@@ -79,5 +79,6 @@ testlogger {
 }
 
 javadoc {
-    options.overview = "docs/javadoc/overview.html"
+    options.overview = "${project.rootDir}/docs/javadoc/overview.html"
+    options.memberLevel = System.getProperty("visibility") == "private" ? JavadocMemberLevel.PRIVATE : JavadocMemberLevel.PUBLIC
 }

@@ -3,6 +3,7 @@ package org.rocstreaming.roctoolkit;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -31,6 +32,11 @@ class NativeObjectReference extends PhantomReference<NativeObject> implements Au
     private final AtomicReference<NativeObject> dependsOn;
 
     /**
+     *  {@link NativeObject} open status.
+     */
+    private final AtomicBoolean isOpen;
+
+    /**
      * Construct a new <code>NativeObjectReference</code>.
      *
      * @param referent          {@link NativeObject} associated.
@@ -43,6 +49,7 @@ class NativeObjectReference extends PhantomReference<NativeObject> implements Au
         this.ptr = referent.getPtr();
         this.destructor = referent.getDestructor();
         this.dependsOn = new AtomicReference<>(dependsOn);
+        this.isOpen = new AtomicBoolean(true);
     }
 
     /**
@@ -73,11 +80,24 @@ class NativeObjectReference extends PhantomReference<NativeObject> implements Au
     }
 
     /**
+     * Get {@link NativeObject} open status.
+     *
+     * @return true is the {@link NativeObject} is still open,
+     *         false otherwise.
+     */
+    boolean isOpen() {
+        return isOpen.get();
+    }
+
+    /**
      * Close the native object.
      */
     @Override
     public void close() throws Exception {
-        destructor.close(ptr);
-        this.dependsOn.set(null);
+        if (isOpen()) {
+            this.isOpen.set(false);
+            destructor.close(ptr);
+            this.dependsOn.set(null);
+        }
     }
 }

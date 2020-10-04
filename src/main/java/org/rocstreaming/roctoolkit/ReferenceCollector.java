@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Collect open {@link NativeObjectReference} for avoid beeing garbage collected.
+ * Collect open {@link NativeObjectReference} for avoid being garbage collected.
  *
  * @param <T>       the type of {@link NativeObjectReference} to be collected.
  */
@@ -42,28 +42,28 @@ class ReferenceCollector<T extends NativeObjectReference> implements Iterable<T>
     }
 
     /**
-     * Get the number of referencies inside the collection.
+     * Get the number of references inside the collection.
      *
-     * @return      number of referencies.
+     * @return      number of references.
      */
     int size() {
         return references.size();
     }
 
     /**
-     * Iterator over <code>ReferenceCollector</code> iterating referencies with dependencies
-     * ({@link NativeObjectReference#dependsOn}) firstly and secondly the referencies without
+     * Iterator over <code>ReferenceCollector</code> iterating references with dependencies
+     * ({@link NativeObjectReference#dependsOn}) firstly and secondly the references without
      * dependencies.
      */
     class ReferenceCollectorIterator implements Iterator<T> {
 
         /**
-         * Iterator over referencies with dependencies.
+         * Iterator over references with dependencies.
          */
         private Iterator<T> withDependencies;
 
         /**
-         * Iterator over referencies without dependencies.
+         * Iterator over references without dependencies.
          */
         private Iterator<T> withoutDependencies;
 

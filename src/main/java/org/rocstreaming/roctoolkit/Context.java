@@ -66,4 +66,3 @@ public class Context extends NativeObject {
     private static native long open(ContextConfig config) throws IllegalArgumentException, Exception;
     private static native void close(long nativePtr) throws Exception;
 }
-

@@ -9,6 +9,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 class AutoCloseThread extends Thread {
 
     /**
+     * Maximum time to wait (in milliseconds) for removing a
+     * {@link NativeObjectReference} from the
+     * {@link AutoCloseThread#referenceQueue}.
+     */
+    private final static long MAX_REMOVE_TIMEOUT_MS = 50L;
+
+    /**
      * Singleton instance.
      */
     private final static AutoCloseThread instance = new AutoCloseThread();
@@ -32,6 +39,7 @@ class AutoCloseThread extends Thread {
      * Create a new <code>AutoCloseThread</code>.
      */
     private AutoCloseThread() {
+        setName("AutoCloseThread");
         referenceQueue = new ReferenceQueue<>();
         phantomCollector = new ReferenceCollector<>();
         running = new AtomicBoolean(false);
@@ -93,22 +101,21 @@ class AutoCloseThread extends Thread {
     /**
      * Entrypoint method of <code>AutoCloseThread</code>.
      *
-     * Polls the {@link ReferenceQueue} associated to this <code>AutoCloseThread</code>
-     * and <code>close</code> any {@link NativeObjectReference} when it becomes phantom reachable.
+     * Remove any phantom reachable {@link NativeObjectReference} from the 
+     * {@link AutoCloseThread#referenceQueue} associated with this <code>AutoCloseThread</code> 
+     * and <code>close</code> it.
      */
     @Override
     public void run() {
         running.set(true);
         while (isRunning()) {
-            NativeObjectReference reference;
-            synchronized (this) {
-                if ((reference = (NativeObjectReference) referenceQueue.poll()) != null) {
-                    try {
-                        remove(reference);
-                        reference.close();
-                    } catch (Exception e) {
-                    }
+            try {
+                NativeObjectReference reference = (NativeObjectReference) referenceQueue.remove(MAX_REMOVE_TIMEOUT_MS);
+                synchronized (this) {
+                    remove(reference);
+                    reference.close();
                 }
+            } catch (Exception e) {
             }
         }
     }

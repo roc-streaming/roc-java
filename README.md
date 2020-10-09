@@ -24,11 +24,6 @@ Add dependency to project ([last version](https://bintray.com/roc-streaming/mave
 
 ## Development
 
-Generate JNI headers:
-```
-./gradlew generateHeaders
-```
-
 Build (native code and Java code):
 ```
 ./gradlew build

@@ -1,3 +1,4 @@
 rootProject.name = 'roc-java'
 
-include ":${System.properties["rocJniLibraryName"]}"
+include ":commons", ":roc_jni"
+includeBuild "cmake-library"

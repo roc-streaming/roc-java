@@ -1,5 +1,3 @@
-import org.gradle.internal.os.OperatingSystem
-
 plugins {
     id 'java-library'
     id 'com.adarshr.test-logger' version '2.0.0'
@@ -20,46 +18,52 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
+    implementation project(":commons")
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.1'
 }
 
 ext {
-    os = getOsName()
-    platform = System.getProperty("platform") ?: os
-    architecture = System.getProperty("host") ?: System.getProperty("os.arch")
-    targetLibraryPath = "${project.buildDir}/libs/${platform}/${architecture}"
-    nativeHeadersPath = "${project.rootDir}/${System.properties["rocJniLibraryName"]}/src/main/public"
+    targetLibraryPath = "${project.rootDir}/libs"
 }
 
-task generateHeaders(dependsOn: 'classes') {
-    description 'Generate JNI headers from Java classes'
+compileJava {
+    options.headerOutputDirectory = file(project(":roc_jni").projectDir.absolutePath + "/src/main/public")
+}
 
-    def sourceDir = file("${project.rootDir}/src/main/java")
-    def classesDir = file("${project.buildDir}/classes/java/main")
-
-    if (!classesDir.exists())
-        classesDir.mkdirs()
-
-    sourceDir.eachFileRecurse { f ->
-        if (!f.directory && f.name.endsWith(".java")) {
-            exec {
-                commandLine "javac", "-h", nativeHeadersPath, "-classpath", sourceDir, f, "-d", classesDir
-            }
+class copyNativeDeps extends Copy {
+    copyNativeDeps() {
+        include "*/*/*.so"
+        include "*/*/*.dylib"
+        eachFile {
+            path = name
         }
+        includeEmptyDirs = false
     }
 }
 
-task copyNativeDeps(type: Copy) {
-    from("${project.rootDir}/${System.properties["rocJniLibraryName"]}/build/lib/main/debug")
+task copyNativeDebugDeps(type: copyNativeDeps) {
+    from(project(":roc_jni").buildDir.absolutePath + "/debug")
     into targetLibraryPath
-    dependsOn ":${System.properties["rocJniLibraryName"]}:build"
+    dependsOn ":roc_jni:assembleDebug"
 }
 
-jar.dependsOn copyNativeDeps
+task copyNativeReleaseDeps(type: copyNativeDeps) {
+    from(project(":roc_jni").buildDir.absolutePath + "/release")
+    into targetLibraryPath
+    dependsOn ":roc_jni:assembleRelease"
+}
+
+jar.dependsOn copyNativeReleaseDeps
+copyNativeDebugDeps.mustRunAfter jar
+
+project(":roc_jni").afterEvaluate {
+    tasks.test.enabled = !project(":roc_jni").extensions.cmake.target.isCrossCompiling.get()
+}
 
 test {
-    dependsOn assemble
+    dependsOn copyNativeDebugDeps
 
     systemProperty "java.library.path", targetLibraryPath
 
@@ -76,20 +80,4 @@ testlogger {
 
 javadoc {
     options.overview = "docs/javadoc/overview.html"
-}
-
-static def getOsName() {
-    final def currentOs = OperatingSystem.current()
-    if (currentOs.isMacOsX()) {
-        return "darwin"
-    } else if (currentOs.isLinux()) {
-        return "linux"
-    } else if (currentOs.isWindows()) {
-        return "win32"
-    } else if (currentOs.is(OperatingSystem.FREE_BSD)) {
-        return "freebsd"
-    } else if (currentOs.is(OperatingSystem.SOLARIS)) {
-        return "solaris"
-    }
-    return System.getProperty("os.name").toLowerCase(Locale.ENGLISH)
 }

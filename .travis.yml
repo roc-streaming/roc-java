@@ -6,6 +6,7 @@ branches:
   only:
     - master
     - develop
+    - /^feature\/.*/
     - /^v\d+\.\d+\.\d+$/
 
 stages:
@@ -33,11 +34,6 @@ jobs:
       language: generic
       env:
         - JAVA_VERSION=8
-      addons:
-        homebrew:
-          taps: adoptopenjdk/openjdk
-          casks: adoptopenjdk8
-          update: true
     - stage: macOS
       os: osx
       osx_image: xcode10.1
@@ -48,18 +44,12 @@ jobs:
       language: generic
       env:
         - JAVA_VERSION=8
-      addons:
-        homebrew:
-          taps: adoptopenjdk/openjdk
-          casks: adoptopenjdk8
-          update: true
     - stage: macOS
       os: osx
       osx_image: xcode11.3
       jdk: openjdk11
     - name: "android jdk8"
       stage: Android
-      sudo: required
       services:
         - docker
       env:
@@ -72,7 +62,6 @@ jobs:
             - $ROC_BASE_DIR
     - name: "android jdk11"
       stage: Android
-      sudo: required
       services:
         - docker
       env:

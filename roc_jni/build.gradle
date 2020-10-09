@@ -1,33 +1,19 @@
 plugins {
-    id 'cpp-library'
+    id "org.rocstreaming.roctoolkit.cmake-library"
 }
 
-def getJavaPath() {
-    return System.getenv('JAVA_HOME') ?: System.properties['java.home'].toString()
-}
+assemble.dependsOn rootProject.classes
 
-def getJniPaths() {
-    return [getJavaPath() + "/include", getJavaPath() + "/include/${os}"]
-}
+cmake {
+    target {
+        host System.getProperty("host")
+        platform System.getProperty("platform")
+    }
 
-ext {
-    rocIncludePath = System.getProperty('ROC_INCLUDE_PATH') ?: System.getenv('ROC_INCLUDE_PATH')
-    rocLibraryPath = System.getProperty('ROC_LIBRARY_PATH') ?: System.getenv('ROC_LIBRARY_PATH')
-    CFLAGS         = System.getProperty('CFLAGS') ? System.getProperty('CFLAGS').split(" ") + "-std=c++11": ["-std=c++11"]
-    LDFLAGS        = System.getProperty('LDFLAGS') ? System.getProperty('LDFLAGS').split(" ") + "-lroc" : ['-lroc']
-}
+    //srcDirs "src/main/cpp", "src/main/public", "src/main/headers"
+    generator System.getProperty("generator")
 
-dependencies {
-    build.dependsOn rootProject.generateHeaders
-}
-
-tasks.withType(CppCompile).configureEach {
-    getJniPaths().each { compilerArgs.add '-I' + it }
-    compilerArgs.add "-I${rocIncludePath}"
-    CFLAGS.each { compilerArgs.add it }
-}
-
-tasks.withType(LinkSharedLibrary).configureEach {
-    linkerArgs.add "-L${rocLibraryPath}"
-    LDFLAGS.each { linkerArgs.add it }
+    arguments "-DROC_INCLUDE_PATH=" + System.getProperty("ROC_INCLUDE_PATH"),
+              "-DROC_LIBRARY_PATH=" + System.getProperty("ROC_LIBRARY_PATH"),
+              "-DJAVA_HOME="        + System.getProperty("TARGET_JAVA_HOME")
 }

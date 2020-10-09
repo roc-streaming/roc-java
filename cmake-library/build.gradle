@@ -1,0 +1,23 @@
+plugins {
+    id "java-gradle-plugin"
+}
+
+dependencies {
+    implementation project(":commons")
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+gradlePlugin {
+    plugins {
+        cmakeLibrary {
+            id = "org.rocstreaming.roctoolkit.cmake-library"
+            implementationClass = "org.rocstreaming.roctoolkit.gradle.plugins.cmake.CMakeLibraryPlugin"
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs.addAll("-Werror", "-Xlint:deprecation")
+}

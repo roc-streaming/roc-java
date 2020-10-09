@@ -17,4 +17,5 @@ sudo apt-get install -y g++ \
                         autoconf \
                         automake \
                         make \
-                        cmake
+                        cmake \
+                        ninja-build

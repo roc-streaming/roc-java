@@ -1,7 +1,6 @@
 # JNI bindings for Roc Toolkit
 
-[![Build Status](https://travis-ci.org/roc-streaming/roc-java.svg?branch=master)](https://travis-ci.org/roc-streaming/roc-java)
-[![Android release](https://img.shields.io/bintray/v/roc-streaming/maven/roc-android?color=blue&label=aar)](https://bintray.com/roc-streaming/maven/roc-android/_latestVersion)
+[![build](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml/badge.svg)](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml) [![Android release](https://img.shields.io/bintray/v/roc-streaming/maven/roc-android?color=blue&label=aar)](https://bintray.com/roc-streaming/maven/roc-android/_latestVersion)
 
 This library provides JNI bindings for [Roc Toolkit](https://github.com/roc-streaming/roc-toolkit), a toolkit for real-time audio streaming over the network.
 
@@ -73,25 +72,62 @@ Then run:
 ./gradlew build
 ```
 
-## Building AAR from sources
+## Building AAR from sources (docker way)
 
-Export some variables for Android environment configuration, for example:
+This will install dependencies inside docker and run build:
 ```
-export JAVA_VERSION=8
-export ANDROID_API=28
-export ANDROID_BUILD_TOOLS_VERSION=28.0.3
-export ANDROID_NDK_VERSION=21.1.6352462
-export ROC_BASE_DIR=/tmp/roc-build   # libroc prefix destination path
+./scripts/android_docker.sh build
 ```
 
-Build libroc for all Android ABIs with:
+This will start emulator inside docker and run tests on it:
 ```
-scripts/travis/android/install.sh
+./scripts/android_docker.sh test
 ```
 
-Build Android subproject and run instrumented tests:
+## Building AAR from sources (manual way)
+
+First, export required environment variables:
+
 ```
-scripts/travis/android/script.sh
+export API=28
+export NDK_VERSION=21.1.6352462
+export BUILD_TOOLS_VERSION=28.0.3
+export CMAKE_VERSION=3.10.2.4988404
+```
+
+Then install Android components:
+
+```
+sdkmanager "platforms;android-${API}"
+sdkmanager "build-tools;${BUILD_TOOLS_VERSION}"
+sdkmanager "ndk;${NDK_VERSION}"
+sdkmanager "cmake;${CMAKE_VERSION}"
+```
+
+Also install build-time dependencies of Roc Toolkit, e.g. on macOS run:
+
+```
+brew install scons ragel gengetopt
+```
+
+Now we can download and build Roc Toolkit:
+
+```
+./scripts/android/build_roc.sh
+```
+
+And finally build bindings and package everything into AAR:
+
+```
+cd android
+./gradlew build
+```
+
+Optionally, run tests on device or emulator (you'll have to create one):
+
+```
+cd android
+./gradlew cAT --info --stacktrace
 ```
 
 ## Developer instructions
@@ -113,32 +149,64 @@ Run tests:
 ./gradlew test
 ```
 
-#### Android build
+If libroc is not in default path you can specify `ROC_INCLUDE_PATH` (path to roc headers) and `ROC_LIBRARY_PATH` (path to roc library) variables with:
+- environment variables
+- gradle system variables
 
-First follow instructions from `Building AAR from sources` section above.
+Additional compilation and linking flags can be specified respectively with `CFLAGS` and `LDFLAGS` gradle system variables
 
-The last step will run a fresh docker container and a new AVD at each execution. When it's already done first time, and you only need to build and test Android subproject, you can just run `/bin/bash` on `rocstreaming/env-android:jdk$JAVA_VERSION` Docker image:
+#### Android build via docker
 
-    docker run -it --rm --privileged --env API=$ANDROID_API \
-        --env BUILD_TOOLS_VERSION=$ANDROID_BUILD_TOOLS_VERSION \
-        --env NDK_VERSION=$ANDROID_NDK_VERSION \
-        --env ROC_BASE_DIR=$ROC_BASE_DIR \
-        -v $PWD:$PWD -v $ROC_BASE_DIR:$ROC_BASE_DIR \
-        -v android-sdk:/sdk -w $PWD \
-            rocstreaming/env-android:jdk$JAVA_VERSION /bin/bash
+This command will pull docker image, install Android SDK and NDK inside it, download and build Roc Toolkit, build JNI bindings, and package everything into AAR:
+```
+./scripts/android_docker.sh build
+```
 
-Inside Docker container bash session you create an AVD:
+To run instrumented tests in Android emulator inside docker image, use this:
+```
+./scripts/android_docker.sh test
+```
 
-    device --name "roc_device" --image "default" --api "${API}" create
-    device --name "roc_device" start
+To clean build results and remove docker container, run this:
+```
+./scripts/android_docker.sh clean
+```
 
-and build and test roc-android:
+If desired, you can export some variables for Android environment configuration; each variable has default value and is optional:
+```
+export JAVA_VERSION=8
+export API=28
+export NDK_VERSION=21.1.6352462
+export BUILD_TOOLS_VERSION=28.0.3
+export CMAKE_VERSION=3.10.2.4988404
+export AVD_IMAGE=default
+export AVD_ARCH=x86_64
 
-    cd android
-    ./gradlew build
-    ./gradlew cAT --info --stacktrace
+./scripts/android_docker.sh [build|test]
+```
 
-Additional information on our `env-android` Docker image is available [here](https://github.com/roc-streaming/roc-toolkit/blob/develop/docs/sphinx/development/continuous_integration.rst#android-environment).
+Additional information on the `env-android` docker image, which is used by this script, is available [here](https://github.com/roc-streaming/roc-toolkit/blob/develop/docs/sphinx/development/continuous_integration.rst#android-environment).
+
+
+#### Device script
+
+There is a helper script named `scripts/android_device.sh` that takes care of creating and booting up AVDs.
+
+It is used in docker and on CI, but you can also use it directly. Supported commands are:
+
+* `create` an AVD:
+
+    ```
+    ./scripts/android_device.sh create --api=<API> --image=<IMAGE> --arch=<ARCH> --name=<AVD-NAME>
+    ```
+
+    The string ``"system-images;android-<API>;<IMAGE>;<ARCH>"`` defines the emulator system image to be installed (it must be present in the list offered by ``sdkmanager --list``)
+
+* `start` device and wait until boot is completed:
+
+    ```
+    ./scripts/android_device.sh start --name=<AVD-NAME>
+    ```
 
 #### Documentation build
 
@@ -147,21 +215,13 @@ Generate docs:
 ./gradlew javadoc
 ```
 
-#### Configuration (building native code)
-
-If libroc is not in default path you can specify `ROC_INCLUDE_PATH` (path to roc headers) and `ROC_LIBRARY_PATH` (path to roc library) variables with:
-- environment variables
-- gradle system variables
-
-Additional compilation and linking flags can be specified respectively with `CFLAGS` and `LDFLAGS` gradle system variables
-
-#### Android release
+#### Publishing Android release
 
 Release workflow:
  * make github release with tag version, e.g. `v0.1.0`
- * travis will run release stage and publish artifacts to bintray
+ * GitHub Actions will run release step and publish artifacts to bintray
 
-Followed env variables should be set in travis:
+Followed env variables should be set in GitHub Actions:
  * `BINTRAY_USER` - bintray user
  * `BINTRAY_KEY` - bintray user api key
  * `BINTRAY_REPO` - bintray repository name

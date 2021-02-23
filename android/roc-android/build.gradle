@@ -9,7 +9,7 @@ ext {
     apiLevel = System.getProperty('API') ?: System.getenv('API')
     buildToolsVersion = System.getProperty('BUILD_TOOLS_VERSION') ?: System.getenv('BUILD_TOOLS_VERSION')
     androidNdkVersion = System.getProperty('NDK_VERSION') ?: System.getenv('NDK_VERSION')
-    ROC_BASE_DIR = System.getProperty('ROC_BASE_DIR') ?: System.getenv('ROC_BASE_DIR')
+    ROC_BASE_DIR = System.getProperty('ROC_BASE_DIR') ?: System.getenv('ROC_BASE_DIR') ?: file("../build/libroc").absolutePath
     bintrayUser = System.getProperty('BINTRAY_USER') ?: System.getenv('BINTRAY_USER')
     bintrayKey = System.getProperty('BINTRAY_KEY') ?: System.getenv('BINTRAY_KEY')
     bintrayRepo = System.getProperty('BINTRAY_REPO') ?: System.getenv('BINTRAY_REPO')

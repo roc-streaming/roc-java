@@ -1,0 +1,157 @@
+name: build
+
+on:
+  # build on manual trigger from web interface
+  workflow_dispatch:
+
+  # build on automatic trigger from roc-toolkit
+  repository_dispatch:
+
+  push:
+    branches:
+      - master
+    tags:
+      - v*
+
+  pull_request:
+    branches:
+      - master
+
+  schedule:
+    - cron: '0 0 * * 1'
+
+jobs:
+
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: linux
+            image: ubuntu-latest
+            java: 11
+
+          - os: linux
+            image: ubuntu-latest
+            java: 8
+
+          - os: osx
+            image: macos-latest
+            java: 11
+
+          - os: osx
+            image: macos-latest
+            java: 8
+
+    name: ${{ matrix.os }}/java${{ matrix.java }}
+
+    runs-on: ${{ matrix.image }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}.x.x
+
+      - name: Install system dependencies
+        run: scripts/${{ matrix.os }}/install_dependencies.sh
+
+      - name: Install Roc
+        run: scripts/${{ matrix.os }}/build_roc.sh
+
+      - name: Build and test bindings
+        run: scripts/${{ matrix.os }}/build_bindings.sh
+
+  android-linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - java: 11
+            api: 29
+            ndk: 21.1.6352462
+
+          - java: 8
+            api: 29
+            ndk: 21.1.6352462
+
+    name: android/linux-java${{ matrix.java }}-api${{ matrix.api }}-ndk${{ matrix.ndk }}
+
+    runs-on: ubuntu-latest
+
+    env:
+      JAVA_VERSION: ${{ matrix.java }}
+      API: ${{ matrix.api }}
+      NDK_VERSION: ${{ matrix.ndk }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: scripts/android_docker.sh build
+
+  android-osx:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - api: 29
+            ndk: 21.1.6352462
+            build_tools: 28.0.3
+            cmake: 3.10.2.4988404
+            avd_image: default
+            avd_arch: x86_64
+
+          - api: 26
+            ndk: 21.1.6352462
+            build_tools: 28.0.3
+            cmake: 3.10.2.4988404
+            avd_image: default
+            avd_arch: x86_64
+
+    name: android/osx-api${{ matrix.api }}-ndk${{ matrix.ndk }}
+
+    runs-on: macos-latest
+
+    env:
+      API: ${{ matrix.api }}
+      NDK_VERSION: ${{ matrix.ndk }}
+      BUILD_TOOLS_VERSION: ${{ matrix.build_tools }}
+      CMAKE_VERSION: ${{ matrix.cmake }}
+      AVD_IMAGE: ${{ matrix.avd_image }}
+      AVD_ARCH: ${{ matrix.avd_arch }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Android SDK components
+        uses: maxim-lobanov/setup-android-tools@v1
+        with:
+          cache: true
+          packages: |
+            platforms;android-${{ matrix.api }}
+            build-tools;${{ matrix.build_tools }}
+            ndk;${{ matrix.ndk }}
+            cmake;${{ matrix.cmake }}
+            system-images;android-${{ matrix.api }};${{ matrix.avd_image }};${{ matrix.avd_arch }}
+            emulator
+
+      - name: Install system dependencies
+        run: scripts/android/install_dependencies.sh
+
+      - name: Build Roc
+        run: scripts/android/build_roc.sh
+
+      - name: Build bindings
+        run: scripts/android/build_bindings.sh
+
+      - name: Start emulator
+        run: scripts/android/start_emulator.sh
+
+      - name: Run instrumented tests
+        run: scripts/android/run_instrumented_tests.sh

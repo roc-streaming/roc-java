@@ -19,35 +19,27 @@ stages:
 jobs:
   include:
     - stage: Linux
+      dist: bionic
       jdk: openjdk8
+
     - stage: Linux
+      dist: bionic
       jdk: openjdk11
-    - stage: Linux
-      dist: xenial
-      jdk: openjdk8
-    - stage: Linux
-      dist: xenial
-      jdk: openjdk11
+
     - stage: macOS
       os: osx
-      osx_image: xcode10.1
+      osx_image: xcode11.6
       language: generic
       env:
         - JAVA_VERSION=8
+
     - stage: macOS
       os: osx
-      osx_image: xcode10.1
-      jdk: openjdk11
-    - stage: macOS
-      os: osx
-      osx_image: xcode11.3
+      osx_image: xcode11.6
       language: generic
       env:
-        - JAVA_VERSION=8
-    - stage: macOS
-      os: osx
-      osx_image: xcode11.3
-      jdk: openjdk11
+        - JAVA_VERSION=11
+
     - name: "android jdk8"
       stage: Android
       services:
@@ -60,12 +52,14 @@ jobs:
           paths:
             - android
             - $ROC_BASE_DIR
+
     - name: "android jdk11"
       stage: Android
       services:
         - docker
       env:
         - DIST=android JAVA_VERSION=11 ANDROID_API=28 ANDROID_BUILD_TOOLS_VERSION=28.0.3 ANDROID_NDK_VERSION=21.1.6352462 ROC_BASE_DIR=$HOME/roc
+
     - name: "android release"
       stage: Release
       workspaces:

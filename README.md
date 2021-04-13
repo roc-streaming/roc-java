@@ -1,6 +1,6 @@
 # JNI bindings for Roc Toolkit
 
-[![Build Status](https://travis-ci.org/roc-streaming/roc-java.svg?branch=master)](https://travis-ci.org/roc-streaming/roc-java)
+[![Build Status](https://travis-ci.com/roc-streaming/roc-java.svg?branch=master)](https://travis-ci.com/roc-streaming/roc-java)
 [![Android release](https://img.shields.io/bintray/v/roc-streaming/maven/roc-android?color=blue&label=aar)](https://bintray.com/roc-streaming/maven/roc-android/_latestVersion)
 
 This library provides JNI bindings for [Roc Toolkit](https://github.com/roc-streaming/roc-toolkit), a toolkit for real-time audio streaming over the network.

@@ -14,6 +14,11 @@ function run_cmd() {
 : "${CMAKE_VERSION:=3.10.2.4988404}"
 : "${AVD_IMAGE:=default}"
 : "${AVD_ARCH:=x86_64}"
+: "${OSSRH_USERNAME:=}"
+: "${OSSRH_PASSWORD:=}"
+: "${SIGNING_KEY_ID:=}"
+: "${SIGNING_PASSWORD:=}"
+: "${SIGNING_KEY:=}"
 
 # go to project root
 cd "$(dirname "$0")"/..

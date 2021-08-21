@@ -113,12 +113,8 @@ nexusStaging {
     password = ossrhPassword
 }
 
-//tasks.withType(Sign) {
-//    onlyIf { gradle.taskGraph.hasTask("uploadArchives") || gradle.taskGraph.hasTask("signArchives") }
-//}
-
 signing {
-    if (signingKeyId?.trim()) {
+    if (signingKeyId?.trim() && signingKey?.trim() && signingPassword?.trim()) {
         useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
         sign configurations.archives
     }

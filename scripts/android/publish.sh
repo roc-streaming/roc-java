@@ -4,4 +4,5 @@ set -euxo pipefail
 export TERM=dumb
 
 cd android
-./gradlew bintrayUpload
+./gradlew uploadArchives
+./gradlew closeRepository

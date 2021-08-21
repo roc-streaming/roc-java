@@ -6,7 +6,7 @@ plugins {
 apply from: 'tag_version.gradle'
 
 allprojects {
-    group 'org.rocstreaming.roctoolkit'
+    group 'org.roc-streaming.roctoolkit'
     version tagVersion
 }
 

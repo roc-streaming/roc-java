@@ -1,7 +1,7 @@
 plugins {
+    id 'maven'
+    id 'signing'
     id 'com.android.library'
-    id 'com.github.dcendents.android-maven'
-    id 'com.jfrog.bintray'
     id 'de.mannodermaus.android-junit5'
 }
 
@@ -10,10 +10,11 @@ ext {
     buildToolsVersion = System.getProperty('BUILD_TOOLS_VERSION') ?: System.getenv('BUILD_TOOLS_VERSION')
     androidNdkVersion = System.getProperty('NDK_VERSION') ?: System.getenv('NDK_VERSION')
     ROC_BASE_DIR = System.getProperty('ROC_BASE_DIR') ?: System.getenv('ROC_BASE_DIR') ?: file("../build/libroc").absolutePath
-    bintrayUser = System.getProperty('BINTRAY_USER') ?: System.getenv('BINTRAY_USER')
-    bintrayKey = System.getProperty('BINTRAY_KEY') ?: System.getenv('BINTRAY_KEY')
-    bintrayRepo = System.getProperty('BINTRAY_REPO') ?: System.getenv('BINTRAY_REPO')
-    bintrayRepoOrg = System.getProperty('BINTRAY_REPO_ORG') ?: System.getenv('BINTRAY_REPO_ORG')
+    ossrhUsername = System.getenv('OSSRH_USERNAME')
+    ossrhPassword = System.getenv('OSSRH_PASSWORD')
+    signingKeyId = System.getenv('SIGNING_KEY_ID')
+    signingPassword = System.getenv('SIGNING_PASSWORD')
+    signingKey = System.getenv('SIGNING_KEY')
 }
 
 android {
@@ -105,39 +106,43 @@ artifacts {
     archives sourcesJar
 }
 
-bintray {
-    user = bintrayUser
-    key = bintrayKey
-
-    pkg {
-        repo = bintrayRepo
-        name = project.name
-        userOrg = bintrayRepoOrg
-        configurations = ['archives']
-        desc = 'Android library for Roc Toolkit'
-        websiteUrl = 'https://github.com/roc-streaming/roc-java'
-        issueTrackerUrl = 'https://github.com/roc-streaming/roc-java/issues'
-        vcsUrl = 'https://github.com/roc-streaming/roc-java.git'
-        licenses = ["MIT"]
-        publish = true
-        publicDownloadNumbers = true
-
-        version {
-            gpg {
-                sign = true
-            }
-        }
-    }
+nexusStaging {
+    serverUrl = 'https://s01.oss.sonatype.org/service/local/'
+    packageGroup = 'org.roc-streaming'
+    username = ossrhUsername
+    password = ossrhPassword
 }
 
-install {
-    repositories.mavenInstaller {
-        pom {
-            project {
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name project.name
                 packaging 'aar'
-                name 'roc-android'
                 description 'Android library for Roc Toolkit'
                 url 'https://github.com/roc-streaming/roc-java'
+
+                scm {
+                    connection 'scm:git:git://github.com/roc-streaming/roc-java.git'
+                    developerConnection 'scm:git:ssh://github.com:roc-streaming/roc-java.git'
+                    url 'https://github.com/roc-streaming/roc-java'
+                }
 
                 licenses {
                     license {
@@ -145,10 +150,17 @@ install {
                     }
                 }
 
-                scm {
-                    connection 'scm:git:https://github.com/roc-streaming/roc-java.git'
-                    developerConnection 'scm:git:https://github.com/roc-streaming/roc-java.git'
-                    url 'https://github.com/roc-streaming/roc-java'
+                developers {
+                    developer {
+                        id 'abushmin'
+                        name 'Andrey Bushmin'
+                        email 'diskbu@yandex.ru'
+                    }
+                    developer {
+                        id 'gavv'
+                        name 'Victor Gaydov'
+                        email 'victor@enise.org'
+                    }
                 }
             }
         }

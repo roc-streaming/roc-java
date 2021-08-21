@@ -5,18 +5,18 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
-        
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.3'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
         classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.5.2.0'
+        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0'
     }
 }
 
+apply plugin: 'io.codearte.nexus-staging'
+
 allprojects {
-    group 'org.rocstreaming.roctoolkit'
+    group 'org.roc-streaming.roctoolkit'
     version tagVersion
 
     repositories {

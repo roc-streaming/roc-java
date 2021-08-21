@@ -5,4 +5,5 @@ export TERM=dumb
 
 cd android
 ./gradlew uploadArchives
-./gradlew closeRepository
+# close staging and release repository
+./gradlew closeAndReleaseRepository

@@ -16,7 +16,7 @@ buildscript {
 apply plugin: 'io.codearte.nexus-staging'
 
 allprojects {
-    group 'org.roc-streaming.roctoolkit.testing'
+    group 'org.roc-streaming.roctoolkit'
     version tagVersion
 
     repositories {

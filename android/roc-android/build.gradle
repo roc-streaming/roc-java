@@ -73,7 +73,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(":commons")
 
     androidTestImplementation "androidx.test:runner:1.2.0"
     androidTestImplementation "org.junit.jupiter:junit-jupiter-api:5.6.2"
@@ -92,7 +91,6 @@ task sourcesJar(type: Jar) {
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    classpath += project.files(project(":commons").sourceSets.main.runtimeClasspath.asPath)
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {

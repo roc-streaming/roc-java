@@ -16,12 +16,11 @@ buildscript {
 apply plugin: 'io.codearte.nexus-staging'
 
 allprojects {
-    group 'org.roc-streaming.roctoolkit'
+    group 'org.roc-streaming.roctoolkit.testing'
     version tagVersion
 
     repositories {
         google()
-        jcenter()
         mavenCentral()
     }
 }

@@ -160,22 +160,14 @@ jobs:
     needs: [desktop, android-linux, android-osx]
     if: startsWith(github.ref, 'refs/tags/v')
 
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - java: 8
-            api: 29
-            ndk: 21.1.6352462
-
-    name: android/linux-java${{ matrix.java }}-api${{ matrix.api }}-ndk${{ matrix.ndk }}
+    name: publish
 
     runs-on: ubuntu-latest
 
     env:
-      JAVA_VERSION: ${{ matrix.java }}
-      API: ${{ matrix.api }}
-      NDK_VERSION: ${{ matrix.ndk }}
+      JAVA_VERSION: 8
+      API: 29
+      NDK_VERSION: 21.1.6352462
       OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
       OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
       SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
@@ -186,5 +178,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Build
+      - name: Publish
         run: scripts/android_docker.sh publish

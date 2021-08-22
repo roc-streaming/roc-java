@@ -160,6 +160,11 @@ uploadArchives {
                         name 'Victor Gaydov'
                         email 'victor@enise.org'
                     }
+                    developer {
+                        id 'MatteoArella'
+                        name 'Matteo Arella'
+                        email 'arella.matteo.95@gmail.com'
+                    }
                 }
             }
         }

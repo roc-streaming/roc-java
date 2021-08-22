@@ -1,6 +1,6 @@
 # JNI bindings for Roc Toolkit
 
-[![build](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml/badge.svg)](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml) [![Android release](https://img.shields.io/bintray/v/roc-streaming/maven/roc-android?color=blue&label=aar)](https://bintray.com/roc-streaming/maven/roc-android/_latestVersion)
+[![build](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml/badge.svg)](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml) [![Android release](https://img.shields.io/maven-central/v/org.roc-streaming.roctoolkit/roc-android?color=blue&label=aar)](https://search.maven.org/artifact/org.roc-streaming.roctoolkit/roc-android)
 
 This library provides JNI bindings for [Roc Toolkit](https://github.com/roc-streaming/roc-toolkit), a toolkit for real-time audio streaming over the network.
 
@@ -59,7 +59,7 @@ Add jcenter repository in `build.gradle` file:
         mavenCentral()
     }
 
-Add dependency to project ([last version](https://bintray.com/roc-streaming/maven/roc-android/_latestVersion)):
+Add dependency to project ([versions](https://search.maven.org/artifact/org.roc-streaming.roctoolkit/roc-android)):
 
     implementation 'org.roc-streaming.roctoolkit:roc-android:0.0.1'
 

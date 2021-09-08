@@ -1,3 +1,1 @@
-include ":commons", ":roc-android"
-
-project(':commons').projectDir = file('../commons')
+include ":roc-android"

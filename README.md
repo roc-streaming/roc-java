@@ -1,6 +1,6 @@
 # JNI bindings for Roc Toolkit
 
-[![build](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml/badge.svg)](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml) [![Android release](https://img.shields.io/bintray/v/roc-streaming/maven/roc-android?color=blue&label=aar)](https://bintray.com/roc-streaming/maven/roc-android/_latestVersion)
+[![build](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml/badge.svg)](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml) [![Android release](https://img.shields.io/maven-central/v/org.roc-streaming.roctoolkit/roc-android?color=blue&label=aar)](https://search.maven.org/artifact/org.roc-streaming.roctoolkit/roc-android)
 
 This library provides JNI bindings for [Roc Toolkit](https://github.com/roc-streaming/roc-toolkit), a toolkit for real-time audio streaming over the network.
 
@@ -56,12 +56,12 @@ Note that prebuilt AAR package for Android already ships the right version of li
 Add jcenter repository in `build.gradle` file:
 
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
-Add dependency to project ([last version](https://bintray.com/roc-streaming/maven/roc-android/_latestVersion)):
+Add dependency to project ([versions](https://search.maven.org/artifact/org.roc-streaming.roctoolkit/roc-android)):
 
-    implementation 'org.rocstreaming.roctoolkit:roc-android:0.0.1'
+    implementation 'org.roc-streaming.roctoolkit:roc-android:0.0.1'
 
 ## Building JAR from sources
 
@@ -219,13 +219,14 @@ Generate docs:
 
 Release workflow:
  * make github release with tag version, e.g. `v0.1.0`
- * GitHub Actions will run release step and publish artifacts to bintray
+ * GitHub Actions will run release step and publish artifacts to artifactory
 
 Followed env variables should be set in GitHub Actions:
- * `BINTRAY_USER` - bintray user
- * `BINTRAY_KEY` - bintray user api key
- * `BINTRAY_REPO` - bintray repository name
- * `BINTRAY_REPO_ORG` - bintray organization name
+ * `OSSRH_USERNAME` - Sonatype OSSRH user
+ * `OSSRH_PASSWORD` - Sonatype OSSRH password
+ * `SIGNING_KEY_ID` - gpg key id
+ * `SIGNING_PASSWORD` - gpg passphrase
+ * `SIGNING_KEY` - gpg private key
 
 ## Authors
 

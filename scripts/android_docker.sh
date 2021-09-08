@@ -14,6 +14,11 @@ function run_cmd() {
 : "${CMAKE_VERSION:=3.10.2.4988404}"
 : "${AVD_IMAGE:=default}"
 : "${AVD_ARCH:=x86_64}"
+: "${OSSRH_USERNAME:=}"
+: "${OSSRH_PASSWORD:=}"
+: "${SIGNING_KEY_ID:=}"
+: "${SIGNING_PASSWORD:=}"
+: "${SIGNING_KEY:=}"
 
 # go to project root
 cd "$(dirname "$0")"/..
@@ -21,10 +26,10 @@ cd "$(dirname "$0")"/..
 # parse arguments
 action="${1:-}"
 case "$action" in
-    clean|build|test)
+    clean|build|test|publish)
         ;;
     *)
-        echo "usage: $(basename $0) build|test|clean" >&2
+        echo "usage: $(basename $0) build|test|clean|publish" >&2
         exit 1
         ;;
 esac
@@ -107,6 +112,11 @@ then
         --env CMAKE_VERSION="${CMAKE_VERSION}"
         --env AVD_IMAGE="${AVD_IMAGE}"
         --env AVD_ARCH="${AVD_ARCH}"
+        --env OSSRH_USERNAME="${OSSRH_USERNAME}"
+        --env OSSRH_PASSWORD="${OSSRH_PASSWORD}"
+        --env SIGNING_KEY_ID="${SIGNING_KEY_ID}"
+        --env SIGNING_PASSWORD="${SIGNING_PASSWORD}"
+        --env SIGNING_KEY="${SIGNING_KEY}"
         -v "${PWD}:${PWD}"
         -v "${PWD}/android/.gradle:/root/.gradle"
         -v roc_android_sdk:/sdk
@@ -150,6 +160,12 @@ fi
 
 # build bindings and AAR
 run_cmd docker exec roc_android su -Ppc scripts/android/build_bindings.sh user
+
+# publish artifacts to artifactory
+if [ "$action" = publish ]
+then
+    run_cmd docker exec roc_android su -Ppc scripts/android/publish.sh user
+fi
 
 # run tests on emulator
 if [ "$action" = test ]

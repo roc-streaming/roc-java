@@ -4,4 +4,7 @@ set -euxo pipefail
 export TERM=dumb
 
 cd android
-./gradlew bintrayUpload
+# automatically creates staging repository and upload archives to there
+./gradlew uploadArchives
+# close staging and release repository
+./gradlew closeAndReleaseRepository

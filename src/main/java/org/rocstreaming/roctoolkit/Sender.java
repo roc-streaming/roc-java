@@ -115,6 +115,12 @@ import java.io.IOException;
 public class Sender extends NativeObject {
 
     /**
+     * Roc context. Keeping the reference to context to avoid it being collected by GC before the receiver itself
+     */
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
+    private final Context context;
+
+    /**
      * Validate sender constructor parameters and open a new sender if validation is successful.
      *
      * @param context                       should point to an opened context.
@@ -141,7 +147,8 @@ public class Sender extends NativeObject {
      * @throws Exception                if an error occured when creating the sender.
      */
     public Sender(Context context, SenderConfig config) throws IllegalArgumentException, Exception {
-        super(tryOpen(context, config), context, Sender::close);
+        super(tryOpen(context, config), Sender::close);
+        this.context = context;
     }
 
     /**

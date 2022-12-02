@@ -2,9 +2,7 @@ package org.rocstreaming.roctoolkit;
 
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <code>NativeObjectReference</code> is associated with a {@link NativeObject} and owns its entire lifetime;
@@ -25,13 +23,6 @@ class NativeObjectReference extends PhantomReference<NativeObject> implements Au
     private final Destructor destructor;
 
     /**
-     *  Avoid {@link NativeObject} dependency to be garbage collected unless this
-     * <code>NativeObjectReference</code> is closed first (for example for avoiding
-     * {@link Context} to be closed before closing {@link Sender} or {@link Receiver}).
-     */
-    private final AtomicReference<NativeObject> dependsOn;
-
-    /**
      *  {@link NativeObject} open status.
      */
     private final AtomicBoolean isOpen;
@@ -39,16 +30,15 @@ class NativeObjectReference extends PhantomReference<NativeObject> implements Au
     /**
      * Construct a new <code>NativeObjectReference</code>.
      *
-     * @param referent          {@link NativeObject} associated.
-     * @param dependsOn         {@link NativeObject} dependency for finalization ordering.
-     * @param queue             Reference queue containing phantom reachable native objects.
+     * @param referent   {@link NativeObject} associated.
+     * @param queue      Reference queue containing phantom reachable native objects.
+     * @param ptr        Underlying roc object native pointer.
+     * @param destructor Destructor method.
      */
-    NativeObjectReference(NativeObject referent, NativeObject dependsOn,
-                        ReferenceQueue<? super NativeObject> queue) {
+    NativeObjectReference(NativeObject referent, ReferenceQueue<? super NativeObject> queue, long ptr, Destructor destructor) {
         super(referent, queue);
-        this.ptr = referent.getPtr();
-        this.destructor = referent.getDestructor();
-        this.dependsOn = new AtomicReference<>(dependsOn);
+        this.ptr = ptr;
+        this.destructor = destructor;
         this.isOpen = new AtomicBoolean(true);
     }
 
@@ -62,31 +52,13 @@ class NativeObjectReference extends PhantomReference<NativeObject> implements Au
     }
 
     /**
-     * Get {@link NativeObject} destructor.
-     *
-     * @return      destructor method for closing {@link NativeObject}.
-     */
-    Destructor getDestructor() {
-        return destructor;
-    }
-
-    /**
-     * Get {@link NativeObject} dependency for finalization ordering.
-     *
-     * @return      an <code>Optional</code> describing the {@link NativeObject} dependency.
-     */
-    Optional<NativeObject> getDependsOn() {
-        return Optional.ofNullable(dependsOn.get());
-    }
-
-    /**
      * Close the native object.
      */
     @Override
     public void close() throws Exception {
         if (isOpen.compareAndSet(true, false)) {
             destructor.close(ptr);
-            this.dependsOn.set(null);
         }
     }
+
 }

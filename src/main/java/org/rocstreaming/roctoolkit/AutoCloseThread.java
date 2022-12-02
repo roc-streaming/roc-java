@@ -1,7 +1,9 @@
 package org.rocstreaming.roctoolkit;
 
 import java.lang.ref.ReferenceQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Thread collecting references and closing {@link NativeObject}s when they become phantom reachable.
@@ -19,9 +21,9 @@ class AutoCloseThread extends Thread {
     private final ReferenceQueue<NativeObject> referenceQueue;
 
     /**
-     * Collection of {@link NativeObjectReference} to avoid they get garbage collected.
+     * Set to keep references to prevent being garbage collected
      */
-    private final ReferenceCollector<NativeObjectReference> phantomCollector;
+    private final Set<NativeObjectReference> set = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     /**
      * Create a new <code>AutoCloseThread</code>.
@@ -30,7 +32,6 @@ class AutoCloseThread extends Thread {
         super("AutoCloseThread");
         setDaemon(true);
         referenceQueue = new ReferenceQueue<>();
-        phantomCollector = new ReferenceCollector<>();
     }
 
     /**
@@ -45,26 +46,15 @@ class AutoCloseThread extends Thread {
     /**
      * Add a {@link NativeObject} to <code>AutoCloseThread</code>.
      *
-     * @param nativeObj     {@link NativeObject} to add.
-     * @param dependsOn     {@link NativeObject} dependency.
-     *
-     * @return              the new {@link NativeObjectReference} associated to the {@link NativeObject}.
+     * @param nativeObj  {@link NativeObject} to add.
+     * @param ptr        Underlying roc object native pointer.
+     * @param destructor Destructor method.
+     * @return the new {@link NativeObjectReference} associated to the {@link NativeObject}.
      */
-    NativeObjectReference add(NativeObject nativeObj, NativeObject dependsOn) {
-        NativeObjectReference reference = new NativeObjectReference(nativeObj, dependsOn, referenceQueue);
-        phantomCollector.add(reference);
+    NativeObjectReference add(NativeObject nativeObj, long ptr, Destructor destructor) {
+        NativeObjectReference reference = new NativeObjectReference(nativeObj, referenceQueue, ptr, destructor);
+        set.add(reference);
         return reference;
-    }
-
-    /**
-     * Add a {@link NativeObject} to <code>AutoCloseThread</code>.
-     *
-     * @param nativeObj     {@link NativeObject} to add.
-     *
-     * @return              the new {@link NativeObjectReference} associated to the {@link NativeObject}.
-     */
-    NativeObjectReference add(NativeObject nativeObj) {
-        return add(nativeObj, null);
     }
 
     /**
@@ -73,7 +63,7 @@ class AutoCloseThread extends Thread {
      * @param reference     the {@link NativeObjectReference} to remove.
      */
     void remove(NativeObjectReference reference) {
-        phantomCollector.remove(reference);
+        set.remove(reference);
     }
 
     /**
@@ -88,7 +78,7 @@ class AutoCloseThread extends Thread {
         while (isAlive()) {
             try {
                 NativeObjectReference reference = (NativeObjectReference) referenceQueue.remove();
-                remove(reference);
+                set.remove(reference);
                 reference.close();
             } catch (Exception e) {
             }

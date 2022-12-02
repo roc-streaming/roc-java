@@ -32,7 +32,7 @@ public class Context extends NativeObject {
      * @throws IllegalArgumentException     if the arguments are invalid.
      * @throws Exception                    if there are not enough resources.
      */
-    private static long validate(ContextConfig config) throws IllegalArgumentException, Exception {
+    private static long tryOpen(ContextConfig config) throws IllegalArgumentException, Exception {
         if (config == null) throw new IllegalArgumentException();
         return open(config);
     }
@@ -60,7 +60,7 @@ public class Context extends NativeObject {
      * @throws Exception if there are not enough resources.
      */
     public Context(ContextConfig config) throws IllegalArgumentException, Exception {
-        super(validate(config), Context::close);
+        super(tryOpen(config), Context::close);
     }
 
     private static native long open(ContextConfig config) throws IllegalArgumentException, Exception;

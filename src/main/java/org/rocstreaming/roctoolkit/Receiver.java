@@ -137,7 +137,7 @@ public class Receiver extends NativeObject {
      * @throws IllegalArgumentException     if the arguments are invalid.
      * @throws Exception                    if an error occured when creating the receiver.
      */
-    private static long validate(Context context, ReceiverConfig config) throws IllegalArgumentException, Exception {
+    private static long tryOpen(Context context, ReceiverConfig config) throws IllegalArgumentException, Exception {
         if (context == null || config == null) throw new IllegalArgumentException();
         return open(context.getPtr(), config);
     }
@@ -154,7 +154,7 @@ public class Receiver extends NativeObject {
      * @throws Exception                if an error occured when creating the receiver.
      */
     public Receiver(Context context, ReceiverConfig config) throws IllegalArgumentException, Exception {
-        super(validate(context, config), context, Receiver::close);
+        super(tryOpen(context, config), context, Receiver::close);
     }
 
     /**

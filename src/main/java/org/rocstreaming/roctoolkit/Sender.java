@@ -125,7 +125,7 @@ public class Sender extends NativeObject {
      * @throws IllegalArgumentException     if the arguments are invalid.
      * @throws Exception                    if an error occured when creating the sender.
      */
-    private static long validate(Context context, SenderConfig config) throws IllegalArgumentException, Exception {
+    private static long tryOpen(Context context, SenderConfig config) throws IllegalArgumentException, Exception {
         if (context == null || config == null) throw new IllegalArgumentException();
         return open(context.getPtr(), config);
     }
@@ -141,7 +141,7 @@ public class Sender extends NativeObject {
      * @throws Exception                if an error occured when creating the sender.
      */
     public Sender(Context context, SenderConfig config) throws IllegalArgumentException, Exception {
-        super(validate(context, config), context, Sender::close);
+        super(tryOpen(context, config), context, Sender::close);
     }
 
     /**

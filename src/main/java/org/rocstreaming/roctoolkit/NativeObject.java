@@ -1,21 +1,14 @@
 package org.rocstreaming.roctoolkit;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 /**
  * A <code>NativeObject</code> represents an underlying native roc object.
  */
 class NativeObject implements AutoCloseable {
 
     /**
-     * Maximum time to wait (in milliseconds) for joining {@link AutoCloseThread}.
-     */
-    private final static long MAX_JOIN_TIMEOUT_MS = SECONDS.toMillis(20L);
-
-    /**
      * <code>NativeObject</code> finalizer thread.
      */
-    private final static AutoCloseThread thread = AutoCloseThread.getInstance();
+    private final static AutoCloseThread AUTO_CLOSE_THREAD = AutoCloseThread.getInstance();
 
     /**
      *  Underlying roc object native pointer.
@@ -34,15 +27,7 @@ class NativeObject implements AutoCloseable {
 
     static {
         RocLibrary.loadLibrary();
-        thread.start();
-
-        /* add a ShutdownHook for closing all NativeObjects that are still open */
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            thread.closeAll();
-            try {
-                thread.join(MAX_JOIN_TIMEOUT_MS);
-            } catch (InterruptedException e) {}
-        }));
+        AUTO_CLOSE_THREAD.start();
     }
 
     /**
@@ -56,7 +41,7 @@ class NativeObject implements AutoCloseable {
     protected NativeObject(long ptr, NativeObject dependsOn, Destructor destructor) {
         this.ptr = ptr;
         this.destructor = destructor;
-        this.resource = thread.add(this, dependsOn);
+        this.resource = AUTO_CLOSE_THREAD.add(this, dependsOn);
     }
 
     /**
@@ -95,7 +80,7 @@ class NativeObject implements AutoCloseable {
      */
     @Override
     public void close() throws Exception {
-        thread.remove(resource);
+        AUTO_CLOSE_THREAD.remove(resource);
         resource.close();
     }
 }

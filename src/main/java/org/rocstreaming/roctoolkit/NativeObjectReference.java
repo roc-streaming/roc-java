@@ -80,22 +80,11 @@ class NativeObjectReference extends PhantomReference<NativeObject> implements Au
     }
 
     /**
-     * Get {@link NativeObject} open status.
-     *
-     * @return true is the {@link NativeObject} is still open,
-     *         false otherwise.
-     */
-    boolean isOpen() {
-        return isOpen.get();
-    }
-
-    /**
      * Close the native object.
      */
     @Override
     public void close() throws Exception {
-        if (isOpen()) {
-            this.isOpen.set(false);
+        if (isOpen.compareAndSet(true, false)) {
             destructor.close(ptr);
             this.dependsOn.set(null);
         }

@@ -8,16 +8,16 @@ class NativeObject implements AutoCloseable {
     /**
      * <code>NativeObject</code> finalizer thread.
      */
-    private final static AutoCloseThread AUTO_CLOSE_THREAD = AutoCloseThread.getInstance();
+    private final static NativeObjectCleaner NATIVE_OBJECT_CLEANER = NativeObjectCleaner.getInstance();
 
     /**
-     *  Reference to {@link NativeObjectReference}.
+     *  Reference to {@link NativeObjectPhantomReference}.
      */
-    private final NativeObjectReference resource;
+    private final NativeObjectPhantomReference resource;
 
     static {
         RocLibrary.loadLibrary();
-        AUTO_CLOSE_THREAD.start();
+        NATIVE_OBJECT_CLEANER.start();
     }
 
     /**
@@ -27,7 +27,7 @@ class NativeObject implements AutoCloseable {
      * @param destructor        destructor method for closing <code>NativeObject</code>.
      */
     protected NativeObject(long ptr, Destructor destructor) {
-        this.resource = AUTO_CLOSE_THREAD.add(this, ptr, destructor);
+        this.resource = NATIVE_OBJECT_CLEANER.register(this, ptr, destructor);
     }
 
     /**
@@ -40,18 +40,14 @@ class NativeObject implements AutoCloseable {
         return this.resource.getPtr();
     }
 
-    public NativeObjectReference getResource() {
-        return resource;
-    }
-
     /**
-     * Close the native object and remove it from the {@link AutoCloseThread}.
+     * Close the native object and remove it from the {@link NativeObjectCleaner}.
      *
      * @throws Exception        if the underlying roc native object cannot be closed.
      */
     @Override
     public void close() throws Exception {
-        AUTO_CLOSE_THREAD.remove(resource);
+        NATIVE_OBJECT_CLEANER.remove(resource);
         resource.close();
     }
 }

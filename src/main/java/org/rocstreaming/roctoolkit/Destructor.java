@@ -10,7 +10,7 @@ interface Destructor {
      * Close {@link NativeObject}.
      *
      * This method can be called synchronously by the
-     * user or asynchronously by {@link AutoCloseThread}.
+     * user or asynchronously by {@link NativeObjectCleaner}.
      *
      * <p style="color: red;">
      * Note: It's important that this method is declared <code>static</code> and not as an

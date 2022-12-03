@@ -95,6 +95,8 @@ jobs:
         run: scripts/android_docker.sh build
 
   android-osx:
+    # will be fixed after update to roc 0.2.x
+    if: false
     strategy:
       fail-fast: false
       matrix:

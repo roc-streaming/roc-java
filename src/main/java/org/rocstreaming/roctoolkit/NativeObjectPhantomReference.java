@@ -5,12 +5,12 @@ import java.lang.ref.ReferenceQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * <code>NativeObjectReference</code> is associated with a {@link NativeObject} and owns its entire lifetime;
+ * <code>NativeObjectPhantomReference</code> is associated with a {@link NativeObject} and owns its entire lifetime;
  *
- * A <code>NativeObjectReference</code> contains necessary data for closing the native object
+ * A <code>NativeObjectPhantomReference</code> contains necessary data for closing the native object
  * after it becomes phantom reachable.
  */
-class NativeObjectReference extends PhantomReference<NativeObject> implements AutoCloseable {
+class NativeObjectPhantomReference extends PhantomReference<NativeObject> implements AutoCloseable {
 
     /**
      *  Underlying roc object native pointer.
@@ -28,14 +28,14 @@ class NativeObjectReference extends PhantomReference<NativeObject> implements Au
     private final AtomicBoolean isOpen;
 
     /**
-     * Construct a new <code>NativeObjectReference</code>.
+     * Construct a new <code>NativeObjectPhantomReference</code>.
      *
      * @param referent   {@link NativeObject} associated.
      * @param queue      Reference queue containing phantom reachable native objects.
      * @param ptr        Underlying roc object native pointer.
      * @param destructor Destructor method.
      */
-    NativeObjectReference(NativeObject referent, ReferenceQueue<? super NativeObject> queue, long ptr, Destructor destructor) {
+    NativeObjectPhantomReference(NativeObject referent, ReferenceQueue<? super NativeObject> queue, long ptr, Destructor destructor) {
         super(referent, queue);
         this.ptr = ptr;
         this.destructor = destructor;
@@ -45,7 +45,7 @@ class NativeObjectReference extends PhantomReference<NativeObject> implements Au
     /**
      * Get {@link NativeObject} native pointer.
      *
-     * @return      the native roc object pointer associated to this <code>NativeObjectReference</code>.
+     * @return      the native roc object pointer associated to this <code>NativeObjectPhantomReference</code>.
      */
     long getPtr() {
         return ptr;

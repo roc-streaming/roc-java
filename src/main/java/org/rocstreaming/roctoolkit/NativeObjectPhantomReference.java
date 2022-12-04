@@ -31,7 +31,7 @@ class NativeObjectPhantomReference extends PhantomReference<NativeObject> implem
     /**
      *  {@link NativeObject} open status.
      */
-    private final AtomicBoolean isOpen;
+    private volatile boolean isOpen;
 
     /**
      * Construct a new <code>NativeObjectPhantomReference</code>.
@@ -47,7 +47,7 @@ class NativeObjectPhantomReference extends PhantomReference<NativeObject> implem
         this.ptr = ptr;
         this.dependsOn = dependsOn;
         this.destructor = destructor;
-        this.isOpen = new AtomicBoolean(true);
+        this.isOpen = true;
     }
 
     /**
@@ -63,9 +63,14 @@ class NativeObjectPhantomReference extends PhantomReference<NativeObject> implem
      * Close the native object.
      */
     @Override
-    public void close() throws Exception {
-        if (isOpen.compareAndSet(true, false)) {
+    public synchronized void close() throws Exception {
+        if (isOpen) {
             destructor.close(ptr);
+            // destructor.close(ptr) could throw exception e.g. if someone tried to close context while
+            // sender/receiver still opened.
+            // In such case NativeObjectCleaner try to close it one more time after NativeObject
+            // will be collected by GC
+            isOpen = false;
         }
     }
 

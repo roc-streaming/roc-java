@@ -48,7 +48,8 @@ class NativeObject implements AutoCloseable {
      */
     @Override
     public void close() throws Exception {
-        NATIVE_OBJECT_CLEANER.remove(resource);
         resource.close();
+        resource.clear();
+        NATIVE_OBJECT_CLEANER.remove(resource);
     }
 }

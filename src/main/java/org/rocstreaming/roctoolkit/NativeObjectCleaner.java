@@ -21,7 +21,9 @@ class NativeObjectCleaner extends Thread {
     private final ReferenceQueue<NativeObject> referenceQueue;
 
     /**
-     * Set to keep references to prevent being garbage collected
+     * Set to keep phantom references to prevent being garbage collected,
+     * otherwise reference will be collected by GC and won't be queued to {@link NativeObjectCleaner#referenceQueue}
+     * when related {@link NativeObject} collected by GC
      */
     private final Set<NativeObjectPhantomReference> set = Collections.newSetFromMap(new ConcurrentHashMap<>());
 

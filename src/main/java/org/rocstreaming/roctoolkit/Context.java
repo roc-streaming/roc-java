@@ -60,7 +60,7 @@ public class Context extends NativeObject {
      * @throws Exception if there are not enough resources.
      */
     public Context(ContextConfig config) throws IllegalArgumentException, Exception {
-        super(tryOpen(config), Context::close);
+        super(tryOpen(config), null, Context::close);
     }
 
     private static native long open(ContextConfig config) throws IllegalArgumentException, Exception;

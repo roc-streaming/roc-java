@@ -18,6 +18,12 @@ class NativeObjectPhantomReference extends PhantomReference<NativeObject> implem
     private final long ptr;
 
     /**
+     * Dependency for finalization ordering. Keep strong reference to prevent it from being collected by GC
+     */
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
+    private final NativeObject dependsOn;
+
+    /**
      *  Destructor method
      */
     private final Destructor destructor;
@@ -33,11 +39,13 @@ class NativeObjectPhantomReference extends PhantomReference<NativeObject> implem
      * @param referent   {@link NativeObject} associated.
      * @param queue      Reference queue containing phantom reachable native objects.
      * @param ptr        Underlying roc object native pointer.
+     * @param dependsOn  Dependency for finalization ordering. Keep strong reference to prevent it from being collected by GC
      * @param destructor Destructor method.
      */
-    NativeObjectPhantomReference(NativeObject referent, ReferenceQueue<? super NativeObject> queue, long ptr, Destructor destructor) {
+    NativeObjectPhantomReference(NativeObject referent, ReferenceQueue<? super NativeObject> queue, long ptr, NativeObject dependsOn, Destructor destructor) {
         super(referent, queue);
         this.ptr = ptr;
+        this.dependsOn = dependsOn;
         this.destructor = destructor;
         this.isOpen = new AtomicBoolean(true);
     }

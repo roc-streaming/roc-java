@@ -48,11 +48,12 @@ class NativeObjectCleaner extends Thread {
      *
      * @param nativeObj  {@link NativeObject} to add.
      * @param ptr        Underlying roc object native pointer.
+     * @param dependsOn  dependency for finalization ordering
      * @param destructor Destructor method.
      * @return the new {@link NativeObjectPhantomReference} associated to the {@link NativeObject}.
      */
-    NativeObjectPhantomReference register(NativeObject nativeObj, long ptr, Destructor destructor) {
-        NativeObjectPhantomReference reference = new NativeObjectPhantomReference(nativeObj, referenceQueue, ptr, destructor);
+    NativeObjectPhantomReference register(NativeObject nativeObj, long ptr, NativeObject dependsOn, Destructor destructor) {
+        NativeObjectPhantomReference reference = new NativeObjectPhantomReference(nativeObj, referenceQueue, ptr, dependsOn, destructor);
         set.add(reference);
         return reference;
     }

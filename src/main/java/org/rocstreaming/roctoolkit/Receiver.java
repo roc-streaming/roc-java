@@ -128,12 +128,6 @@ import java.io.IOException;
 public class Receiver extends NativeObject {
 
     /**
-     * Roc context. Keeping the reference to context to avoid it being collected by GC before the receiver itself
-     */
-    @SuppressWarnings({"FieldCanBeLocal", "unused"})
-    private final Context context;
-
-    /**
      * Validate receiver constructor parameters and open a new receiver if validation is successful.
      *
      * @param context                       should point to an opened context.
@@ -141,7 +135,7 @@ public class Receiver extends NativeObject {
      *
      * @return                              the native roc receiver pointer.
      * @throws IllegalArgumentException     if the arguments are invalid.
-     * @throws Exception                    if an error occured when creating the receiver.
+     * @throws Exception                    if an error occurred when creating the receiver.
      */
     private static long tryOpen(Context context, ReceiverConfig config) throws IllegalArgumentException, Exception {
         if (context == null || config == null) throw new IllegalArgumentException();
@@ -157,11 +151,10 @@ public class Receiver extends NativeObject {
      * @param config        should point to an initialized config.
      *
      * @throws IllegalArgumentException if the arguments are invalid.
-     * @throws Exception                if an error occured when creating the receiver.
+     * @throws Exception                if an error occurred when creating the receiver.
      */
     public Receiver(Context context, ReceiverConfig config) throws IllegalArgumentException, Exception {
-        super(tryOpen(context, config), Receiver::close);
-        this.context = context;
+        super(tryOpen(context, config), context, Receiver::close);
     }
 
     /**

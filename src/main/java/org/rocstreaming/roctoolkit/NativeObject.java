@@ -23,11 +23,12 @@ class NativeObject implements AutoCloseable {
     /**
      * Construct a <code>NativeObject</code>.
      *
-     * @param ptr               native pointer to a roc native object
-     * @param destructor        destructor method for closing <code>NativeObject</code>.
+     * @param ptr        native pointer to a roc native object
+     * @param dependsOn  dependency for finalization ordering
+     * @param destructor destructor method for closing <code>NativeObject</code>.
      */
-    protected NativeObject(long ptr, Destructor destructor) {
-        this.resource = NATIVE_OBJECT_CLEANER.register(this, ptr, destructor);
+    protected NativeObject(long ptr, NativeObject dependsOn, Destructor destructor) {
+        this.resource = NATIVE_OBJECT_CLEANER.register(this, ptr, dependsOn, destructor);
     }
 
     /**

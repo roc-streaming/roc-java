@@ -1,6 +1,6 @@
 # JNI bindings for Roc Toolkit
 
-[![build](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml/badge.svg)](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml) [![Android release](https://img.shields.io/maven-central/v/org.roc-streaming.roctoolkit/roc-android?color=blue&label=aar)](https://search.maven.org/artifact/org.roc-streaming.roctoolkit/roc-android)
+[![build](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml/badge.svg)](https://github.com/roc-streaming/roc-java/actions/workflows/build.yaml) [![Android release](https://img.shields.io/maven-central/v/org.roc-streaming.roctoolkit/roc-android?color=blue&label=aar)](https://search.maven.org/artifact/org.roc-streaming.roctoolkit/roc-android) [![Android javadoc](https://javadoc.io/badge2/org.roc-streaming.roctoolkit/roc-android/javadoc.svg?color=blue&label=aar-javadoc)](https://javadoc.io/doc/org.roc-streaming.roctoolkit/roc-android)
 
 This library provides JNI bindings for [Roc Toolkit](https://github.com/roc-streaming/roc-toolkit), a toolkit for real-time audio streaming over the network.
 
@@ -53,7 +53,7 @@ Note that prebuilt AAR package for Android already ships the right version of li
 
 ## Using prebuilt AAR for Android
 
-Add jcenter repository in `build.gradle` file:
+Add mavenCentral repository in `build.gradle` file:
 
     repositories {
         mavenCentral()

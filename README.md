@@ -29,7 +29,7 @@ Key features:
 
 ## Documentation
 
-Documentation for the Java API is not available online yet. You can find it in the source code as javadoc comments.
+Documentation for the Java API generated from javadoc comments can be found on [javadoc.io](https://javadoc.io/doc/org.roc-streaming.roctoolkit/roc-android/latest/index.html).
 
 Documentation for the C API can be found [here](https://roc-streaming.org/toolkit/docs/api.html).
 

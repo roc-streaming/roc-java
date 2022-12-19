@@ -12,8 +12,8 @@ Android support included!
 
 Compatible senders and receivers include:
 
-* [command-line tools](https://roc-streaming.org/toolkit/docs/running/command_line_tools.html)
-* [PulseAudio modules](https://roc-streaming.org/toolkit/docs/running/pulseaudio_modules.html)
+* [command-line tools](https://roc-streaming.org/toolkit/docs/tools/command_line_tools.html)
+* [sound server modules](https://roc-streaming.org/toolkit/docs/tools/sound_server_modules.html) (PulseAudio, PipeWire)
 * [C library](https://roc-streaming.org/toolkit/docs/api.html)
 * [Go bindings](https://github.com/roc-streaming/roc-go/)
 

@@ -39,6 +39,10 @@ then
     mkdir -p "android/build/roc-toolkit"
     git clone -q --recurse-submodules https://github.com/roc-streaming/roc-toolkit.git \
         "android/build/roc-toolkit"
+    work_dir=$(pwd)
+    cd "android/build/roc-toolkit"
+    git checkout -q 863a0227b78464c3a56fc0484bec73c891e4b7a8
+    cd $work_dir
 fi
 
 if [ ! -d "android/build/libroc" ]

@@ -42,6 +42,7 @@ then
     work_dir=$(pwd)
     cd "android/build/roc-toolkit"
     git checkout -q 863a0227b78464c3a56fc0484bec73c891e4b7a8
+    git submodule update --init --recursive
     cd $work_dir
 fi
 

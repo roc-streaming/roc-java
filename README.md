@@ -61,7 +61,7 @@ Add mavenCentral repository in `build.gradle` file:
 
 Add dependency to project ([versions](https://search.maven.org/artifact/org.roc-streaming.roctoolkit/roc-android)):
 
-    implementation 'org.roc-streaming.roctoolkit:roc-android:0.0.1'
+    implementation 'org.roc-streaming.roctoolkit:roc-android:<VERSION>'
 
 ## Building JAR from sources
 

@@ -33,6 +33,77 @@ Documentation for the Java API generated from javadoc comments can be found on [
 
 Documentation for the C API can be found [here](https://roc-streaming.org/toolkit/docs/api.html).
 
+## Quick start
+
+#### Sender
+
+```java
+import org.rocstreaming.roctoolkit;
+
+final String MY_RECEIVER_IP = "192.168.0.1";
+final int MY_RECEIVER_SOURCE_PORT = 10001;
+final int MY_RECEIVER_REPAIR_PORT = 10002;
+final int MY_SAMPLE_RATE = 44100;
+
+try (Context context = new Context()) {
+    ReceiverConfig config = new SenderConfig.Builder(MY_SAMPLE_RATE,
+                                                ChannelSet.STEREO,
+                                                FrameEncoding.PCM_FLOAT)
+                                                .fecCode(FecCode.RS8M)
+                                                .automaticTiming(true)
+                                        .build();
+                                        
+    try (Sender sender = new Sender(context, config)) {
+        Address sourceAddress = new Address(Family.AUTO, MY_RECEIVER_IP, MY_RECEIVER_SOURCE_PORT);
+        Address repairAddress = new Address(Family.AUTO, MY_RECEIVER_IP, MY_RECEIVER_REPAIR_PORT);
+
+        sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, sourceAddress);
+        sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, repairAddress);
+        
+        while (/* not stopped */) {
+            float[] samples = /* generate samples */
+
+            sender.write(samples);
+        }
+    }
+}
+```
+
+#### Receiver
+
+```java
+import org.rocstreaming.roctoolkit;
+
+final String MY_RECEIVER_IP = "0.0.0.0";
+final int MY_RECEIVER_SOURCE_PORT = 10001;
+final int MY_RECEIVER_REPAIR_PORT = 10002;
+final int MY_SAMPLE_RATE = 44100;
+final int MY_SAMPLE_BATCH = 320;
+
+try (Context context = new Context()) {
+    ReceiverConfig config = new ReceiverConfig.Builder(MY_SAMPLE_RATE,
+                                            ChannelSet.STEREO,
+                                            FrameEncoding.PCM_FLOAT)
+                                            .automaticTiming(true)
+                                        .build();
+                                        
+    try (Receiver receiver = new Receiver(context, config)) {
+        Address sourceAddress = new Address(Family.AUTO, MY_RECEIVER_IP, MY_RECEIVER_SOURCE_PORT);
+        Address repairAddress = new Address(Family.AUTO, MY_RECEIVER_IP, MY_RECEIVER_REPAIR_PORT);
+
+        receiver.bind(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, sourceAddress);
+        receiver.bind(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, repairAddress);
+        
+        while (/* not stopped */) {
+            float[] samples = new float[MY_SAMPLE_BATCH];
+            receiver.read(samples);
+
+            /* process received samples */
+        }
+    }
+}
+```
+
 ## Versioning
 
 Java bindings and the C library both use [semantic versioning](https://semver.org/).

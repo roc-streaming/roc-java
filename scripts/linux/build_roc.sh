@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-git clone https://github.com/roc-streaming/roc-toolkit.git /tmp/roc
+git clone --recurse-submodules https://github.com/roc-streaming/roc-toolkit.git /tmp/roc
 work_dir=$(pwd)
 cd /tmp/roc
 git checkout -q 863a0227b78464c3a56fc0484bec73c891e4b7a8

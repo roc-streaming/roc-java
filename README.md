@@ -256,7 +256,7 @@ export AVD_ARCH=x86_64
 ./scripts/android_docker.sh [build|test]
 ```
 
-Additional information on the `env-android` docker image, which is used by this script, is available [here](https://github.com/roc-streaming/roc-toolkit/blob/develop/docs/sphinx/development/continuous_integration.rst#android-environment).
+Additional information on the `env-android` docker image, which is used by this script, is available [here](https://roc-streaming.org/toolkit/docs/development/continuous_integration.html#android-environment).
 
 
 #### Device script

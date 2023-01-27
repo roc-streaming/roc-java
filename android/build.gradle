@@ -1,4 +1,4 @@
-apply from: '../tag_version.gradle'
+apply from: '../common.gradle'
 
 buildscript {
     repositories {

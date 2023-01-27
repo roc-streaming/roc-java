@@ -1,3 +1,8 @@
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
+
 def getTagVersion = {
     try {
         def stdout = new ByteArrayOutputStream()
@@ -14,4 +19,22 @@ def getTagVersion = {
 
 ext {
     tagVersion = getTagVersion()
+}
+
+ext.copyNativeLibs = { start, target ->
+    Path startPath = Paths.get(start)
+    Path targetPath = Paths.get(target)
+
+    targetPath.toFile().mkdirs()
+    Files.walk(startPath).withCloseable { stream ->
+        stream
+                .filter({ path -> path.getFileName().toString().endsWith(".dylib") || path.getFileName().toString().endsWith(".so") })
+                .forEach({ path ->
+                    try {
+                        Files.copy(path, targetPath.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING)
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+    }
 }

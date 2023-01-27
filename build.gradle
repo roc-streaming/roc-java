@@ -32,27 +32,18 @@ compileJava {
     options.headerOutputDirectory = file(project(":roc_jni").projectDir.absolutePath + "/src/main/public")
 }
 
-class copyNativeDeps extends Copy {
-    copyNativeDeps() {
-        include "*/*/*.so"
-        include "*/*/*.dylib"
-        eachFile {
-            path = name
-        }
-        includeEmptyDirs = false
+tasks.register('copyNativeDebugDeps') {
+    dependsOn ":roc_jni:assembleDebug"
+    doLast {
+        copyNativeLibs(project(":roc_jni").buildDir.absolutePath + "/debug", targetLibraryPath)
     }
 }
 
-task copyNativeDebugDeps(type: copyNativeDeps) {
-    from(project(":roc_jni").buildDir.absolutePath + "/debug")
-    into targetLibraryPath
-    dependsOn ":roc_jni:assembleDebug"
-}
-
-task copyNativeReleaseDeps(type: copyNativeDeps) {
-    from(project(":roc_jni").buildDir.absolutePath + "/release")
-    into targetLibraryPath
+tasks.register('copyNativeReleaseDeps') {
     dependsOn ":roc_jni:assembleRelease"
+    doLast {
+        copyNativeLibs(project(":roc_jni").buildDir.absolutePath + "/release", targetLibraryPath)
+    }
 }
 
 jar.dependsOn copyNativeReleaseDeps

@@ -12,19 +12,17 @@ if(APPLE)
 endif()
 
 add_library(roc_jni SHARED
-        src/main/cpp/address.cpp
         src/main/cpp/channel_set.cpp
+        src/main/cpp/clock_source.cpp
         src/main/cpp/common.cpp
         src/main/cpp/context.cpp
-        src/main/cpp/family.cpp
-        src/main/cpp/fec_code.cpp
+        src/main/cpp/endpoint.cpp
+        src/main/cpp/fec_encoding.cpp
         src/main/cpp/frame_encoding.cpp
         src/main/cpp/logger.cpp
-        src/main/cpp/log_level.cpp
         src/main/cpp/packet_encoding.cpp
-        src/main/cpp/port_type.cpp
-        src/main/cpp/protocol.cpp
         src/main/cpp/receiver.cpp
+        src/main/cpp/resampler_backend.cpp
         src/main/cpp/resampler_profile.cpp
         src/main/cpp/sender.cpp
         )

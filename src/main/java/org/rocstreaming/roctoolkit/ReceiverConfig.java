@@ -2,7 +2,7 @@ package org.rocstreaming.roctoolkit;
 
 /**
  * Receiver configuration.
- *
+ * <p>
  * ReceiverConfig object can be instantiated with {@link ReceiverConfig.Builder ReceiverConfig.Builder} objects.
  *
  * @see Receiver
@@ -13,7 +13,8 @@ public class ReceiverConfig {
     private int frameSampleRate;
     private ChannelSet frameChannels;
     private FrameEncoding frameEncoding;
-    private boolean automaticTiming;
+    private ClockSource clockSource;
+    private ResamplerBackend resamplerBackend;
     private ResamplerProfile resamplerProfile;
     private long targetLatency;
     private long maxLatencyOverrun;
@@ -22,21 +23,24 @@ public class ReceiverConfig {
     private long brokenPlaybackTimeout;
     private long breakageDetectionWindow;
 
-    private ReceiverConfig(int frameSampleRate,
-                           ChannelSet frameChannels,
-                           FrameEncoding frameEncoding,
-                           boolean automaticTiming,
-                           ResamplerProfile resamplerProfile,
-                           long targetLatency,
-                           long maxLatencyOverrun,
-                           long maxLatencyUnderrun,
-                           long noPlaybackTimeout,
-                           long brokenPlaybackTimeout,
-                           long breakageDetectionWindow) {
+    private ReceiverConfig(
+            int frameSampleRate,
+            ChannelSet frameChannels,
+            FrameEncoding frameEncoding,
+            ClockSource clockSource,
+            ResamplerBackend resamplerBackend,
+            ResamplerProfile resamplerProfile,
+            long targetLatency,
+            long maxLatencyOverrun,
+            long maxLatencyUnderrun,
+            long noPlaybackTimeout,
+            long brokenPlaybackTimeout,
+            long breakageDetectionWindow) {
         this.frameSampleRate = frameSampleRate;
         this.frameChannels = frameChannels;
         this.frameEncoding = frameEncoding;
-        this.automaticTiming = automaticTiming;
+        this.clockSource = clockSource;
+        this.resamplerBackend = resamplerBackend;
         this.resamplerProfile = resamplerProfile;
         this.targetLatency = targetLatency;
         this.maxLatencyOverrun = maxLatencyOverrun;
@@ -51,10 +55,11 @@ public class ReceiverConfig {
      * @see ReceiverConfig
      */
     public static class Builder {
-        private int frameSampleRate;
-        private ChannelSet frameChannels;
-        private FrameEncoding frameEncoding;
-        private boolean automaticTiming;
+        private final int frameSampleRate;
+        private final ChannelSet frameChannels;
+        private final FrameEncoding frameEncoding;
+        private ClockSource clockSource;
+        private ResamplerBackend resamplerBackend;
         private ResamplerProfile resamplerProfile;
         private long targetLatency;
         private long maxLatencyOverrun;
@@ -78,14 +83,22 @@ public class ReceiverConfig {
         }
 
         /**
-         * @param automaticTiming   Enable automatic timing.
-         *                          If non-zero, the receiver read operation restricts the read
-         *                          rate according to the <code>frameSampleRate</code> parameter.
-         *                          If zero, no restrictions are applied.
+         * @param clockSource Clock source to use.
+         *                    Defines whether read operation will be blocking or non-blocking.
+         *                    If zero, default value is used.
          * @return this Builder
          */
-        public Builder automaticTiming(boolean automaticTiming) {
-            this.automaticTiming = automaticTiming;
+        public Builder clockSource(ClockSource clockSource) {
+            this.clockSource = clockSource;
+            return this;
+        }
+
+        /**
+         * @param resamplerBackend Resampler backend to use.
+         * @return this Builder
+         */
+        public Builder resamplerBackend(ResamplerBackend resamplerBackend) {
+            this.resamplerBackend = resamplerBackend;
             return this;
         }
 
@@ -114,8 +127,7 @@ public class ReceiverConfig {
          *                          The session will not start playing until it accumulates the
          *                          requested latency.
          *                          Then, if resampler is enabled, the session will adjust its clock
-         *                          to keep actual latency as close as close as possible to the target
-         *                          latency.
+         *                          to keep actual latency as close as possible to the target latency.
          *                          If zero, default value is used.
          * @return this Builder
          */
@@ -197,7 +209,7 @@ public class ReceiverConfig {
          * @return the new {@link ReceiverConfig ReceiverConfig}
          */
         public ReceiverConfig build() {
-            return new ReceiverConfig(frameSampleRate, frameChannels, frameEncoding, automaticTiming,
+            return new ReceiverConfig(frameSampleRate, frameChannels, frameEncoding, clockSource, resamplerBackend,
                                     resamplerProfile, targetLatency, maxLatencyOverrun, maxLatencyUnderrun,
                                     noPlaybackTimeout, brokenPlaybackTimeout, breakageDetectionWindow);
         }
@@ -227,12 +239,20 @@ public class ReceiverConfig {
         this.frameEncoding = frameEncoding;
     }
 
-    public boolean getAutomaticTiming() {
-        return automaticTiming;
+    public ClockSource getClockSource() {
+        return clockSource;
     }
 
-    public void setAutomaticTiming(boolean automaticTiming) {
-        this.automaticTiming = automaticTiming;
+    public void setClockSource(ClockSource clockSource) {
+        this.clockSource = clockSource;
+    }
+
+    public ResamplerBackend getResamplerBackend() {
+        return resamplerBackend;
+    }
+
+    public void setResamplerBackend(ResamplerBackend resamplerBackend) {
+        this.resamplerBackend = resamplerBackend;
     }
 
     public ResamplerProfile getResamplerProfile() {

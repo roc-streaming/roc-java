@@ -17,16 +17,16 @@ JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Sender_open
 
 /*
  * Class:     org_rocstreaming_roctoolkit_Sender
- * Method:    bind
- * Signature: (JLorg/rocstreaming/roctoolkit/Address;)V
+ * Method:    setOutgoingAddress
+ * Signature: (JIILjava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_bind
-  (JNIEnv *, jobject, jlong, jobject);
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_setOutgoingAddress
+  (JNIEnv *, jobject, jlong, jint, jint, jstring);
 
 /*
  * Class:     org_rocstreaming_roctoolkit_Sender
  * Method:    connect
- * Signature: (JIILorg/rocstreaming/roctoolkit/Address;)V
+ * Signature: (JIILorg/rocstreaming/roctoolkit/Endpoint;)V
  */
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_connect
   (JNIEnv *, jobject, jlong, jint, jint, jobject);

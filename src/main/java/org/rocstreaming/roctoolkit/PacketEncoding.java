@@ -1,7 +1,5 @@
 package org.rocstreaming.roctoolkit;
 
-import java.util.function.Supplier;
-
 /**
  * Packet encoding.
  */
@@ -13,16 +11,16 @@ public enum PacketEncoding {
      * Uncompressed samples coded as interleaved 16-bit signed big-endian
      * integers in two's complement notation.
      */
-    AVP_L16( PacketEncoding::getRocPacketEncodingAVPL16 );
+    AVP_L16(2);
 
     private final int value;
-    PacketEncoding(Supplier<Integer> value) {
-        RocLibrary.loadLibrary();
-        this.value = value.get();
-    }
-    public int getValue() {
-        return( this.value );
+
+    PacketEncoding(int value) {
+        this.value = value;
     }
 
-    private static native int getRocPacketEncodingAVPL16();
+    public int getValue() {
+        return this.value;
+    }
+
 }

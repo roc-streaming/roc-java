@@ -10,7 +10,7 @@ public class ContextTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Logger.setLevel(LogLevel.NONE);
+        Logger.setLevel(LogLevel.ERROR);
     }
 
     @Test

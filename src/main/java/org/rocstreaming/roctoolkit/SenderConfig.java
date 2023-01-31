@@ -2,7 +2,7 @@ package org.rocstreaming.roctoolkit;
 
 /**
  * Sender configuration.
- *
+ * <p>
  * SenderConfig object can be instantiated with {@link SenderConfig.Builder SenderConfig.Builder} objects.
  *
  * @see Sender
@@ -18,17 +18,28 @@ public class SenderConfig {
     private PacketEncoding packetEncoding;
     private long packetLength;
     private int packetInterleaving;
-    private boolean automaticTiming;
+    private ClockSource clockSource;
+    private ResamplerBackend resamplerBackend;
     private ResamplerProfile resamplerProfile;
-    private FecCode fecCode;
+    private FecEncoding fecEncoding;
     private int fecBlockSourcePackets;
     private int fecBlockRepairPackets;
 
-    private SenderConfig(int frameSampleRate, ChannelSet frameChannels, FrameEncoding frameEncoding,
-                         int packetSampleRate, ChannelSet packetChannels, PacketEncoding packetEncoding,
-                         long packetLength, int packetInterleaving, boolean automaticTiming,
-                         ResamplerProfile resamplerProfile, FecCode fecCode, int fecBlockSourcePackets,
-                         int fecBlockRepairPackets) {
+    private SenderConfig(
+            int frameSampleRate,
+            ChannelSet frameChannels,
+            FrameEncoding frameEncoding,
+            int packetSampleRate,
+            ChannelSet packetChannels,
+            PacketEncoding packetEncoding,
+            long packetLength,
+            int packetInterleaving,
+            ClockSource clockSource,
+            ResamplerBackend resamplerBackend,
+            ResamplerProfile resamplerProfile,
+            FecEncoding fecEncoding,
+            int fecBlockSourcePackets,
+            int fecBlockRepairPackets) {
         this.frameSampleRate = frameSampleRate;
         this.frameChannels = frameChannels;
         this.frameEncoding = frameEncoding;
@@ -37,42 +48,44 @@ public class SenderConfig {
         this.packetEncoding = packetEncoding;
         this.packetLength = packetLength;
         this.packetInterleaving = packetInterleaving;
-        this.automaticTiming = automaticTiming;
+        this.clockSource = clockSource;
+        this.resamplerBackend = resamplerBackend;
         this.resamplerProfile = resamplerProfile;
-        this.fecCode = fecCode;
+        this.fecEncoding = fecEncoding;
         this.fecBlockSourcePackets = fecBlockSourcePackets;
         this.fecBlockRepairPackets = fecBlockRepairPackets;
     }
 
     /**
-     *  Builder class for {@link SenderConfig SenderConfig} objects
+     * Builder class for {@link SenderConfig SenderConfig} objects
      *
      * @see SenderConfig
      */
     public static class Builder {
-        private int frameSampleRate;
-        private ChannelSet frameChannels;
-        private FrameEncoding frameEncoding;
+        private final int frameSampleRate;
+        private final ChannelSet frameChannels;
+        private final FrameEncoding frameEncoding;
         private int packetSampleRate;
         private ChannelSet packetChannels;
         private PacketEncoding packetEncoding;
         private long packetLength;
         private int packetInterleaving;
-        private boolean automaticTiming;
+        private ClockSource clockSource;
+        private ResamplerBackend resamplerBackend;
         private ResamplerProfile resamplerProfile;
-        private FecCode fecCode;
+        private FecEncoding fecEncoding;
         private int fecBlockSourcePackets;
         private int fecBlockRepairPackets;
 
         /**
          * Create a Builder object for building {@link SenderConfig SenderConfig}
          *
-         * @param frameSampleRate   The rate of the samples in the frames passed to sender.
-         *                          Number of samples per channel per second.
-         *                          If <code>frameSampleRate</code> and <code>packetSampleRate</code>
-         *                          are different, resampler should be enabled.
-         * @param frameChannels     The channel set in the frames passed to sender.
-         * @param frameEncoding     The sample encoding in the frames passed to sender.
+         * @param frameSampleRate The rate of the samples in the frames passed to sender.
+         *                        Number of samples per channel per second.
+         *                        If <code>frameSampleRate</code> and <code>packetSampleRate</code>
+         *                        are different, resampler should be enabled.
+         * @param frameChannels   The channel set in the frames passed to sender.
+         * @param frameEncoding   The sample encoding in the frames passed to sender.
          */
         public Builder(int frameSampleRate, ChannelSet frameChannels, FrameEncoding frameEncoding) {
             this.frameSampleRate = frameSampleRate;
@@ -81,10 +94,10 @@ public class SenderConfig {
         }
 
         /**
-         * @param   packetSampleRate The rate of the samples in the packets generated by sender.
-         *                           Number of samples per channel per second.
-         *                           If zero, default value is used.
-         * @return  this Builder
+         * @param packetSampleRate The rate of the samples in the packets generated by sender.
+         *                         Number of samples per channel per second.
+         *                         If zero, default value is used.
+         * @return this Builder
          */
         public Builder packetSampleRate(int packetSampleRate) {
             this.packetSampleRate = packetSampleRate;
@@ -92,8 +105,8 @@ public class SenderConfig {
         }
 
         /**
-         * @param packetChannels     The channel set in the packets generated by sender.
-         *                           If null, default value is used.
+         * @param packetChannels The channel set in the packets generated by sender.
+         *                       If null, default value is used.
          * @return this Builder
          */
         public Builder packetChannels(ChannelSet packetChannels) {
@@ -102,8 +115,8 @@ public class SenderConfig {
         }
 
         /**
-         * @param packetEncoding    The sample encoding in the packets generated by sender.
-         *                          If null, default value is used.
+         * @param packetEncoding The sample encoding in the packets generated by sender.
+         *                       If null, default value is used.
          * @return this Builder
          */
         public Builder packetEncoding(PacketEncoding packetEncoding) {
@@ -112,12 +125,12 @@ public class SenderConfig {
         }
 
         /**
-         * @param packetLength      The length of the packets produced by sender, in nanoseconds.
-         *                          Number of nanoseconds encoded per packet.
-         *                          The samples written to the sender are buffered until the full
-         *                          packet is accumulated or the sender is flushed or closed.
-         *                          Larger number reduces packet overhead but also increases latency.
-         *                          If zero, default value is used.
+         * @param packetLength The length of the packets produced by sender, in nanoseconds.
+         *                     Number of nanoseconds encoded per packet.
+         *                     The samples written to the sender are buffered until the full
+         *                     packet is accumulated or the sender is flushed or closed.
+         *                     Larger number reduces packet overhead but also increases latency.
+         *                     If zero, default value is used.
          * @return this Builder
          */
         public Builder packetLength(long packetLength) {
@@ -137,21 +150,29 @@ public class SenderConfig {
         }
 
         /**
-         * @param automaticTiming   Enable automatic timing.
-         *                          If true, the sender write operation restricts the write rate
-         *                          according to the <code>frameSampleRate</code> parameter. If false, no
-         *                          restrictions are applied.
+         * @param clockSource Clock source to use.
+         *                    Defines whether write operation will be blocking or non-blocking.
+         *                    If zero, default value is used.
          * @return this Builder
          */
-        public Builder automaticTiming(boolean automaticTiming) {
-            this.automaticTiming = automaticTiming;
+        public Builder clockSource(ClockSource clockSource) {
+            this.clockSource = clockSource;
             return this;
         }
 
         /**
-         * @param resamplerProfile  Resampler profile to use.
-         *                          If non-null, the sender employs resampler if the frame sample rate
-         *                          differs from the packet sample rate.
+         * @param resamplerBackend Resampler backend to use.
+         * @return this Builder
+         */
+        public Builder resamplerBackend(ResamplerBackend resamplerBackend) {
+            this.resamplerBackend = resamplerBackend;
+            return this;
+        }
+
+        /**
+         * @param resamplerProfile Resampler profile to use.
+         *                         If non-null, the sender employs resampler if the frame sample rate
+         *                         differs from the packet sample rate.
          * @return this Builder
          */
         public Builder resamplerProfile(ResamplerProfile resamplerProfile) {
@@ -160,21 +181,21 @@ public class SenderConfig {
         }
 
         /**
-         * @param fecCode           FEC code to use.
-         *                          If non-null, the sender employs a FEC codec to generate redundant
-         *                          packets which may be used on receiver to restore lost packets.
-         *                          This requires both sender and receiver to use two separate source
-         *                          and repair ports.
+         * @param fecEncoding FEC encoding to use.
+         *                    If non-null, the sender employs a FEC codec to generate redundant
+         *                    packets which may be used on receiver to restore lost packets.
+         *                    This requires both sender and receiver to use two separate source
+         *                    and repair ports.
          * @return this Builder
          */
-        public Builder fecCode(FecCode fecCode) {
-            this.fecCode = fecCode;
+        public Builder fecEncoding(FecEncoding fecEncoding) {
+            this.fecEncoding = fecEncoding;
             return this;
         }
 
         /**
          * @param fecBlockSourcePackets Number of source packets per FEC block.
-         *                              Used if some FEC code is selected.
+         *                              Used if some FEC encoding is selected.
          *                              Larger number increases robustness but also increases latency.
          *                              If zero, default value is used.
          * @return this Builder
@@ -186,7 +207,7 @@ public class SenderConfig {
 
         /**
          * @param fecBlockRepairPackets Number of repair packets per FEC block.
-         *                              Used if some FEC code is selected.
+         *                              Used if some FEC encoding is selected.
          *                              Larger number increases robustness but also increases traffic.
          *                              If zero, default value is used.
          * @return this Builder
@@ -197,14 +218,15 @@ public class SenderConfig {
         }
 
         /**
-         *  Build the {@link SenderConfig SenderConfig} object with <code>Builder</code> parameters.
+         * Build the {@link SenderConfig SenderConfig} object with <code>Builder</code> parameters.
+         *
          * @return the new {@link SenderConfig SenderConfig}
          */
         public SenderConfig build() {
             return new SenderConfig(frameSampleRate, frameChannels, frameEncoding, packetSampleRate,
-                                    packetChannels, packetEncoding, packetLength, packetInterleaving,
-                                    automaticTiming, resamplerProfile, fecCode, fecBlockSourcePackets,
-                                    fecBlockRepairPackets);
+                    packetChannels, packetEncoding, packetLength, packetInterleaving,
+                    clockSource, resamplerBackend, resamplerProfile, fecEncoding,
+                    fecBlockSourcePackets, fecBlockRepairPackets);
         }
     }
 
@@ -272,12 +294,20 @@ public class SenderConfig {
         this.packetInterleaving = packetInterleaving;
     }
 
-    public boolean getAutomaticTiming() {
-        return automaticTiming;
+    public ClockSource getClockSource() {
+        return clockSource;
     }
 
-    public void setAutomaticTiming(boolean automaticTiming) {
-        this.automaticTiming = automaticTiming;
+    public void setClockSource(ClockSource clockSource) {
+        this.clockSource = clockSource;
+    }
+
+    public ResamplerBackend getResamplerBackend() {
+        return resamplerBackend;
+    }
+
+    public void setResamplerBackend(ResamplerBackend resamplerBackend) {
+        this.resamplerBackend = resamplerBackend;
     }
 
     public ResamplerProfile getResamplerProfile() {
@@ -288,12 +318,12 @@ public class SenderConfig {
         this.resamplerProfile = resamplerProfile;
     }
 
-    public FecCode getFecCode() {
-        return fecCode;
+    public FecEncoding getFecEncoding() {
+        return fecEncoding;
     }
 
-    public void setFecCode(FecCode fecCode) {
-        this.fecCode = fecCode;
+    public void setFecEncoding(FecEncoding fecEncoding) {
+        this.fecEncoding = fecEncoding;
     }
 
     public int getFecBlockSourcePackets() {

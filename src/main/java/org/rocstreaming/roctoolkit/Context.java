@@ -1,16 +1,16 @@
 package org.rocstreaming.roctoolkit;
 
 /**
- * Roc context.
- *
- * Context contains memory pools and network worker thread(s). Other objects
- * that work with memory and network should be attached to a context. It is
- * allowed both to create a separate context for every object, or to create a
- * single context shared between multiple objects.
- *
+ * Shared context.
+ * <p>
+ * Context contains memory pools and network worker threads, shared among objects attached
+ * to the context. It is allowed both to create a separate context for every object, or
+ * to create a single context shared between multiple objects.
+ * <p>
+ * <h3>Lifecycle</h3>
  * A context is created using {@link #Context() Context()} or
  * {@link #Context(ContextConfig) Context(ContextConfig)} and destroyed using
- * {@link #close() close()}. <code>Receiver</code> class implements
+ * {@link #close() close()}. <code>Context</code> class implements
  * {@link AutoCloseable AutoCloseable} so if it is used in a try-with-resources
  * statement the object is closed automatically at the end of the statement.
  * Objects can be attached and detached to an opened context at any moment from
@@ -39,7 +39,7 @@ public class Context extends NativeObject {
 
     /**
      * Open a new context.
-     *
+     * <p>
      * Allocates and initializes a new context. May start some background threads.
      *
      * @throws IllegalArgumentException if the arguments are invalid.
@@ -51,7 +51,7 @@ public class Context extends NativeObject {
 
     /**
      * Open a new context.
-     *
+     * <p>
      * Allocates and initializes a new context. May start some background threads.
      *
      * @param config should point to an initialized config.

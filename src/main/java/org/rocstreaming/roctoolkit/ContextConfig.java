@@ -2,7 +2,7 @@ package org.rocstreaming.roctoolkit;
 
 /**
  * Context configuration.
- *
+ * <p>
  * ContextConfig object can be instantiated with {@link ContextConfig.Builder ContextConfig.Builder} objects.
  *
  * @see Context
@@ -49,7 +49,7 @@ public class ContextConfig {
          * @param maxFrameSize Maximum size in bytes of an audio frame.
          *                     Defines the amount of bytes allocated per intermediate internal
          *                     frame in the pipeline. Does not limit the size of the frames
-         *                     provided by user.
+         *                     provided by user. If zero, default value is used.
          * @return this Builder
          */
         public Builder maxFrameSize(int maxFrameSize) {

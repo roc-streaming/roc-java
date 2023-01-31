@@ -1,7 +1,5 @@
 package org.rocstreaming.roctoolkit;
 
-import java.util.function.Supplier;
-
 /**
  * Resampler profile.
  */
@@ -10,41 +8,37 @@ public enum ResamplerProfile {
     /**
      * No resampling.
      */
-    DISABLE( ResamplerProfile::getRocResamplerDisable ),
+    DISABLE(-1),
 
     /**
      * Default profile.
      * Current default is {@link ResamplerProfile#MEDIUM MEDIUM}.
      */
-    DEFAULT( ResamplerProfile::getRocResamplerDefault ),
+    DEFAULT(0),
 
     /**
      * High quality, low speed.
      */
-    HIGH( ResamplerProfile::getRocResamplerHigh ),
+    HIGH(1),
 
     /**
      * Medium quality, medium speed.
      */
-    MEDIUM( ResamplerProfile::getRocResamplerMedium ),
+    MEDIUM(2),
 
     /**
      * Low quality, high speed.
      */
-    LOW( ResamplerProfile::getRocResamplerLow );
+    LOW(3);
 
     private final int value;
-    ResamplerProfile(Supplier<Integer> value) {
-        RocLibrary.loadLibrary();
-        this.value = value.get();
-    }
-    public int getValue() {
-        return( this.value );
+
+    ResamplerProfile(int value) {
+        this.value = value;
     }
 
-    private static native int getRocResamplerDisable();
-    private static native int getRocResamplerDefault();
-    private static native int getRocResamplerHigh();
-    private static native int getRocResamplerMedium();
-    private static native int getRocResamplerLow();
+    public int getValue() {
+        return this.value;
+    }
+
 }

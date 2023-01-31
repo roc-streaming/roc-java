@@ -1,7 +1,5 @@
 package org.rocstreaming.roctoolkit;
 
-import java.util.function.Supplier;
-
 /**
  * Channel set.
  */
@@ -11,16 +9,16 @@ public enum ChannelSet {
      * Stereo.
      * Two channels: left and right.
      */
-    STEREO( ChannelSet::getRocChannelSetStereo );
+    STEREO(0x3);
 
     private final int value;
-    ChannelSet(Supplier<Integer> value) {
-        RocLibrary.loadLibrary();
-        this.value = value.get();
-    }
-    public int getValue() {
-        return( this.value );
+
+    ChannelSet(int value) {
+        this.value = value;
     }
 
-    private static native int getRocChannelSetStereo();
+    public int getValue() {
+        return this.value;
+    }
+
 }

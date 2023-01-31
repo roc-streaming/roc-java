@@ -123,7 +123,7 @@ then
         -w "${PWD}"
     )
 
-    # for hardware accelaration in emulator
+    # for hardware acceleration in emulator
     if [ -e "/dev/kvm" ]
     then
         docker_args+=( --privileged --device /dev/kvm )

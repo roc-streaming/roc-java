@@ -6,7 +6,7 @@
 #define CONTEXT_CLASS               PACKAGE_BASE_NAME "/Context"
 #define CONTEXT_CONFIG_CLASS        PACKAGE_BASE_NAME "/ContextConfig"
 
-char context_config_unmarshall(JNIEnv *env, roc_context_config* conf, jobject jconfig) {
+char context_config_unmarshal(JNIEnv *env, roc_context_config* conf, jobject jconfig) {
     jclass contextConfigClass;
     char err = 0;
 
@@ -25,13 +25,13 @@ JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Context_open(JNIEnv *en
     roc_context*        context;
     roc_context_config  context_config;
 
-    if (context_config_unmarshall(env, &context_config, config) != 0) {
+    if (context_config_unmarshal(env, &context_config, config) != 0) {
         jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
         env->ThrowNew(exceptionClass, "Wrong context configuration values");
         return (jlong) NULL;
     }
 
-    if ((context = roc_context_open(&context_config)) == NULL) {
+    if (roc_context_open(&context_config, &context) != 0) {
         jclass exceptionClass = env->FindClass(EXCEPTION);
         env->ThrowNew(exceptionClass, "Error opening context");
         return (jlong) NULL;

@@ -1,17 +1,19 @@
 #include "org_rocstreaming_roctoolkit_Receiver.h"
 
 #include "common.h"
+#include "clock_source.h"
 #include "channel_set.h"
 #include "frame_encoding.h"
+#include "resampler_backend.h"
 #include "resampler_profile.h"
-#include "address.h"
+#include "endpoint.h"
 
 #include <roc/receiver.h>
 
 #define RECEIVER_CLASS              PACKAGE_BASE_NAME "/Receiver"
 #define RECEIVER_CONFIG_CLASS       PACKAGE_BASE_NAME "/ReceiverConfig"
 
-char receiver_config_unmarshall(JNIEnv *env, roc_receiver_config* config, jobject jconfig) {
+char receiver_config_unmarshal(JNIEnv *env, roc_receiver_config* config, jobject jconfig) {
     jobject tempObject;
     jclass  receiverConfigClass;
     char err = 0;
@@ -30,8 +32,11 @@ char receiver_config_unmarshall(JNIEnv *env, roc_receiver_config* config, jobjec
     if (tempObject == NULL) return 1;
     config->frame_encoding = (roc_frame_encoding) get_frame_encoding(env, tempObject);
 
-    config->automatic_timing = get_boolean_field_value(env, receiverConfigClass, jconfig, "automaticTiming", &err);
-    if (err) return err;
+    tempObject = get_object_field(env, receiverConfigClass, jconfig, "clockSource", "L" CLOCK_SOURCE_CLASS ";");
+    config->clock_source = get_clock_source(env, tempObject);
+
+    tempObject = get_object_field(env, receiverConfigClass, jconfig, "resamplerBackend", "L" RESAMPLER_BACKEND_CLASS ";");
+    config->resampler_backend = get_resampler_backend(env, tempObject);
 
     tempObject = get_object_field(env, receiverConfigClass, jconfig, "resamplerProfile", "L" RESAMPLER_PROFILE_CLASS ";");
     config->resampler_profile = (roc_resampler_profile) get_resampler_profile(env, tempObject);
@@ -58,13 +63,13 @@ JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Receiver_open(JNIEnv * 
 
     context = (roc_context*) contextPtr;
 
-    if (receiver_config_unmarshall(env, &receiverConfig, jconfig) != 0) {
+    if (receiver_config_unmarshal(env, &receiverConfig, jconfig) != 0) {
         jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
         env->ThrowNew(exceptionClass, "Bad arguments");
         return (jlong) NULL;
     }
 
-    if ((receiver = roc_receiver_open(context, &receiverConfig)) == NULL) {
+    if ((roc_receiver_open(context, &receiverConfig, &receiver)) != 0) {
         jclass exceptionClass = env->FindClass(EXCEPTION);
         env->ThrowNew(exceptionClass, "Error opening receiver");
         return (jlong) NULL;
@@ -74,26 +79,29 @@ JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Receiver_open(JNIEnv * 
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(JNIEnv * env, jobject thisObj, jlong receiverPtr,
-                    jint type, jint protocol, jobject jaddress) {
+                    jint slot, jint interface, jobject jendpoint) {
     roc_receiver*   receiver    = NULL;
-    roc_address     address;
+    roc_endpoint*   endpoint;
     int             port        = 0;
 
     receiver = (roc_receiver*) receiverPtr;
 
-    if (address_unmarshall(env, &address, jaddress) != 0) {
+    if (endpoint_unmarshal(env, &endpoint, jendpoint) != 0) {
+        roc_endpoint_deallocate(endpoint);
         jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
         env->ThrowNew(exceptionClass, "Bad arguments");
         return;
     }
 
-    if ((port = roc_address_port(&address)) < 0) {
+    if ((roc_endpoint_get_port(endpoint, &port)) != 0) {
+        roc_endpoint_deallocate(endpoint);
         jclass exceptionClass = env->FindClass(EXCEPTION);
         env->ThrowNew(exceptionClass, "Error binding receiver");
         return;
     }
 
-    if (roc_receiver_bind(receiver, (roc_port_type) type, (roc_protocol) protocol, &address) != 0) {
+    if (roc_receiver_bind(receiver, (roc_slot) slot, (roc_interface) interface, endpoint) != 0) {
+        roc_endpoint_deallocate(endpoint);
         jclass exceptionClass = env->FindClass(EXCEPTION);
         env->ThrowNew(exceptionClass, "Error binding receiver");
         return;
@@ -101,9 +109,10 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(JNIEnv * e
 
     // ephemeral port
     if (!port) {
-        port = roc_address_port(&address);
-        address_set_port(env, jaddress, port);
+        roc_endpoint_get_port(endpoint, &port);
+        endpoint_set_port(env, jendpoint, port);
     }
+    roc_endpoint_deallocate(endpoint);
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_readFloats(JNIEnv *env, jobject thisObj, jlong receiverPtr, jfloatArray jsamples) {

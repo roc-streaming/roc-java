@@ -49,7 +49,7 @@ try (Context context = new Context()) {
     ReceiverConfig config = new SenderConfig.Builder(MY_SAMPLE_RATE,
                                                 ChannelSet.STEREO,
                                                 FrameEncoding.PCM_FLOAT)
-                                                .fecCode(FecCode.RS8M)
+                                                .fecEncoding(FecCode.RS8M)
                                                 .automaticTiming(true)
                                         .build();
                                         

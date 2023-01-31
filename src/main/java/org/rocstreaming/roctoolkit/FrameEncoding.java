@@ -1,7 +1,5 @@
 package org.rocstreaming.roctoolkit;
 
-import java.util.function.Supplier;
-
 /**
  * Frame encoding.
  */
@@ -12,16 +10,16 @@ public enum FrameEncoding {
      * Uncompressed samples coded as floats in range [-1; 1].
      * Channels are interleaved, e.g. two channels are encoded as "L R L R ...".
      */
-    PCM_FLOAT( FrameEncoding::getRocFrameEncodingPCMFloat );
+    PCM_FLOAT(1);
 
     private final int value;
-    FrameEncoding(Supplier<Integer> value) {
-        RocLibrary.loadLibrary();
-        this.value = value.get();
-    }
-    public int getValue() {
-        return( this.value );
+
+    FrameEncoding(int value) {
+        this.value = value;
     }
 
-    private static native int getRocFrameEncodingPCMFloat();
+    public int getValue() {
+        return this.value;
+    }
+
 }

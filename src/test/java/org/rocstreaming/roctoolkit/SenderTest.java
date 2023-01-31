@@ -1,9 +1,7 @@
 package org.rocstreaming.roctoolkit;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+
 import java.io.IOException;
 import static java.lang.Math.sin;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +31,6 @@ public class SenderTest {
         this.config = new SenderConfig.Builder(SAMPLE_RATE,
                                                 ChannelSet.STEREO,
                                                 FrameEncoding.PCM_FLOAT)
-                                                .automaticTiming(true)
                                         .build();
         this.samples = new float[BUFFER_SIZE];
         gensine(this.samples);
@@ -41,7 +38,7 @@ public class SenderTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Logger.setLevel(LogLevel.NONE);
+        Logger.setLevel(LogLevel.ERROR);
     }
 
     @BeforeEach
@@ -83,35 +80,38 @@ public class SenderTest {
         });
     }
 
+    @Disabled("bind not implemented in roc 0.2.x yet")
     @Test
     public void TestValidSenderBind() throws Exception {
         try (
                 Sender sender = new Sender(context, config);
         ) {
-            assertDoesNotThrow(() -> sender.bind(new Address(Family.AUTO, "0.0.0.0", 0)));
+            assertDoesNotThrow(() -> sender.bind(new Endpoint("rtp+rs8m://127.0.0.1:0")));
         }
     }
 
+    @Disabled("bind not implemented in roc 0.2.x yet")
     @Test
     public void TestSenderBindEphemeralPort() throws Exception {
         try (
                 Sender sender = new Sender(context, config);
         ) {
-            Address senderAddress = new Address(Family.AUTO, "0.0.0.0", 0);
-            sender.bind(senderAddress);
-            assertNotEquals(0, senderAddress.getPort());
+            Endpoint senderEndpoint = new Endpoint("rtp+rs8m://127.0.0.1:0");
+            sender.bind(senderEndpoint);
+            assertNotEquals(0, senderEndpoint.getPort());
         }
     }
 
+    @Disabled("bind not implemented in roc 0.2.x yet")
     @Test
     public void TestInvalidSenderBind() throws Exception {
         try (
                 Sender sender = new Sender(context, config);
         ) {
             assertThrows(IllegalArgumentException.class, () -> sender.bind(null));
+            sender.bind(new Endpoint("rtp+rs8m://127.0.0.1:0"));
             assertThrows(IOException.class, () -> {
-                sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
-                sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
+                sender.bind(new Endpoint("rtp+rs8m://127.0.0.1:0"));
             });
         }
     }
@@ -122,9 +122,8 @@ public class SenderTest {
                 Sender sender = new Sender(context, config);
         ) {
             assertDoesNotThrow(() -> {
-                sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
-                sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
-                sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "127.0.0.1", 10002));
+                sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:10001"));
+                sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://127.0.0.1:10002"));
             });
         }
     }
@@ -134,15 +133,14 @@ public class SenderTest {
         try (
             Sender sender = new Sender(context, config);
         ) {
-            sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
             assertThrows(IllegalArgumentException.class, () -> {
-                sender.connect(null, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
+                sender.connect(null, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             });
             assertThrows(IllegalArgumentException.class, () -> {
-                sender.connect(PortType.AUDIO_SOURCE, null, new Address(Family.AUTO, "127.0.0.1", 10001));
+                sender.connect(Slot.DEFAULT, null, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             });
             assertThrows(IllegalArgumentException.class, () -> {
-                sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, null);
+                sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, null);
             });
         }
     }
@@ -152,9 +150,8 @@ public class SenderTest {
         try (
             Sender sender = new Sender(context, config);
         ) {
-            sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
-            sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
-            sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "127.0.0.1", 10002));
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
             for (int i = 0; i < SINE_SAMPLES / BUFFER_SIZE; i++) {
                 assertDoesNotThrow(() -> sender.write(samples));
             }
@@ -166,11 +163,11 @@ public class SenderTest {
         try (
                 Sender sender = new Sender(context, config);
         ) {
-            assertThrows(IOException.class, () -> sender.write(samples)); // write before bind
-            sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
-            assertThrows(IOException.class, () -> sender.write(samples)); // write before connect
-            sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
-            sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "127.0.0.1", 10002));
+            // bind not implemented in roc 0.2.x yet
+            // assertThrows(IOException.class, () -> sender.write(samples)); // write before bind
+            // sender.bind();
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
             assertThrows(IllegalArgumentException.class, () -> sender.write(null));
         }
     }
@@ -180,13 +177,24 @@ public class SenderTest {
         try (
                 Sender sender = new Sender(context, config);
         ) {
-            sender.bind(new Address(Family.AUTO, "0.0.0.0", 0));
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
+            sender.write(samples);
             assertThrows(IOException.class, () -> {
-                sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
-                sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "127.0.0.1", 10002));
-                sender.write(samples);
-                sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "127.0.0.1", 10001));
+                sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             });
+        }
+    }
+
+    @Test
+    void TestSetOutgoingAddressAfterConnect() throws Exception {
+        try (
+                Sender sender = new Sender(context, config);
+        ) {
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
+            Exception exception = assertThrows(Exception.class, () -> sender.setOutgoingAddress(Slot.DEFAULT, Interface.AUDIO_SOURCE, "127.0.0.1"));
+            assertEquals("Couldn't set outgoing address", exception.getMessage());
         }
     }
 }

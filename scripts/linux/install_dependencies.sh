@@ -10,6 +10,7 @@ sudo apt-get install -y g++ \
                         libuv1-dev \
                         libunwind-dev \
                         libpulse-dev \
+                        libspeexdsp-dev \
                         libsox-dev \
                         libcpputest-dev \
                         libtool \

@@ -96,7 +96,7 @@ jobs:
 
   android-osx:
     # will be fixed after update to roc 0.2.x; todo: add dependency to release step
-    if: false
+#    if: false
     strategy:
       fail-fast: false
       matrix:

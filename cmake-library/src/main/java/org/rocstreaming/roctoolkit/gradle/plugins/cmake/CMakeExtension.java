@@ -58,7 +58,7 @@ public class CMakeExtension {
         srcDirs.addAll(dirs);
     }
 
-    public final ListProperty<String> getArguements() {
+    public final ListProperty<String> getArguments() {
         return arguments;
     }
 

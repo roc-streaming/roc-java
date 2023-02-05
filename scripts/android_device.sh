@@ -51,7 +51,7 @@ function create_device() {
         echo "--- installing system image android-${api};${image};${arch}"
         ( yes | sdkmanager $package > /dev/null ) || exit 1
     fi
-    echo "creating device \"${name}\""
+    echo "creating device \"${name}\", package \"${package}\""
     echo no | avdmanager create avd --name "${name}" --package $package > /dev/null
 }
 

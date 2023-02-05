@@ -63,15 +63,15 @@ class NativeObjectCleaner extends Thread {
     /**
      * Remove a reference from <code>NativeObjectCleaner</code>.
      *
-     * @param reference     the {@link NativeObjectPhantomReference} to remove.
+     * @param reference     the {@link NativeObjectPhantomReference} to unregister.
      */
-    void remove(NativeObjectPhantomReference reference) {
+    void unregister(NativeObjectPhantomReference reference) {
         set.remove(reference);
     }
 
     /**
      * Entrypoint method of <code>NativeObjectCleaner</code>.
-     *
+     * <p>
      * Remove any phantom reachable {@link NativeObjectPhantomReference} from the
      * {@link NativeObjectCleaner#referenceQueue} associated with this <code>NativeObjectCleaner</code>
      * and <code>close</code> it.
@@ -83,7 +83,7 @@ class NativeObjectCleaner extends Thread {
                 NativeObjectPhantomReference reference = (NativeObjectPhantomReference) referenceQueue.remove();
                 set.remove(reference);
                 reference.close();
-            } catch (Exception e) {
+            } catch (Exception ignore) {
             }
         }
     }

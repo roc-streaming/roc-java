@@ -4,7 +4,6 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
-import org.gradle.api.attributes.Attribute;
 import org.rocstreaming.roctoolkit.gradle.tasks.CMake;
 import org.rocstreaming.roctoolkit.gradle.tasks.Builder;
 import org.rocstreaming.roctoolkit.gradle.plugins.NativeLibraryPlugin;
@@ -32,7 +31,7 @@ public class CMakeLibraryPlugin implements Plugin<Project> {
         final TaskProvider<CMake> cmakeDebug = tasks.register("cmakeDebug", CMake.class, task -> {
             task.setBuildType("Debug");
             task.getTarget().set(extension.getTarget());
-            task.getArguments().set(extension.getArguements());
+            task.getArguments().set(extension.getArguments());
             task.getVariantDirectory().set(project.getLayout().getBuildDirectory().dir("debug"));
             task.getProjectDirectory().set(extension.getProjectDirectory());
             task.getGenerator().set(extension.getGenerator());
@@ -41,7 +40,7 @@ public class CMakeLibraryPlugin implements Plugin<Project> {
         final TaskProvider<CMake> cmakeRelease = tasks.register("cmakeRelease", CMake.class, task -> {
             task.setBuildType("RelWithDebInfo");
             task.getTarget().set(extension.getTarget());
-            task.getArguments().set(extension.getArguements());
+            task.getArguments().set(extension.getArguments());
             task.getVariantDirectory().set(project.getLayout().getBuildDirectory().dir("release"));
             task.getProjectDirectory().set(extension.getProjectDirectory());
             task.getGenerator().set(extension.getGenerator());

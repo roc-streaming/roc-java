@@ -42,7 +42,7 @@ class NativeObject implements AutoCloseable {
     }
 
     /**
-     * Close the native object and remove it from the {@link NativeObjectCleaner}.
+     * Close the native object and unregister it from the {@link NativeObjectCleaner}.
      *
      * @throws Exception        if the underlying roc native object cannot be closed.
      */
@@ -50,6 +50,6 @@ class NativeObject implements AutoCloseable {
     public void close() throws Exception {
         resource.close();
         resource.clear();
-        NATIVE_OBJECT_CLEANER.remove(resource);
+        NATIVE_OBJECT_CLEANER.unregister(resource);
     }
 }

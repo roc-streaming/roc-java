@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ReceiverTest {
 
     private static final int SAMPLE_RATE = 44100;
-    private ReceiverConfig config;
+    private final ReceiverConfig config;
     private Context context;
 
     ReceiverTest() {
@@ -38,9 +38,8 @@ public class ReceiverTest {
     @Test
     public void TestValidReceiverCreationAndDeinitialization() {
         assertDoesNotThrow(() -> {
-            try (
-                    Receiver receiver = new Receiver(context, config);
-            ) {
+            //noinspection EmptyTryBlock
+            try (Receiver ignored = new Receiver(context, config)) {
             }
         });
     }
@@ -66,9 +65,7 @@ public class ReceiverTest {
 
     @Test
     public void TestValidReceiverBind() throws Exception {
-        try (
-                Receiver receiver = new Receiver(context, config);
-        ) {
+        try (Receiver receiver = new Receiver(context, config)) {
             assertDoesNotThrow(() -> receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:0")));
             assertDoesNotThrow(() -> receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:0")));
         }
@@ -76,9 +73,7 @@ public class ReceiverTest {
 
     @Test
     public void TestReceiverBindEphemeralPort() throws Exception {
-        try (
-                Receiver receiver = new Receiver(context, config);
-        ) {
+        try (Receiver receiver = new Receiver(context, config)) {
             Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://0.0.0.0:0");
             Endpoint repairEndpoint = new Endpoint("rs8m://0.0.0.0:0");
             receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, sourceEndpoint);
@@ -95,9 +90,7 @@ public class ReceiverTest {
 
     @Test
     public void TestInvalidReceiverBind() throws Exception {
-        try (
-                Receiver receiver = new Receiver(context, config);
-        ) {
+        try (Receiver receiver = new Receiver(context, config)) {
             assertThrows(IllegalArgumentException.class, () -> receiver.bind(null, Interface.AUDIO_SOURCE, new Endpoint("rtp://0.0.0.0")));
             assertThrows(IllegalArgumentException.class, () -> receiver.bind(Slot.DEFAULT, null, new Endpoint("rtp://0.0.0.0")));
             assertThrows(IllegalArgumentException.class, () -> receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, null));
@@ -106,9 +99,7 @@ public class ReceiverTest {
 
     @Test
     public void TestInvalidReadFloatArray() throws Exception {
-        try (
-                Receiver receiver = new Receiver(context, config);
-        ) {
+        try (Receiver receiver = new Receiver(context, config)) {
             receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:0"));
             receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://127.0.0.1:0"));
             assertThrows(IllegalArgumentException.class, () -> receiver.read(null));
@@ -116,10 +107,18 @@ public class ReceiverTest {
     }
 
     @Test
+    public void TestReceiverSetMulticastGroup() throws Exception {
+        try (Receiver receiver = new Receiver(context, config)) {
+            assertDoesNotThrow(() -> {
+                receiver.setMulticastGroup(Slot.DEFAULT, Interface.AUDIO_SOURCE, "0.0.0.0");
+                receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://224.0.0.1:0"));
+            });
+        }
+    }
+
+    @Test
     public void TestReceiverReadZeroizedArray() throws Exception {
-        try (
-                Receiver receiver = new Receiver(context, config);
-        ) {
+        try (Receiver receiver = new Receiver(context, config)) {
             receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:0"));
             receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:0"));
             float[] samples = {1.0f, 1.0f};

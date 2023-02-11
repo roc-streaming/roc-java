@@ -15,7 +15,7 @@ package org.rocstreaming.roctoolkit;
  * In simple cases, just use {@link Slot#DEFAULT}.
  * <p>
  * Each slot has its own set of interfaces, dedicated to different kinds of endpoints.
- * See {@link Interface}. for details.
+ * See {@link Interface} for details.
  */
 public class Slot {
 

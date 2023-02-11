@@ -17,6 +17,14 @@ JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Receiver_open
 
 /*
  * Class:     org_rocstreaming_roctoolkit_Receiver
+ * Method:    setMulticastGroup
+ * Signature: (JIILjava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_setMulticastGroup
+  (JNIEnv *, jobject, jlong, jint, jint, jstring);
+
+/*
+ * Class:     org_rocstreaming_roctoolkit_Receiver
  * Method:    bind
  * Signature: (JIILorg/rocstreaming/roctoolkit/Endpoint;)V
  */

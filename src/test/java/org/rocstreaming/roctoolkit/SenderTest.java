@@ -54,9 +54,8 @@ public class SenderTest {
     @Test
     public void TestValidSenderCreationAndDeinitialization() {
         assertDoesNotThrow(() -> {
-            try (
-                    Sender sender = new Sender(context, config);
-            ) {}
+            //noinspection EmptyTryBlock
+            try (Sender ignored = new Sender(context, config)) {}
         });
     }
 
@@ -83,9 +82,7 @@ public class SenderTest {
     @Disabled("bind not implemented in roc 0.2.x yet")
     @Test
     public void TestValidSenderBind() throws Exception {
-        try (
-                Sender sender = new Sender(context, config);
-        ) {
+        try (Sender sender = new Sender(context, config)) {
             assertDoesNotThrow(() -> sender.bind(new Endpoint("rtp+rs8m://127.0.0.1:0")));
         }
     }
@@ -93,9 +90,7 @@ public class SenderTest {
     @Disabled("bind not implemented in roc 0.2.x yet")
     @Test
     public void TestSenderBindEphemeralPort() throws Exception {
-        try (
-                Sender sender = new Sender(context, config);
-        ) {
+        try (Sender sender = new Sender(context, config)) {
             Endpoint senderEndpoint = new Endpoint("rtp+rs8m://127.0.0.1:0");
             sender.bind(senderEndpoint);
             assertNotEquals(0, senderEndpoint.getPort());
@@ -105,9 +100,7 @@ public class SenderTest {
     @Disabled("bind not implemented in roc 0.2.x yet")
     @Test
     public void TestInvalidSenderBind() throws Exception {
-        try (
-                Sender sender = new Sender(context, config);
-        ) {
+        try (Sender sender = new Sender(context, config)) {
             assertThrows(IllegalArgumentException.class, () -> sender.bind(null));
             sender.bind(new Endpoint("rtp+rs8m://127.0.0.1:0"));
             assertThrows(IOException.class, () -> {
@@ -118,9 +111,7 @@ public class SenderTest {
 
     @Test
     public void TestValidSenderConnect() throws Exception {
-        try (
-                Sender sender = new Sender(context, config);
-        ) {
+        try (Sender sender = new Sender(context, config)) {
             assertDoesNotThrow(() -> {
                 sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:10001"));
                 sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://127.0.0.1:10002"));
@@ -130,9 +121,7 @@ public class SenderTest {
 
     @Test
     public void TestInvalidSenderConnect() throws Exception {
-        try (
-            Sender sender = new Sender(context, config);
-        ) {
+        try (Sender sender = new Sender(context, config)) {
             assertThrows(IllegalArgumentException.class, () -> {
                 sender.connect(null, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             });
@@ -147,9 +136,7 @@ public class SenderTest {
 
     @Test
     public void TestValidSenderWriteFloatArray() throws Exception {
-        try (
-            Sender sender = new Sender(context, config);
-        ) {
+        try (Sender sender = new Sender(context, config)) {
             sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
             for (int i = 0; i < SINE_SAMPLES / BUFFER_SIZE; i++) {
@@ -160,9 +147,7 @@ public class SenderTest {
 
     @Test
     public void TestInvalidSenderWriteFloatArray() throws Exception {
-        try (
-                Sender sender = new Sender(context, config);
-        ) {
+        try (Sender sender = new Sender(context, config)) {
             // bind not implemented in roc 0.2.x yet
             // assertThrows(IOException.class, () -> sender.write(samples)); // write before bind
             // sender.bind();
@@ -174,9 +159,7 @@ public class SenderTest {
 
     @Test
     public void TestInvalidConnectAfterWrite() throws Exception {
-        try (
-                Sender sender = new Sender(context, config);
-        ) {
+        try (Sender sender = new Sender(context, config)) {
             sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
             sender.write(samples);
@@ -188,9 +171,7 @@ public class SenderTest {
 
     @Test
     void TestSetOutgoingAddressAfterConnect() throws Exception {
-        try (
-                Sender sender = new Sender(context, config);
-        ) {
+        try (Sender sender = new Sender(context, config)) {
             sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
             Exception exception = assertThrows(Exception.class, () -> sender.setOutgoingAddress(Slot.DEFAULT, Interface.AUDIO_SOURCE, "127.0.0.1"));

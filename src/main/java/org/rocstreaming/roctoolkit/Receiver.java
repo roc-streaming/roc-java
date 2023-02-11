@@ -223,9 +223,9 @@ public class Receiver extends NativeObject {
      * @param ip    should be IPv4 or IPv6 address
      * @throws IllegalArgumentException if the arguments are invalid.
      */
-    public void setMulticastGroup(Slot slot, Interface iface, String ip) throws IllegalArgumentException {
-        // todo
-        throw new RuntimeException("setMulticastGroup not implemented");
+    public void setMulticastGroup(Slot slot, Interface iface, String ip) throws IllegalArgumentException, Exception {
+        if (slot == null || iface == null || ip == null) throw new IllegalArgumentException();
+        setMulticastGroup(getPtr(), slot.getValue(), iface.getValue(), ip);
     }
 
     /**
@@ -282,6 +282,8 @@ public class Receiver extends NativeObject {
     }
 
     private static native long open(long contextPtr, ReceiverConfig config) throws IllegalArgumentException, Exception;
+
+    private native void setMulticastGroup(long receiverPtr, int slot, int iface, String ip) throws IllegalArgumentException;
 
     private native void bind(long receiverPtr, int slot, int iface, Endpoint endpoint) throws IllegalArgumentException, IOException;
 

@@ -78,6 +78,23 @@ JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Receiver_open(JNIEnv * 
     return (jlong) receiver;
 }
 
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_setMulticastGroup(JNIEnv * env, jobject thisObj,
+                    jlong receiverPtr, jint slot, jint interface, jstring jip) {
+    roc_receiver* receiver    = NULL;
+    const char*   ip;
+
+    receiver = (roc_receiver*) receiverPtr;
+    ip = env->GetStringUTFChars(jip, 0);
+
+    if (roc_receiver_set_multicast_group(receiver, (roc_slot) slot, (roc_interface) interface, ip) != 0) {
+        env->ReleaseStringUTFChars(jip, ip);
+        jclass exceptionClass = env->FindClass(EXCEPTION);
+        env->ThrowNew(exceptionClass, "Couldn't set multicast group");
+        return;
+    }
+    env->ReleaseStringUTFChars(jip, ip);
+}
+
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(JNIEnv * env, jobject thisObj, jlong receiverPtr,
                     jint slot, jint interface, jobject jendpoint) {
     roc_receiver*   receiver    = NULL;

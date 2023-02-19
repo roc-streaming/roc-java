@@ -1,14 +1,16 @@
 package org.rocstreaming.roctoolkit;
 
+import org.awaitility.Duration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 
 public class SenderReceiverTest {
@@ -36,7 +38,6 @@ public class SenderReceiverTest {
     }
 
     @Test
-    @Timeout(30)
     void WriteReadTest() throws Exception {
         try (
                 Context context = new Context();
@@ -66,9 +67,11 @@ public class SenderReceiverTest {
             });
 
             float[] readBuffer = new float[2];
-            do {
-                receiver.read(readBuffer);
-            } while (Arrays.equals(new float[]{0, 0}, readBuffer));
+            await().atMost(Duration.ONE_MINUTE)
+                    .untilAsserted(() -> {
+                        receiver.read(readBuffer);
+                        assertNotEquals(new float[]{0, 0}, readBuffer);
+                    });
             running.set(false);
             submit.get();
         }

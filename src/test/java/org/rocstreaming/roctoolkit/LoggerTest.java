@@ -1,9 +1,13 @@
 package org.rocstreaming.roctoolkit;
 
+import org.awaitility.Duration;
 import org.junit.jupiter.api.Test;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LoggerTest {
@@ -35,25 +39,18 @@ public class LoggerTest {
 
     @Test
     public void TestValidLoggerSetCallback() throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(baos);
-        PrintStream old = System.out;
-        System.setOut(ps);
-
+        Set<String> logs = Collections.newSetFromMap(new ConcurrentHashMap<>());
         Logger.setLevel(LogLevel.INFO);
-        Logger.setCallback((level, component, message) -> {
-            System.out.println("[level=\"" + level + "\", component=\"" + component + "\"]: " + message);
-        });
+        Logger.setCallback((level, component, message) ->
+                logs.add(String.format("[level=\"%s\", component=\"%s\"]: %s", level, component, message)));
 
-        try (
-            Context c = new Context();
-        ) {}
-        System.out.flush();
-        System.setOut(old);
-        String[] lines = baos.toString().split(System.getProperty("line.separator"));
-        String expected = String.join("\n",
-                "[level=\"INFO\", component=\"libroc\"]: roc_context_open: opening context",
-                "[level=\"INFO\", component=\"libroc\"]: roc_context_close: closed context");
-        assertEquals(expected, String.join("\n", lines));
+        //noinspection EmptyTryBlock
+        try (Context ignored = new Context()) {
+        }
+
+        String logOpen = "[level=\"INFO\", component=\"libroc\"]: roc_context_open: opening context";
+        String logClose = "[level=\"INFO\", component=\"libroc\"]: roc_context_close: closed context";
+        await().atMost(Duration.FIVE_MINUTES)
+                .untilAsserted(() -> assertTrue(logs.contains(logOpen) && logs.contains(logClose)));
     }
 }

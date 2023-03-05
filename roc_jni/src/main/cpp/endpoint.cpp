@@ -27,31 +27,31 @@ int endpoint_unmarshal(JNIEnv *env, roc_endpoint** endpoint, jobject jendpoint) 
     protocolClass = env->FindClass(PROTOCOL_CLASS);
     assert(protocolClass != NULL);
 
-    if (roc_endpoint_allocate(endpoint) != 0) return -1;
+    if ((err = roc_endpoint_allocate(endpoint)) != 0) return err;
 
     tempObject = get_object_field(env, endpointClass, jendpoint, "protocol", "L" PROTOCOL_CLASS ";");
     protocol = (roc_protocol) get_enum_value(env, protocolClass, tempObject);
-    if (roc_endpoint_set_protocol(*endpoint, protocol) != 0) return -1;
+    if ((err = roc_endpoint_set_protocol(*endpoint, protocol)) != 0) return err;
 
     jstr = (jstring) get_object_field(env, endpointClass, jendpoint, "host", "Ljava/lang/String;");
     host = env->GetStringUTFChars(jstr, 0);
     assert(host != NULL);
-    if (roc_endpoint_set_host(*endpoint, host) != 0) {
+    if ((err = roc_endpoint_set_host(*endpoint, host)) != 0) {
         env->ReleaseStringUTFChars(jstr, host);
-        return -1;
+        return err;
     }
     env->ReleaseStringUTFChars(jstr, host);
 
     port = get_int_field_value(env, endpointClass, jendpoint, "port", &err);
     if (err) return err;
-    if (roc_endpoint_set_port(*endpoint, port) != 0) return -1;
+    if ((err = roc_endpoint_set_port(*endpoint, port)) != 0) return err;
 
     jstr = (jstring) get_object_field(env, endpointClass, jendpoint, "resource", "Ljava/lang/String;");
     if (jstr != NULL) {
         resource = env->GetStringUTFChars(jstr, 0);
-        if (roc_endpoint_set_resource(*endpoint, resource) != 0) {
+        if ((err = roc_endpoint_set_resource(*endpoint, resource)) != 0) {
             env->ReleaseStringUTFChars(jstr, resource);
-            return -1;
+            return err;
         }
         env->ReleaseStringUTFChars(jstr, resource);
     }

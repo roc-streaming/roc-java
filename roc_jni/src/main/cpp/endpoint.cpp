@@ -54,19 +54,6 @@ int endpoint_unmarshal(JNIEnv *env, roc_endpoint** endpoint, jobject jendpoint) 
     return 0;
 }
 
-void endpoint_set_port(JNIEnv *env, jobject endpoint, int port) {
-    jclass      endpointClass;
-    jfieldID    attrId;
-
-    endpointClass = env->FindClass(ENDPOINT_CLASS);
-    assert(endpointClass != NULL);
-
-    attrId = env->GetFieldID(endpointClass, "port", "I");
-    assert(attrId != NULL);
-
-    env->SetIntField(endpoint, attrId, port);
-}
-
 static const char* protocolMapping(roc_protocol protocol) {
     switch (protocol) {
         case ROC_PROTO_RTSP:
@@ -110,7 +97,44 @@ void endpoint_set_protocol(JNIEnv *env, jobject endpoint, roc_protocol protocol)
     assert(protocolField != NULL);
 
     protocolObj = env->GetStaticObjectField(protocolClass, protocolField);
+    assert(protocolObj != NULL);
     env->SetObjectField(endpoint, attrId, protocolObj);
+}
+
+void endpoint_set_host(JNIEnv *env, jobject endpoint, char buf[128]) {
+    jclass      endpointClass;
+    jfieldID    attrId;
+
+    endpointClass = env->FindClass(ENDPOINT_CLASS);
+    assert(endpointClass != NULL);
+
+    attrId = env->GetFieldID(endpointClass, "host", "Ljava/lang/String;");
+    assert(attrId != NULL);
+    env->SetObjectField(endpoint, attrId, env->NewStringUTF(buf));
+}
+
+void endpoint_set_port(JNIEnv *env, jobject endpoint, int port) {
+    jclass      endpointClass;
+    jfieldID    attrId;
+
+    endpointClass = env->FindClass(ENDPOINT_CLASS);
+    assert(endpointClass != NULL);
+
+    attrId = env->GetFieldID(endpointClass, "port", "I");
+    assert(attrId != NULL);
+    env->SetIntField(endpoint, attrId, port);
+}
+
+void endpoint_set_resource(JNIEnv *env, jobject endpoint, char buf[128]) {
+    jclass      endpointClass;
+    jfieldID    attrId;
+
+    endpointClass = env->FindClass(ENDPOINT_CLASS);
+    assert(endpointClass != NULL);
+
+    attrId = env->GetFieldID(endpointClass, "resource", "Ljava/lang/String;");
+    assert(attrId != NULL);
+    env->SetObjectField(endpoint, attrId, env->NewStringUTF(buf));
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_init(JNIEnv *env, jobject thisObj, jstring juri) {
@@ -119,9 +143,6 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_init(JNIEnv *en
     jclass          endpointClass;
     roc_protocol    protocol;
     int             port;
-    jfieldID        hostAttrId;
-    jfieldID        portAttrId;
-    jfieldID        resourceAttrId;
     char            buf[128];
     size_t          bufsz = sizeof(buf);
 
@@ -153,23 +174,18 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_init(JNIEnv *en
     roc_endpoint_get_protocol(endpoint, &protocol);
     endpoint_set_protocol(env, thisObj, protocol);
 
+    // todo: don't use fixed buf[128]
     roc_endpoint_get_host(endpoint, buf, &bufsz);
-    hostAttrId = env->GetFieldID(endpointClass, "host", "Ljava/lang/String;");
-    assert(hostAttrId != NULL);
-    env->SetObjectField(thisObj, hostAttrId, env->NewStringUTF(buf));
+    endpoint_set_host(env, thisObj, buf);
 
-    portAttrId = env->GetFieldID(endpointClass, "port", "I");
-    assert(portAttrId != NULL);
     if (roc_endpoint_get_port(endpoint, &port) == 0) {
-        env->SetIntField(thisObj, portAttrId, port);
+        endpoint_set_port(env, thisObj, port);
     } else {
-        env->SetIntField(thisObj, portAttrId, -1);
+        endpoint_set_port(env, thisObj, -1);
     }
 
     if (roc_endpoint_get_resource(endpoint, buf, &bufsz) == 0) {
-        resourceAttrId = env->GetFieldID(endpointClass, "resource", "Ljava/lang/String;");
-        assert(resourceAttrId != NULL);
-        env->SetObjectField(thisObj, resourceAttrId, env->NewStringUTF(buf));
+        endpoint_set_resource(env, thisObj, buf);
     }
 
     roc_endpoint_deallocate(endpoint);

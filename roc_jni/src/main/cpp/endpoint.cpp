@@ -1,15 +1,14 @@
 #include "org_rocstreaming_roctoolkit_Endpoint.h"
 #include "common.h"
 #include "endpoint.h"
+#include "protocol.h"
 
 #include <roc/config.h>
 
 #define ENDPOINT_CLASS              PACKAGE_BASE_NAME "/Endpoint"
-#define PROTOCOL_CLASS              PACKAGE_BASE_NAME "/Protocol"
 
 int endpoint_unmarshal(JNIEnv *env, roc_endpoint** endpoint, jobject jendpoint) {
     jclass          endpointClass;
-    jclass          protocolClass;
     jobject         tempObject;
     jstring         jstr;
     roc_protocol    protocol;
@@ -24,13 +23,10 @@ int endpoint_unmarshal(JNIEnv *env, roc_endpoint** endpoint, jobject jendpoint) 
     endpointClass = env->FindClass(ENDPOINT_CLASS);
     assert(endpointClass != NULL);
 
-    protocolClass = env->FindClass(PROTOCOL_CLASS);
-    assert(protocolClass != NULL);
+    tempObject = get_object_field(env, endpointClass, jendpoint, "protocol", "L" PROTOCOL_CLASS ";");
+    protocol = get_protocol(env, tempObject);
 
     if ((err = roc_endpoint_allocate(endpoint)) != 0) return err;
-
-    tempObject = get_object_field(env, endpointClass, jendpoint, "protocol", "L" PROTOCOL_CLASS ";");
-    protocol = (roc_protocol) get_enum_value(env, protocolClass, tempObject);
     if ((err = roc_endpoint_set_protocol(*endpoint, protocol)) != 0) return err;
 
     jstr = (jstring) get_object_field(env, endpointClass, jendpoint, "host", "Ljava/lang/String;");

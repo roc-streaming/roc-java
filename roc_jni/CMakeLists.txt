@@ -21,6 +21,7 @@ add_library(roc_jni SHARED
         src/main/cpp/frame_encoding.cpp
         src/main/cpp/logger.cpp
         src/main/cpp/packet_encoding.cpp
+        src/main/cpp/protocol.cpp
         src/main/cpp/receiver.cpp
         src/main/cpp/resampler_backend.cpp
         src/main/cpp/resampler_profile.cpp

@@ -38,12 +38,7 @@ if [ ! -d "android/build/roc-toolkit" ]
 then
     mkdir -p "android/build/roc-toolkit"
     git clone -q --recurse-submodules https://github.com/roc-streaming/roc-toolkit.git \
-        -b develop "android/build/roc-toolkit"
-#    work_dir=$(pwd)
-#    cd "android/build/roc-toolkit"
-#    git checkout -q 863a0227b78464c3a56fc0484bec73c891e4b7a8
-#    git submodule update --init --recursive
-#    cd $work_dir
+        "android/build/roc-toolkit"
 fi
 
 if [ ! -d "android/build/libroc" ]

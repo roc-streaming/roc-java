@@ -7,7 +7,7 @@
 #define CONTEXT_CONFIG_CLASS        PACKAGE_BASE_NAME "/ContextConfig"
 
 char context_config_unmarshal(JNIEnv *env, roc_context_config* conf, jobject jconfig) {
-    jclass contextConfigClass;
+    jclass contextConfigClass = NULL;
     char err = 0;
 
     contextConfigClass = env->FindClass(CONTEXT_CONFIG_CLASS);
@@ -22,8 +22,8 @@ char context_config_unmarshal(JNIEnv *env, roc_context_config* conf, jobject jco
 }
 
 JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Context_open(JNIEnv *env, jclass contextClass, jobject config) {
-    roc_context*        context;
-    roc_context_config  context_config;
+    roc_context*        context = NULL;
+    roc_context_config context_config = {};
 
     if (context_config_unmarshal(env, &context_config, config) != 0) {
         jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);

@@ -14,8 +14,8 @@
 #define RECEIVER_CONFIG_CLASS       PACKAGE_BASE_NAME "/ReceiverConfig"
 
 char receiver_config_unmarshal(JNIEnv *env, roc_receiver_config* config, jobject jconfig) {
-    jobject tempObject;
-    jclass  receiverConfigClass;
+    jobject tempObject = NULL;
+    jclass  receiverConfigClass = NULL;
     char err = 0;
 
     receiverConfigClass = env->FindClass(RECEIVER_CONFIG_CLASS);
@@ -57,9 +57,9 @@ char receiver_config_unmarshal(JNIEnv *env, roc_receiver_config* config, jobject
 
 JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Receiver_open(JNIEnv * env, jclass receiverClass,
                     jlong contextPtr, jobject jconfig) {
-    roc_context*            context;
-    roc_receiver_config     receiverConfig;
-    roc_receiver*           receiver;
+    roc_context*            context = NULL;
+    roc_receiver_config     receiverConfig = {};
+    roc_receiver*           receiver = NULL;
 
     context = (roc_context*) contextPtr;
 
@@ -81,7 +81,7 @@ JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Receiver_open(JNIEnv * 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_setMulticastGroup(JNIEnv * env, jobject thisObj,
                     jlong receiverPtr, jint slot, jint interface, jstring jip) {
     roc_receiver* receiver    = NULL;
-    const char*   ip;
+    const char*   ip = NULL;
 
     receiver = (roc_receiver*) receiverPtr;
     ip = env->GetStringUTFChars(jip, 0);
@@ -98,7 +98,7 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_setMulticastGro
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(JNIEnv * env, jobject thisObj, jlong receiverPtr,
                     jint slot, jint interface, jobject jendpoint) {
     roc_receiver*   receiver    = NULL;
-    roc_endpoint*   endpoint;
+    roc_endpoint*   endpoint    = NULL;
     int             port        = 0;
 
     receiver = (roc_receiver*) receiverPtr;
@@ -133,10 +133,10 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(JNIEnv * e
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_readFloats(JNIEnv *env, jobject thisObj, jlong receiverPtr, jfloatArray jsamples) {
-    roc_receiver*       receiver;
-    roc_frame           frame;
-    jfloat*             samples;
-    jsize               len;
+    roc_receiver*       receiver = NULL;
+    roc_frame           frame = {};
+    jfloat*             samples = NULL;
+    jsize               len = 0;
 
     if (jsamples == NULL) {
         jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);

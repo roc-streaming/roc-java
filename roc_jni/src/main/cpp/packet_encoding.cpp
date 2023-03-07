@@ -2,7 +2,7 @@
 #include "common.h"
 
 roc_packet_encoding get_packet_encoding(JNIEnv *env, jobject jpacket_encoding) {
-    jclass packetEncodingClass;
+    jclass packetEncodingClass = NULL;
 
     packetEncodingClass = env->FindClass(PACKET_ENCODING_CLASS);
     assert(packetEncodingClass != NULL);

@@ -4,7 +4,7 @@
 #include <roc/config.h>
 
 roc_fec_encoding get_fec_encoding(JNIEnv *env, jobject jfec_encoding) {
-    jclass fecEncodingClass;
+    jclass fecEncodingClass = NULL;
 
     fecEncodingClass = env->FindClass(FEC_ENCODING_CLASS);
     assert(fecEncodingClass != NULL);

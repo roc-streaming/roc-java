@@ -2,7 +2,7 @@
 #include "common.h"
 
 roc_protocol get_protocol(JNIEnv *env, jobject jprotocol) {
-    jclass        protocolClass;
+    jclass        protocolClass = NULL;
 
     protocolClass = env->FindClass(PROTOCOL_CLASS);
     assert(protocolClass != NULL);

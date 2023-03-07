@@ -8,13 +8,13 @@
 #define ENDPOINT_CLASS              PACKAGE_BASE_NAME "/Endpoint"
 
 int endpoint_unmarshal(JNIEnv *env, roc_endpoint** endpoint, jobject jendpoint) {
-    jclass          endpointClass;
-    jobject         tempObject;
-    jstring         jstr;
-    roc_protocol    protocol;
-    const char*     host;
-    int             port;
-    const char*     resource;
+    jclass          endpointClass = NULL;
+    jobject         tempObject = NULL;
+    jstring         jstr = NULL;
+    roc_protocol    protocol = (roc_protocol)0;
+    const char*     host = NULL;
+    int             port = 0;
+    const char*     resource = NULL;
     char            err = 0;
 
     if (jendpoint == NULL)
@@ -76,12 +76,12 @@ static const char* protocolMapping(roc_protocol protocol) {
 };
 
 void endpoint_set_protocol(JNIEnv *env, jobject endpoint, roc_protocol protocol) {
-    jclass      endpointClass;
-    jclass      protocolClass;
-    jfieldID    attrId;
-    jfieldID    protocolField;
-    const char* protocolValue;
-    jobject     protocolObj;
+    jclass      endpointClass = NULL;
+    jclass      protocolClass = NULL;
+    jfieldID    attrId = NULL;
+    jfieldID    protocolField = NULL;
+    const char* protocolValue = NULL;
+    jobject     protocolObj = NULL;
 
     endpointClass = env->FindClass(ENDPOINT_CLASS);
     assert(endpointClass != NULL);
@@ -102,8 +102,8 @@ void endpoint_set_protocol(JNIEnv *env, jobject endpoint, roc_protocol protocol)
 }
 
 void endpoint_set_host(JNIEnv *env, jobject endpoint, char buf[128]) {
-    jclass      endpointClass;
-    jfieldID    attrId;
+    jclass      endpointClass = NULL;
+    jfieldID    attrId = NULL;
 
     endpointClass = env->FindClass(ENDPOINT_CLASS);
     assert(endpointClass != NULL);
@@ -114,8 +114,8 @@ void endpoint_set_host(JNIEnv *env, jobject endpoint, char buf[128]) {
 }
 
 void endpoint_set_port(JNIEnv *env, jobject endpoint, int port) {
-    jclass      endpointClass;
-    jfieldID    attrId;
+    jclass      endpointClass = NULL;
+    jfieldID    attrId = NULL;
 
     endpointClass = env->FindClass(ENDPOINT_CLASS);
     assert(endpointClass != NULL);
@@ -126,8 +126,8 @@ void endpoint_set_port(JNIEnv *env, jobject endpoint, int port) {
 }
 
 void endpoint_set_resource(JNIEnv *env, jobject endpoint, char buf[128]) {
-    jclass      endpointClass;
-    jfieldID    attrId;
+    jclass      endpointClass = NULL;
+    jfieldID    attrId = NULL;
 
     endpointClass = env->FindClass(ENDPOINT_CLASS);
     assert(endpointClass != NULL);
@@ -138,11 +138,11 @@ void endpoint_set_resource(JNIEnv *env, jobject endpoint, char buf[128]) {
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_init(JNIEnv *env, jobject thisObj, jstring juri) {
-    roc_endpoint*   endpoint;
-    const char*     uri;
-    jclass          endpointClass;
-    roc_protocol    protocol;
-    int             port;
+    roc_endpoint*   endpoint = NULL;
+    const char*     uri = NULL;
+    jclass          endpointClass = NULL;
+    roc_protocol    protocol = (roc_protocol)0;
+    int             port = 0;
     char            buf[128];
     size_t          bufsz = sizeof(buf);
 
@@ -192,7 +192,7 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_init(JNIEnv *en
 }
 
 JNIEXPORT jstring JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_getUri(JNIEnv *env, jobject thisObj) {
-    roc_endpoint*   endpoint;
+    roc_endpoint*   endpoint = NULL;
     char            buf[128];
     size_t          bufsz = sizeof(buf);
 
@@ -209,6 +209,7 @@ JNIEXPORT jstring JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_getUri(JNIEn
         return NULL;
     }
 
+    // todo: don't use fixed buf[128]
     if (roc_endpoint_get_uri(endpoint, buf, &bufsz) != 0) {
         roc_endpoint_deallocate(endpoint);
         jclass exceptionClass = env->FindClass(EXCEPTION);

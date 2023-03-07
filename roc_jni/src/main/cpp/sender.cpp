@@ -16,8 +16,8 @@
 #define SENDER_CONFIG_CLASS         PACKAGE_BASE_NAME "/SenderConfig"
 
 char sender_config_unmarshal(JNIEnv *env, roc_sender_config* config, jobject jconfig) {
-    jobject tempObject;
-    jclass senderConfigClass;
+    jobject tempObject = NULL;
+    jclass senderConfigClass = NULL;
     char err = 0;
 
     senderConfigClass = env->FindClass(SENDER_CONFIG_CLASS);
@@ -67,9 +67,9 @@ char sender_config_unmarshal(JNIEnv *env, roc_sender_config* config, jobject jco
 }
 
 JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Sender_open(JNIEnv *env, jclass senderClass, jlong contextPtr, jobject jconfig) {
-    roc_context*            context;
-    roc_sender_config       config;
-    roc_sender*             sender;
+    roc_context*            context = NULL;
+    roc_sender_config       config = {};
+    roc_sender*             sender = NULL;
 
     context = (roc_context*) contextPtr;
 
@@ -99,8 +99,8 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_close(JNIEnv *env
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_setOutgoingAddress(JNIEnv *env, jobject thisObj, jlong senderPtr, jint slot, jint interface, jstring jip) {
-    roc_sender*     sender;
-    const char*     ip;
+    roc_sender*     sender = NULL;
+    const char*     ip = NULL;
 
     sender = (roc_sender*) senderPtr;
     ip = env->GetStringUTFChars(jip, 0);
@@ -116,8 +116,8 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_setOutgoingAddres
 
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_connect(JNIEnv *env, jobject thisObj, jlong senderPtr, jint slot, jint interface, jobject jendpoint) {
-    roc_endpoint*   endpoint;
-    roc_sender*     sender;
+    roc_endpoint*   endpoint = NULL;
+    roc_sender*     sender = NULL;
 
     if (jendpoint == NULL) {
         jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
@@ -138,9 +138,9 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_connect(JNIEnv *e
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_writeFloats(JNIEnv *env, jobject thisObj, jlong senderPtr, jfloatArray jsamples) {
-    jfloat*     samples;
-    jsize       len;
-    roc_frame   frame;
+    jfloat*     samples = NULL;
+    jsize       len = 0;
+    roc_frame   frame = {};
 
     if (jsamples == NULL) {
         jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);

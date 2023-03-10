@@ -126,7 +126,11 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_connect(JNIEnv *e
     }
 
     sender = (roc_sender*) senderPtr;
-    endpoint_unmarshal(env, &endpoint, jendpoint);
+    if (endpoint_unmarshal(env, &endpoint, jendpoint) != 0) {
+        jclass exceptionClass = env->FindClass(IO_EXCEPTION);
+        env->ThrowNew(exceptionClass, "Error unmarshalling endpoint");
+        return;
+    }
 
     if (roc_sender_connect(sender, (roc_slot) slot, (roc_interface) interface, endpoint) != 0) {
         roc_endpoint_deallocate(endpoint);

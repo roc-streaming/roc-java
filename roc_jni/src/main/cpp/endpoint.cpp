@@ -19,6 +19,7 @@ int endpoint_unmarshal(JNIEnv *env, roc_endpoint** endpoint, jobject jendpoint) 
     const char*     resource = NULL;
     char            err = 0;
 
+    assert(*endpoint == NULL);
     if (jendpoint == NULL)
         return -1;
 
@@ -29,26 +30,42 @@ int endpoint_unmarshal(JNIEnv *env, roc_endpoint** endpoint, jobject jendpoint) 
     protocol = get_protocol(env, tempObject);
 
     if ((err = roc_endpoint_allocate(endpoint)) != 0) return err;
-    if ((err = roc_endpoint_set_protocol(*endpoint, protocol)) != 0) return err;
+    if ((err = roc_endpoint_set_protocol(*endpoint, protocol)) != 0) {
+        roc_endpoint_deallocate(*endpoint);
+        *endpoint = NULL;
+        return err;
+    }
 
     jstr = (jstring) get_object_field(env, endpointClass, jendpoint, "host", "Ljava/lang/String;");
     host = env->GetStringUTFChars(jstr, 0);
     assert(host != NULL);
     if ((err = roc_endpoint_set_host(*endpoint, host)) != 0) {
         env->ReleaseStringUTFChars(jstr, host);
+        roc_endpoint_deallocate(*endpoint);
+        *endpoint = NULL;
         return err;
     }
     env->ReleaseStringUTFChars(jstr, host);
 
     port = get_int_field_value(env, endpointClass, jendpoint, "port", &err);
-    if (err) return err;
-    if ((err = roc_endpoint_set_port(*endpoint, port)) != 0) return err;
+    if (err) {
+        roc_endpoint_deallocate(*endpoint);
+        *endpoint = NULL;
+        return err;
+    }
+    if ((err = roc_endpoint_set_port(*endpoint, port)) != 0) {
+        roc_endpoint_deallocate(*endpoint);
+        *endpoint = NULL;
+        return err;
+    }
 
     jstr = (jstring) get_object_field(env, endpointClass, jendpoint, "resource", "Ljava/lang/String;");
     if (jstr != NULL) {
         resource = env->GetStringUTFChars(jstr, 0);
         if ((err = roc_endpoint_set_resource(*endpoint, resource)) != 0) {
             env->ReleaseStringUTFChars(jstr, resource);
+            roc_endpoint_deallocate(*endpoint);
+            *endpoint = NULL;
             return err;
         }
         env->ReleaseStringUTFChars(jstr, resource);
@@ -205,14 +222,7 @@ JNIEXPORT jstring JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_getUri(JNIEn
     char*           buf = NULL;
     size_t          bufsz = 0;
 
-    if (roc_endpoint_allocate(&endpoint) != 0 ) {
-        jclass exceptionClass = env->FindClass(EXCEPTION);
-        env->ThrowNew(exceptionClass, "Can't allocate roc_endpoint");
-        return NULL;
-    };
-
     if (endpoint_unmarshal(env, &endpoint, thisObj) != 0) {
-        roc_endpoint_deallocate(endpoint);
         jclass exceptionClass = env->FindClass(EXCEPTION);
         env->ThrowNew(exceptionClass, "Can't unmarshal roc_endpoint");
         return NULL;

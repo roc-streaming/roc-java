@@ -102,9 +102,7 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(JNIEnv * e
     int             port        = 0;
 
     receiver = (roc_receiver*) receiverPtr;
-
     if (endpoint_unmarshal(env, &endpoint, jendpoint) != 0) {
-        roc_endpoint_deallocate(endpoint);
         jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
         env->ThrowNew(exceptionClass, "Bad arguments");
         return;

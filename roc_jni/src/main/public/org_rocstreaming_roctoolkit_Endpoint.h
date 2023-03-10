@@ -23,6 +23,14 @@ JNIEXPORT jstring JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_getUri
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_init
   (JNIEnv *, jobject, jstring);
 
+/*
+ * Class:     org_rocstreaming_roctoolkit_Endpoint
+ * Method:    validate
+ * Signature: (ILjava/lang/String;ILjava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_validate
+  (JNIEnv *, jobject, jint, jstring, jint, jstring);
+
 #ifdef __cplusplus
 }
 #endif

@@ -248,3 +248,12 @@ JNIEXPORT jstring JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_getUri(JNIEn
     return jstr;
 }
 
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_validate(JNIEnv *env, jobject thisObj, jint protocol, jstring host, jint port, jstring resource) {
+  roc_endpoint* endpoint = NULL;
+  if (endpoint_unmarshal(env, &endpoint, thisObj) != 0) {
+      jclass exceptionClass = env->FindClass(EXCEPTION);
+      env->ThrowNew(exceptionClass, "Invalid roc_endpoint");
+      return;
+  }
+  roc_endpoint_deallocate(endpoint);
+}

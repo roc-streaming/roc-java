@@ -60,6 +60,7 @@ for i in "${!target_host[@]}"; do
         --disable-tools \
         --disable-pulseaudio \
         --disable-sox \
+        --disable-openssl \
         --build-3rdparty=libuv,openfec,speexdsp
 
     scons -Q -C android/build/roc-toolkit \
@@ -72,5 +73,6 @@ for i in "${!target_host[@]}"; do
         --disable-tools \
         --disable-pulseaudio \
         --disable-sox \
+        --disable-openssl \
         --build-3rdparty=libuv,openfec,speexdsp install
 done

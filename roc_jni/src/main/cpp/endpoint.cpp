@@ -198,6 +198,7 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_init(JNIEnv *en
     roc_endpoint_get_host(endpoint, buf, &bufsz);
     endpoint_set_host(env, thisObj, buf);
     free(buf);
+    bufsz = 0;
 
     if (roc_endpoint_get_port(endpoint, &port) == 0) {
         endpoint_set_port(env, thisObj, port);
@@ -249,11 +250,28 @@ JNIEXPORT jstring JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_getUri(JNIEn
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_validate(JNIEnv *env, jobject thisObj, jint protocol, jstring host, jint port, jstring resource) {
-  roc_endpoint* endpoint = NULL;
-  if (endpoint_unmarshal(env, &endpoint, thisObj) != 0) {
-      jclass exceptionClass = env->FindClass(EXCEPTION);
-      env->ThrowNew(exceptionClass, "Invalid roc_endpoint");
-      return;
-  }
-  roc_endpoint_deallocate(endpoint);
+    roc_endpoint* endpoint = NULL;
+    char*         buf = NULL;
+    size_t        bufsz = 0;
+
+    if (endpoint_unmarshal(env, &endpoint, thisObj) != 0) {
+        jclass exceptionClass = env->FindClass(EXCEPTION);
+        env->ThrowNew(exceptionClass, "Invalid roc_endpoint");
+        return;
+    }
+    if (roc_endpoint_get_uri(endpoint, NULL, &bufsz) != 0) {
+        roc_endpoint_deallocate(endpoint);
+        jclass exceptionClass = env->FindClass(EXCEPTION);
+        env->ThrowNew(exceptionClass, "Invalid roc_endpoint");
+        return;
+    }
+    buf = (char*)malloc(bufsz);
+    if (roc_endpoint_get_uri(endpoint, buf, &bufsz) != 0) {
+        roc_endpoint_deallocate(endpoint);
+        jclass exceptionClass = env->FindClass(EXCEPTION);
+        env->ThrowNew(exceptionClass, "Invalid roc_endpoint");
+        return;
+    }
+    roc_endpoint_deallocate(endpoint);
+    free(buf);
 }

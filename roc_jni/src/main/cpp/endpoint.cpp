@@ -73,49 +73,18 @@ int endpoint_unmarshal(JNIEnv *env, roc_endpoint** endpoint, jobject jendpoint) 
     return 0;
 }
 
-static const char* protocolMapping(roc_protocol protocol) {
-    switch (protocol) {
-        case ROC_PROTO_RTSP:
-            return "RTSP";
-        case ROC_PROTO_RTP:
-            return "RTP";
-        case ROC_PROTO_RTP_RS8M_SOURCE:
-            return "RTP_RS8M_SOURCE";
-        case ROC_PROTO_RS8M_REPAIR:
-            return "RS8M_REPAIR";
-        case ROC_PROTO_RTP_LDPC_SOURCE:
-            return "RTP_LDPC_SOURCE";
-        case ROC_PROTO_LDPC_REPAIR:
-            return "LDPC_REPAIR";
-        case ROC_PROTO_RTCP:
-            return "RTCP";
-        default:
-            return NULL;
-    }
-};
-
 void endpoint_set_protocol(JNIEnv *env, jobject endpoint, roc_protocol protocol) {
     jclass      endpointClass = NULL;
-    jclass      protocolClass = NULL;
     jfieldID    attrId = NULL;
-    jfieldID    protocolField = NULL;
-    const char* protocolValue = NULL;
     jobject     protocolObj = NULL;
 
     endpointClass = env->FindClass(ENDPOINT_CLASS);
     assert(endpointClass != NULL);
 
-    protocolClass = env->FindClass(PROTOCOL_CLASS);
-    assert(protocolClass != NULL);
-
     attrId = env->GetFieldID(endpointClass, "protocol", "L" PROTOCOL_CLASS ";");
     assert(attrId != NULL);
 
-    protocolValue = protocolMapping(protocol); // todo: maybe better to call java function to get Enum value by roc_protocol?
-    protocolField = env->GetStaticFieldID(protocolClass, protocolValue, "L" PROTOCOL_CLASS ";");
-    assert(protocolField != NULL);
-
-    protocolObj = env->GetStaticObjectField(protocolClass, protocolField);
+    protocolObj = get_protocol_enum(env, protocol);
     assert(protocolObj != NULL);
     env->SetObjectField(endpoint, attrId, protocolObj);
 }

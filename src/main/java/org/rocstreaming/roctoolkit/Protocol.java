@@ -118,7 +118,7 @@ public enum Protocol {
     }
 
     @SuppressWarnings("unused") // used by JNI
-    public static Protocol getByValue(int value) {
+    private static Protocol getByValue(int value) {
         for (Protocol protocol : values()) {
             if (value == protocol.value) {
                 return protocol;

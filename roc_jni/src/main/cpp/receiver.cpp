@@ -108,7 +108,7 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(JNIEnv * e
         return;
     }
 
-    if ((roc_endpoint_get_port(endpoint, &port)) != 0) {
+    if (roc_endpoint_get_port(endpoint, &port) != 0) {
         roc_endpoint_deallocate(endpoint);
         jclass exceptionClass = env->FindClass(EXCEPTION);
         env->ThrowNew(exceptionClass, "Error binding receiver");
@@ -124,7 +124,12 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(JNIEnv * e
 
     // ephemeral port
     if (!port) {
-        roc_endpoint_get_port(endpoint, &port);
+        if (roc_endpoint_get_port(endpoint, &port) != 0) {
+            roc_endpoint_deallocate(endpoint);
+            jclass exceptionClass = env->FindClass(EXCEPTION);
+            env->ThrowNew(exceptionClass, "Error binding receiver: can't get port from endpoint after bind");
+            return;
+        }
         endpoint_set_port(env, jendpoint, port);
     }
     roc_endpoint_deallocate(endpoint);

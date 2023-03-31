@@ -159,12 +159,28 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_init(JNIEnv *en
     endpointClass = env->FindClass(ENDPOINT_CLASS);
     assert(endpointClass != NULL);
 
-    roc_endpoint_get_protocol(endpoint, &protocol);
+    if (roc_endpoint_get_protocol(endpoint, &protocol) != 0) {
+        roc_endpoint_deallocate(endpoint);
+        jclass exceptionClass = env->FindClass(EXCEPTION);
+        env->ThrowNew(exceptionClass, "Can't get protocol from endpoint");
+        return;
+    }
     endpoint_set_protocol(env, thisObj, protocol);
 
-    roc_endpoint_get_host(endpoint, NULL, &bufsz);
+    if (roc_endpoint_get_host(endpoint, NULL, &bufsz) != 0) {
+        roc_endpoint_deallocate(endpoint);
+        jclass exceptionClass = env->FindClass(EXCEPTION);
+        env->ThrowNew(exceptionClass, "Can't get host from endpoint");
+        return;
+    }
     buf = (char*)malloc(bufsz);
-    roc_endpoint_get_host(endpoint, buf, &bufsz);
+    if (roc_endpoint_get_host(endpoint, buf, &bufsz) != 0) {
+        free(buf);
+        roc_endpoint_deallocate(endpoint);
+        jclass exceptionClass = env->FindClass(EXCEPTION);
+        env->ThrowNew(exceptionClass, "Can't get host from endpoint");
+        return;
+    }
     endpoint_set_host(env, thisObj, buf);
     free(buf);
     bufsz = 0;

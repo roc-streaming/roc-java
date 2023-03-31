@@ -89,7 +89,7 @@ void endpoint_set_protocol(JNIEnv *env, jobject endpoint, roc_protocol protocol)
     env->SetObjectField(endpoint, attrId, protocolObj);
 }
 
-void endpoint_set_host(JNIEnv *env, jobject endpoint, char* buf) {
+void endpoint_set_host(JNIEnv *env, jobject endpoint, const char* buf) {
     jclass      endpointClass = NULL;
     jfieldID    attrId = NULL;
 
@@ -113,7 +113,7 @@ void endpoint_set_port(JNIEnv *env, jobject endpoint, int port) {
     env->SetIntField(endpoint, attrId, port);
 }
 
-void endpoint_set_resource(JNIEnv *env, jobject endpoint, char* buf) {
+void endpoint_set_resource(JNIEnv *env, jobject endpoint, const char* buf) {
     jclass      endpointClass = NULL;
     jfieldID    attrId = NULL;
 

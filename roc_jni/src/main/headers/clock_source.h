@@ -2,9 +2,6 @@
 
 #ifndef CLOCK_SOURCE_H_
 #define CLOCK_SOURCE_H_
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #include "common.h"
 
@@ -14,7 +11,4 @@ extern "C" {
 
 roc_clock_source get_clock_source(JNIEnv* env, jobject jclock_source);
 
-#ifdef __cplusplus
-}
-#endif
 #endif /* CLOCK_SOURCE_H_ */

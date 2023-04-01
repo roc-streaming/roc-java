@@ -75,3 +75,28 @@ javadoc {
     options.overview = "${project.rootDir}/docs/javadoc/overview.html"
     options.memberLevel = System.getProperty("visibility") == "private" ? JavadocMemberLevel.PRIVATE : JavadocMemberLevel.PUBLIC
 }
+
+task clangFormat {
+    description = 'Formats all .h and .cpp files using clang-format'
+
+    doLast {
+        def hFiles = fileTree(dir: 'roc_jni', include: '**/*.h')
+        def cppFiles = fileTree(dir: 'roc_jni', include: '**/*.cpp')
+        def excludedFiles = fileTree(dir: 'roc_jni', include: '**/org_rocstreaming_roctoolkit_*')
+
+        hFiles = hFiles.minus(excludedFiles)
+        cppFiles = cppFiles.minus(excludedFiles)
+
+        hFiles.each { file ->
+            exec {
+                commandLine 'clang-format', '-i', file
+            }
+        }
+
+        cppFiles.each { file ->
+            exec {
+                commandLine 'clang-format', '-i', file
+            }
+        }
+    }
+}

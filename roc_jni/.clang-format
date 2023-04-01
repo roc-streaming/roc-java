@@ -1,0 +1,12 @@
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+#
+---
+BasedOnStyle: WebKit # http://www.webkit.org/coding/coding-style.html
+
+UseTab: Never
+IndentWidth: 4
+ColumnLimit: 100
+
+AllowShortIfStatementsOnASingleLine: Always
+BreakBeforeBraces: Attach
+SpaceAfterCStyleCast: true

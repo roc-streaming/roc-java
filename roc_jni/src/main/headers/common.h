@@ -2,9 +2,6 @@
 
 #ifndef COMMON_H_
 #define COMMON_H_
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #include <assert.h>
 #include <string.h>
@@ -34,7 +31,4 @@ int get_enum_value(JNIEnv* env, jclass clazz, jobject enumObj);
 jobject get_object_field(
     JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, const char* attr_class_name);
 
-#ifdef __cplusplus
-}
-#endif
 #endif /* COMMON_H_ */

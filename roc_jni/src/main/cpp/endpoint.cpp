@@ -222,6 +222,7 @@ JNIEXPORT jstring JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_getUri(JNIEn
     }
     buf = (char*)malloc(bufsz);
     if (roc_endpoint_get_uri(endpoint, buf, &bufsz) != 0) {
+        free(buf);
         roc_endpoint_deallocate(endpoint);
         jclass exceptionClass = env->FindClass(EXCEPTION);
         env->ThrowNew(exceptionClass, "Can't get uri");
@@ -252,6 +253,7 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_validate(JNIEnv
     }
     buf = (char*)malloc(bufsz);
     if (roc_endpoint_get_uri(endpoint, buf, &bufsz) != 0) {
+        free(buf);
         roc_endpoint_deallocate(endpoint);
         jclass exceptionClass = env->FindClass(EXCEPTION);
         env->ThrowNew(exceptionClass, "Invalid roc_endpoint");

@@ -3,7 +3,7 @@
 
 #include <roc/config.h>
 
-roc_channel_set get_channel_set(JNIEnv *env, jobject jchannel_set) {
+roc_channel_set get_channel_set(JNIEnv* env, jobject jchannel_set) {
     jclass channelSetClass = NULL;
 
     channelSetClass = env->FindClass(CHANNEL_SET_CLASS);

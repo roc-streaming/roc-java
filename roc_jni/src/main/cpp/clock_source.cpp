@@ -3,7 +3,7 @@
 
 #include <roc/config.h>
 
-roc_clock_source get_clock_source(JNIEnv *env, jobject jclock_source) {
+roc_clock_source get_clock_source(JNIEnv* env, jobject jclock_source) {
     jclass clockSourceClass = NULL;
 
     clockSourceClass = env->FindClass(CLOCK_SOURCE_CLASS);

@@ -1,7 +1,6 @@
-#include <jni.h>
+#pragma once
 
-#ifndef COMMON_H_
-#define COMMON_H_
+#include <jni.h>
 
 #include <assert.h>
 #include <string.h>
@@ -30,5 +29,3 @@ void set_int_field_value(JNIEnv* env, jclass clazz, jobject obj, const char* att
 int get_enum_value(JNIEnv* env, jclass clazz, jobject enumObj);
 jobject get_object_field(
     JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, const char* attr_class_name);
-
-#endif /* COMMON_H_ */

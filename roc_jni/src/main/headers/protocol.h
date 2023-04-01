@@ -1,7 +1,6 @@
-#include <jni.h>
+#pragma once
 
-#ifndef PROTOCOL_H_
-#define PROTOCOL_H_
+#include <jni.h>
 
 #include "common.h"
 
@@ -12,5 +11,3 @@
 roc_protocol get_protocol(JNIEnv* env, jobject jprotocol);
 
 jobject get_protocol_enum(JNIEnv* env, roc_protocol protocol);
-
-#endif /* PROTOCOL_H_ */

@@ -235,7 +235,7 @@ JNIEXPORT jstring JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_getUri(JNIEn
     return jstr;
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_validate(JNIEnv *env, jobject thisObj, jint protocol, jstring host, jint port, jstring resource) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_validate(JNIEnv *env, jobject thisObj) {
     roc_endpoint* endpoint = NULL;
     char*         buf = NULL;
     size_t        bufsz = 0;

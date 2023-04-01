@@ -85,7 +85,7 @@ public class Endpoint {
         this.host = host;
         this.port = port;
         this.resource = resource;
-        validate(protocol.getValue(), host, port, resource);
+        validate();
     }
 
     /**
@@ -185,6 +185,6 @@ public class Endpoint {
 
     private native void init(String uri) throws IllegalArgumentException;
 
-    private native void validate(int protocol, String host, int port, String resource) throws IllegalArgumentException;
+    private native void validate() throws IllegalArgumentException;
 
 }

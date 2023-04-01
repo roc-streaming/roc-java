@@ -26,10 +26,10 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_init
 /*
  * Class:     org_rocstreaming_roctoolkit_Endpoint
  * Method:    validate
- * Signature: (ILjava/lang/String;ILjava/lang/String;)V
+ * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_validate
-  (JNIEnv *, jobject, jint, jstring, jint, jstring);
+  (JNIEnv *, jobject);
 
 #ifdef __cplusplus
 }

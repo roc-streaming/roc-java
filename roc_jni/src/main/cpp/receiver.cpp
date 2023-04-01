@@ -1,65 +1,77 @@
 #include "org_rocstreaming_roctoolkit_Receiver.h"
 
-#include "common.h"
-#include "clock_source.h"
 #include "channel_set.h"
+#include "clock_source.h"
+#include "common.h"
+#include "endpoint.h"
 #include "frame_encoding.h"
 #include "resampler_backend.h"
 #include "resampler_profile.h"
-#include "endpoint.h"
 
 #include <roc/receiver.h>
 
-#define RECEIVER_CLASS              PACKAGE_BASE_NAME "/Receiver"
-#define RECEIVER_CONFIG_CLASS       PACKAGE_BASE_NAME "/ReceiverConfig"
+#define RECEIVER_CLASS PACKAGE_BASE_NAME "/Receiver"
+#define RECEIVER_CONFIG_CLASS PACKAGE_BASE_NAME "/ReceiverConfig"
 
-char receiver_config_unmarshal(JNIEnv *env, roc_receiver_config* config, jobject jconfig) {
+char receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, jobject jconfig) {
     jobject tempObject = NULL;
-    jclass  receiverConfigClass = NULL;
+    jclass receiverConfigClass = NULL;
     char err = 0;
 
     receiverConfigClass = env->FindClass(RECEIVER_CONFIG_CLASS);
     assert(receiverConfigClass != NULL);
 
-    config->frame_sample_rate = get_uint_field_value(env, receiverConfigClass, jconfig, "frameSampleRate", &err);
+    config->frame_sample_rate
+        = get_uint_field_value(env, receiverConfigClass, jconfig, "frameSampleRate", &err);
     if (err) return err;
 
-    tempObject = get_object_field(env, receiverConfigClass, jconfig, "frameChannels", "L" CHANNEL_SET_CLASS ";");
+    tempObject = get_object_field(
+        env, receiverConfigClass, jconfig, "frameChannels", "L" CHANNEL_SET_CLASS ";");
     if (tempObject == NULL) return 1;
     config->frame_channels = (roc_channel_set) get_channel_set(env, tempObject);
 
-    tempObject = get_object_field(env, receiverConfigClass, jconfig, "frameEncoding", "L" FRAME_ENCODING_CLASS ";");
+    tempObject = get_object_field(
+        env, receiverConfigClass, jconfig, "frameEncoding", "L" FRAME_ENCODING_CLASS ";");
     if (tempObject == NULL) return 1;
     config->frame_encoding = (roc_frame_encoding) get_frame_encoding(env, tempObject);
 
-    tempObject = get_object_field(env, receiverConfigClass, jconfig, "clockSource", "L" CLOCK_SOURCE_CLASS ";");
+    tempObject = get_object_field(
+        env, receiverConfigClass, jconfig, "clockSource", "L" CLOCK_SOURCE_CLASS ";");
     config->clock_source = get_clock_source(env, tempObject);
 
-    tempObject = get_object_field(env, receiverConfigClass, jconfig, "resamplerBackend", "L" RESAMPLER_BACKEND_CLASS ";");
+    tempObject = get_object_field(
+        env, receiverConfigClass, jconfig, "resamplerBackend", "L" RESAMPLER_BACKEND_CLASS ";");
     config->resampler_backend = get_resampler_backend(env, tempObject);
 
-    tempObject = get_object_field(env, receiverConfigClass, jconfig, "resamplerProfile", "L" RESAMPLER_PROFILE_CLASS ";");
+    tempObject = get_object_field(
+        env, receiverConfigClass, jconfig, "resamplerProfile", "L" RESAMPLER_PROFILE_CLASS ";");
     config->resampler_profile = (roc_resampler_profile) get_resampler_profile(env, tempObject);
 
-    config->target_latency = get_ullong_field_value(env, receiverConfigClass, jconfig, "targetLatency", &err);
+    config->target_latency
+        = get_ullong_field_value(env, receiverConfigClass, jconfig, "targetLatency", &err);
     if (err) return err;
-    config->max_latency_overrun = get_ullong_field_value(env, receiverConfigClass, jconfig, "maxLatencyOverrun", &err);
+    config->max_latency_overrun
+        = get_ullong_field_value(env, receiverConfigClass, jconfig, "maxLatencyOverrun", &err);
     if (err) return err;
-    config->max_latency_underrun = get_ullong_field_value(env, receiverConfigClass, jconfig, "maxLatencyUnderrun", &err);
+    config->max_latency_underrun
+        = get_ullong_field_value(env, receiverConfigClass, jconfig, "maxLatencyUnderrun", &err);
     if (err) return err;
-    config->no_playback_timeout = get_llong_field_value(env, receiverConfigClass, jconfig, "noPlaybackTimeout", &err);
+    config->no_playback_timeout
+        = get_llong_field_value(env, receiverConfigClass, jconfig, "noPlaybackTimeout", &err);
     if (err) return err;
-    config->broken_playback_timeout = get_llong_field_value(env, receiverConfigClass, jconfig, "brokenPlaybackTimeout", &err);
+    config->broken_playback_timeout
+        = get_llong_field_value(env, receiverConfigClass, jconfig, "brokenPlaybackTimeout", &err);
     if (err) return err;
-    config->breakage_detection_window = get_ullong_field_value(env, receiverConfigClass, jconfig, "breakageDetectionWindow", &err);
+    config->breakage_detection_window = get_ullong_field_value(
+        env, receiverConfigClass, jconfig, "breakageDetectionWindow", &err);
     return err;
 }
 
-JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Receiver_open(JNIEnv * env, jclass receiverClass,
-                    jlong contextPtr, jobject jconfig) {
-    roc_context*            context = NULL;
-    roc_receiver_config     receiverConfig = {};
-    roc_receiver*           receiver = NULL;
+JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Receiver_open(
+    JNIEnv* env, jclass receiverClass, jlong contextPtr, jobject jconfig) {
+    roc_context* context = NULL;
+    roc_receiver_config receiverConfig = {};
+    roc_receiver* receiver = NULL;
 
     context = (roc_context*) contextPtr;
 
@@ -78,15 +90,16 @@ JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Receiver_open(JNIEnv * 
     return (jlong) receiver;
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_setMulticastGroup(JNIEnv * env, jobject thisObj,
-                    jlong receiverPtr, jint slot, jint interface, jstring jip) {
-    roc_receiver* receiver    = NULL;
-    const char*   ip = NULL;
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_setMulticastGroup(
+    JNIEnv* env, jobject thisObj, jlong receiverPtr, jint slot, jint interface, jstring jip) {
+    roc_receiver* receiver = NULL;
+    const char* ip = NULL;
 
     receiver = (roc_receiver*) receiverPtr;
     ip = env->GetStringUTFChars(jip, 0);
 
-    if (roc_receiver_set_multicast_group(receiver, (roc_slot) slot, (roc_interface) interface, ip) != 0) {
+    if (roc_receiver_set_multicast_group(receiver, (roc_slot) slot, (roc_interface) interface, ip)
+        != 0) {
         env->ReleaseStringUTFChars(jip, ip);
         jclass exceptionClass = env->FindClass(EXCEPTION);
         env->ThrowNew(exceptionClass, "Couldn't set multicast group");
@@ -95,11 +108,11 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_setMulticastGro
     env->ReleaseStringUTFChars(jip, ip);
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(JNIEnv * env, jobject thisObj, jlong receiverPtr,
-                    jint slot, jint interface, jobject jendpoint) {
-    roc_receiver*   receiver    = NULL;
-    roc_endpoint*   endpoint    = NULL;
-    int             port        = 0;
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(
+    JNIEnv* env, jobject thisObj, jlong receiverPtr, jint slot, jint interface, jobject jendpoint) {
+    roc_receiver* receiver = NULL;
+    roc_endpoint* endpoint = NULL;
+    int port = 0;
 
     receiver = (roc_receiver*) receiverPtr;
     if (endpoint_unmarshal(env, &endpoint, jendpoint) != 0) {
@@ -123,11 +136,12 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(JNIEnv * e
     roc_endpoint_deallocate(endpoint);
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_readFloats(JNIEnv *env, jobject thisObj, jlong receiverPtr, jfloatArray jsamples) {
-    roc_receiver*       receiver = NULL;
-    roc_frame           frame = {};
-    jfloat*             samples = NULL;
-    jsize               len = 0;
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_readFloats(
+    JNIEnv* env, jobject thisObj, jlong receiverPtr, jfloatArray jsamples) {
+    roc_receiver* receiver = NULL;
+    roc_frame frame = {};
+    jfloat* samples = NULL;
+    jsize len = 0;
 
     if (jsamples == NULL) {
         jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
@@ -153,7 +167,8 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_readFloats(JNIE
     env->ReleaseFloatArrayElements(jsamples, samples, 0);
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_close(JNIEnv *env, jclass receiverClass, jlong receiverPtr) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_close(
+    JNIEnv* env, jclass receiverClass, jlong receiverPtr) {
 
     roc_receiver* receiver = (roc_receiver*) receiverPtr;
 

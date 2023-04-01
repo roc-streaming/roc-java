@@ -3,7 +3,7 @@
 
 #include <roc/config.h>
 
-roc_resampler_profile get_resampler_profile(JNIEnv *env, jobject jresampler_profile) {
+roc_resampler_profile get_resampler_profile(JNIEnv* env, jobject jresampler_profile) {
     jclass resamplerProfileClass = NULL;
 
     resamplerProfileClass = env->FindClass(RESAMPLER_PROFILE_CLASS);

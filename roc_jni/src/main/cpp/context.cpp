@@ -1,12 +1,13 @@
 #include "org_rocstreaming_roctoolkit_Context.h"
+
 #include "common.h"
 
 #include <roc/context.h>
 
-#define CONTEXT_CLASS               PACKAGE_BASE_NAME "/Context"
-#define CONTEXT_CONFIG_CLASS        PACKAGE_BASE_NAME "/ContextConfig"
+#define CONTEXT_CLASS PACKAGE_BASE_NAME "/Context"
+#define CONTEXT_CONFIG_CLASS PACKAGE_BASE_NAME "/ContextConfig"
 
-char context_config_unmarshal(JNIEnv *env, roc_context_config* conf, jobject jconfig) {
+char context_config_unmarshal(JNIEnv* env, roc_context_config* conf, jobject jconfig) {
     jclass contextConfigClass = NULL;
     char err = 0;
 
@@ -15,14 +16,17 @@ char context_config_unmarshal(JNIEnv *env, roc_context_config* conf, jobject jco
 
     memset(conf, 0, sizeof(roc_context_config));
 
-    conf->max_packet_size = get_uint_field_value(env, contextConfigClass, jconfig, "maxPacketSize", &err);
+    conf->max_packet_size
+        = get_uint_field_value(env, contextConfigClass, jconfig, "maxPacketSize", &err);
     if (err) return err;
-    conf->max_frame_size = get_uint_field_value(env, contextConfigClass, jconfig, "maxFrameSize", &err);
+    conf->max_frame_size
+        = get_uint_field_value(env, contextConfigClass, jconfig, "maxFrameSize", &err);
     return err;
 }
 
-JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Context_open(JNIEnv *env, jclass contextClass, jobject config) {
-    roc_context*        context = NULL;
+JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Context_open(
+    JNIEnv* env, jclass contextClass, jobject config) {
+    roc_context* context = NULL;
     roc_context_config context_config = {};
 
     if (context_config_unmarshal(env, &context_config, config) != 0) {
@@ -40,7 +44,8 @@ JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Context_open(JNIEnv *en
     return (jlong) context;
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Context_close(JNIEnv *env, jclass contextClass, jlong nativePtr) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Context_close(
+    JNIEnv* env, jclass contextClass, jlong nativePtr) {
 
     roc_context* context = (roc_context*) nativePtr;
 

@@ -7,11 +7,12 @@ extern "C" {
 #endif
 
 #include "common.h"
+
 #include <roc/config.h>
 
-#define PACKET_ENCODING_CLASS        PACKAGE_BASE_NAME "/PacketEncoding"
+#define PACKET_ENCODING_CLASS PACKAGE_BASE_NAME "/PacketEncoding"
 
-roc_packet_encoding get_packet_encoding(JNIEnv *env, jobject jpacket_encoding);
+roc_packet_encoding get_packet_encoding(JNIEnv* env, jobject jpacket_encoding);
 
 #ifdef __cplusplus
 }

@@ -40,8 +40,8 @@ static const char* logLevelMapping(roc_log_level level) {
 };
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
-    JNIEnv* env;
-    jclass tempLocalClassRef;
+    JNIEnv* env = NULL;
+    jclass tempLocalClassRef = NULL;
 
     if (vm->GetEnv((void**) &env, JNI_VERSION) != JNI_OK) {
         return JNI_ERR;
@@ -54,7 +54,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
 }
 
 void JNI_OnUnload(JavaVM *vm, void *reserved) {
-    JNIEnv* env;
+    JNIEnv* env = NULL;
 
     vm->GetEnv((void**) &env, JNI_VERSION);
 
@@ -66,12 +66,12 @@ void JNI_OnUnload(JavaVM *vm, void *reserved) {
     handler_args.mutex.unlock();
 }
 
-void logger_handler(roc_log_level level, const char* component, const char* message) {
-    JNIEnv*     env;
-    jfieldID    field;
-    jobject     levelObj;
-    jstring     jcomp;
-    jstring     jmess;
+void logger_handler(const roc_log_message* message, void* argument) {
+    JNIEnv*     env = NULL;
+    jfieldID    field = NULL;
+    jobject     levelObj = NULL;
+    jstring     jmodule = NULL;
+    jstring     jmess = NULL;
 
     handler_args.mutex.lock();
     if(handler_args.vm == NULL || handler_args.callback == NULL || handler_args.methID == NULL) {
@@ -100,13 +100,13 @@ void logger_handler(roc_log_level level, const char* component, const char* mess
         return;
     }
 
-    field = env->GetStaticFieldID(handler_args.logLevelClass, logLevelMapping(level), "L" LOG_LEVEL_CLASS ";");
+    field = env->GetStaticFieldID(handler_args.logLevelClass, logLevelMapping(message->level), "L" LOG_LEVEL_CLASS ";");
     levelObj = env->GetStaticObjectField(handler_args.logLevelClass, field);
 
-    jcomp = env->NewStringUTF(component);
-    jmess = env->NewStringUTF(message);
+    jmodule = env->NewStringUTF(message->module);
+    jmess = env->NewStringUTF(message->text);
 
-    env->CallVoidMethod(handler_args.callback, handler_args.methID, levelObj, jcomp, jmess);
+    env->CallVoidMethod(handler_args.callback, handler_args.methID, levelObj, jmodule, jmess);
 
     if (attached)
         handler_args.vm->DetachCurrentThread();
@@ -115,8 +115,8 @@ void logger_handler(roc_log_level level, const char* component, const char* mess
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setLevel(JNIEnv *env, jclass clazz, jobject jlevel) {
-    jclass          logLevelClass;
-    roc_log_level   level;
+    jclass          logLevelClass = NULL;
+    roc_log_level   level = (roc_log_level)0;
 
     if (jlevel == NULL) {
         jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
@@ -129,11 +129,11 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setLevel(JNIEnv *
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setCallback(JNIEnv *env, jclass clazz, jobject jhandler) {
-    jclass      logHandlerClass;
-    jmethodID   tmpMethodID;
+    jclass      logHandlerClass = NULL;
+    jmethodID   tmpMethodID = NULL;
 
     if (jhandler == NULL) { // reset default callback (write to stderr)
-        roc_log_set_handler(NULL);
+        roc_log_set_handler(NULL, NULL);
         return;
     }
 
@@ -152,5 +152,5 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setCallback(JNIEn
     handler_args.methID = tmpMethodID;
     handler_args.mutex.unlock();
 
-    roc_log_set_handler(logger_handler);
+    roc_log_set_handler(logger_handler, NULL);
 }

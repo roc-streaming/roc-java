@@ -1,9 +1,13 @@
 package org.rocstreaming.roctoolkit;
 
+import org.awaitility.Duration;
 import org.junit.jupiter.api.Test;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LoggerTest {
@@ -34,27 +38,19 @@ public class LoggerTest {
     }
 
     @Test
-    public void TestValidLoggerSetCallback() {
-        assertDoesNotThrow(() -> {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PrintStream ps = new PrintStream(baos);
-            PrintStream old = System.out;
-            System.setOut(ps);
+    public void TestValidLoggerSetCallback() throws Exception {
+        Set<String> logs = Collections.newSetFromMap(new ConcurrentHashMap<>());
+        Logger.setLevel(LogLevel.INFO);
+        Logger.setCallback((level, component, message) ->
+                logs.add(String.format("[level=\"%s\", component=\"%s\"]: %s", level, component, message)));
 
-            Logger.setLevel(LogLevel.INFO);
-            Logger.setCallback((level, component, message) -> {
-                System.out.println("[level=\"" + level + "\", component=\"" + component + "\"]: \"" + message + "\"");
-            });
+        //noinspection EmptyTryBlock
+        try (Context ignored = new Context()) {
+        }
 
-            try (
-                Context c = new Context();
-            ) {}
-            System.out.flush();
-            System.setOut(old);
-            String[] lines = baos.toString().split(System.getProperty("line.separator"));
-            assertEquals(2, lines.length);
-            assertEquals("[level=\"INFO\", component=\"roc_lib\"]: \"roc_context: opening context\"", lines[0]);
-            assertEquals("[level=\"INFO\", component=\"roc_lib\"]: \"roc_context: closed context\"", lines[1]);
-        });
+        String logOpen = "[level=\"INFO\", component=\"libroc\"]: roc_context_open: opening context";
+        String logClose = "[level=\"INFO\", component=\"libroc\"]: roc_context_close: closed context";
+        await().atMost(Duration.FIVE_MINUTES)
+                .untilAsserted(() -> assertTrue(logs.contains(logOpen) && logs.contains(logClose)));
     }
 }

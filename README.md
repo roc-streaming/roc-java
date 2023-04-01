@@ -46,19 +46,18 @@ final int MY_RECEIVER_REPAIR_PORT = 10002;
 final int MY_SAMPLE_RATE = 44100;
 
 try (Context context = new Context()) {
-    ReceiverConfig config = new SenderConfig.Builder(MY_SAMPLE_RATE,
-                                                ChannelSet.STEREO,
-                                                FrameEncoding.PCM_FLOAT)
-                                                .fecCode(FecCode.RS8M)
-                                                .automaticTiming(true)
-                                        .build();
+    SenderConfig config = new SenderConfig.Builder(SAMPLE_RATE,
+        ChannelSet.STEREO,
+        FrameEncoding.PCM_FLOAT)
+        .fecEncoding(FecEncoding.RS8M)
+        .build();
                                         
     try (Sender sender = new Sender(context, config)) {
-        Address sourceAddress = new Address(Family.AUTO, MY_RECEIVER_IP, MY_RECEIVER_SOURCE_PORT);
-        Address repairAddress = new Address(Family.AUTO, MY_RECEIVER_IP, MY_RECEIVER_REPAIR_PORT);
+        Endpoint sourceEndpoint = new Endpoint(Protocol.RTP_RS8M_SOURCE, MY_RECEIVER_IP, MY_RECEIVER_SOURCE_PORT);
+        Endpoint repairEndpoint = new Endpoint(Protocol.RS8M_REPAIR, MY_RECEIVER_IP, MY_RECEIVER_REPAIR_PORT);
 
-        sender.connect(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, sourceAddress);
-        sender.connect(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, repairAddress);
+        sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, sourceEndpoint);
+        sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, repairEndpoint);
         
         while (/* not stopped */) {
             float[] samples = /* generate samples */
@@ -81,18 +80,17 @@ final int MY_SAMPLE_RATE = 44100;
 final int MY_SAMPLE_BATCH = 320;
 
 try (Context context = new Context()) {
-    ReceiverConfig config = new ReceiverConfig.Builder(MY_SAMPLE_RATE,
-                                            ChannelSet.STEREO,
-                                            FrameEncoding.PCM_FLOAT)
-                                            .automaticTiming(true)
-                                        .build();
+    ReceiverConfig config = new ReceiverConfig.Builder(SAMPLE_RATE,
+        ChannelSet.STEREO,
+        FrameEncoding.PCM_FLOAT)
+        .build();
                                         
     try (Receiver receiver = new Receiver(context, config)) {
-        Address sourceAddress = new Address(Family.AUTO, MY_RECEIVER_IP, MY_RECEIVER_SOURCE_PORT);
-        Address repairAddress = new Address(Family.AUTO, MY_RECEIVER_IP, MY_RECEIVER_REPAIR_PORT);
+        Endpoint sourceEndpoint = new Endpoint(Protocol.RTP_RS8M_SOURCE, MY_RECEIVER_IP, MY_RECEIVER_SOURCE_PORT);
+        Endpoint repairEndpoint = new Endpoint(Protocol.RS8M_REPAIR, MY_RECEIVER_IP, MY_RECEIVER_REPAIR_PORT);
 
-        receiver.bind(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, sourceAddress);
-        receiver.bind(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, repairAddress);
+        receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, sourceEndpoint);
+        receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, repairEndpoint);
         
         while (/* not stopped */) {
             float[] samples = new float[MY_SAMPLE_BATCH];

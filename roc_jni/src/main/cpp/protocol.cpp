@@ -1,23 +1,27 @@
-#include "org_rocstreaming_roctoolkit_Protocol.h"
+#include "protocol.h"
+#include "common.h"
 
-#include <roc/config.h>
+roc_protocol get_protocol(JNIEnv *env, jobject jprotocol) {
+    jclass        protocolClass = NULL;
 
-JNIEXPORT jint JNICALL Java_org_rocstreaming_roctoolkit_Protocol_getRocProtoRTP(JNIEnv *, jclass) {
-    return ROC_PROTO_RTP;
+    protocolClass = env->FindClass(PROTOCOL_CLASS);
+    assert(protocolClass != NULL);
+
+    return (roc_protocol) get_enum_value(env, protocolClass, jprotocol);
 }
 
-JNIEXPORT jint JNICALL Java_org_rocstreaming_roctoolkit_Protocol_getRocProtoRTPRS8MSOURCE(JNIEnv *, jclass) {
-    return ROC_PROTO_RTP_RS8M_SOURCE;
-}
+jobject get_protocol_enum(JNIEnv *env, roc_protocol protocol) {
+    jclass        protocolClass = NULL;
+    jobject       jprotocol = NULL;
+    jmethodID     getProtocolMethodID = NULL;
 
-JNIEXPORT jint JNICALL Java_org_rocstreaming_roctoolkit_Protocol_getRocProtoRS8MREPAIR(JNIEnv *, jclass) {
-    return ROC_PROTO_RS8M_REPAIR;
-}
+    protocolClass = env->FindClass(PROTOCOL_CLASS);
+    assert(protocolClass != NULL);
 
-JNIEXPORT jint JNICALL Java_org_rocstreaming_roctoolkit_Protocol_getRocProtoRTPLDPCSOURCE(JNIEnv *, jclass) {
-    return ROC_PROTO_RTP_LDPC_SOURCE;
-}
+    getProtocolMethodID = env->GetStaticMethodID(protocolClass, "getByValue", "(I)L" PROTOCOL_CLASS ";");
+    assert(getProtocolMethodID != NULL);
 
-JNIEXPORT jint JNICALL Java_org_rocstreaming_roctoolkit_Protocol_getRocProtoLDPCREPAIR(JNIEnv *, jclass) {
-    return ROC_PROTO_LDPC_REPAIR;
+    jprotocol = (jobject) env->CallStaticObjectMethod(protocolClass, getProtocolMethodID, (jint) protocol);
+    assert(jprotocol != NULL);
+    return jprotocol;
 }

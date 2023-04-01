@@ -1,11 +1,13 @@
 package org.rocstreaming.roctoolkit;
 
+import org.awaitility.Duration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NativeObjectCleanerTest {
@@ -57,18 +59,11 @@ class NativeObjectCleanerTest {
         //noinspection UnusedAssignment
         receiver = null;
         System.gc();
-        long timeout = TimeUnit.MINUTES.toMillis(3);
-        while (timeout > 0) {
-            Thread.sleep(50);
-            timeout -= 50;
-            try {
-                assertDoesNotThrow(context::close);
-                return;
-            } catch (AssertionFailedError ignore) {
-            }
-            System.gc();
-        }
-        fail("failed to close context because receiver wasn't auto closed");
+        await().atMost(Duration.FIVE_MINUTES)
+                .untilAsserted(() -> {
+                    System.gc();
+                    assertDoesNotThrow(context::close);
+                });
     }
 
 }

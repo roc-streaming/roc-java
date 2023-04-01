@@ -9,21 +9,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ReceiverTest {
 
-    private final int SAMPLE_RATE = 44100;
-    private ReceiverConfig config;
+    private static final int SAMPLE_RATE = 44100;
+    private final ReceiverConfig config;
     private Context context;
 
     ReceiverTest() {
         this.config = new ReceiverConfig.Builder(SAMPLE_RATE,
-                                            ChannelSet.STEREO,
-                                            FrameEncoding.PCM_FLOAT)
-                                            .automaticTiming(true)
-                                        .build();
+                ChannelSet.STEREO,
+                FrameEncoding.PCM_FLOAT)
+                .build();
     }
 
     @BeforeAll
     public static void beforeAll() {
-        Logger.setLevel(LogLevel.NONE);
+        Logger.setLevel(LogLevel.ERROR);
     }
 
     @BeforeEach
@@ -39,9 +38,9 @@ public class ReceiverTest {
     @Test
     public void TestValidReceiverCreationAndDeinitialization() {
         assertDoesNotThrow(() -> {
-            try (
-                    Receiver receiver = new Receiver(context, config);
-            ) {}
+            //noinspection EmptyTryBlock
+            try (Receiver ignored = new Receiver(context, config)) {
+            }
         });
     }
 
@@ -66,58 +65,63 @@ public class ReceiverTest {
 
     @Test
     public void TestValidReceiverBind() throws Exception {
-        try (
-                Receiver receiver = new Receiver(context, config);
-        ) {
-            assertDoesNotThrow(() -> receiver.bind(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, new Address(Family.AUTO, "0.0.0.0", 10001)));
-            assertDoesNotThrow(() -> receiver.bind(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "0.0.0.0", 10002)));
+        try (Receiver receiver = new Receiver(context, config)) {
+            assertDoesNotThrow(() -> receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:0")));
+            assertDoesNotThrow(() -> receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:0")));
         }
     }
 
     @Test
     public void TestReceiverBindEphemeralPort() throws Exception {
-        try (
-                Receiver receiver = new Receiver(context, config);
-        ) {
-            Address sourceAddress = new Address(Family.AUTO, "0.0.0.0", 0);
-            Address repairAddress = new Address(Family.AUTO, "0.0.0.0", 0);
-            receiver.bind(PortType.AUDIO_SOURCE, Protocol.RTP_RS8M_SOURCE, sourceAddress);
-            receiver.bind(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, repairAddress);
-            assertNotEquals(0, sourceAddress.getPort());
-            assertNotEquals(0, repairAddress.getPort());
+        try (Receiver receiver = new Receiver(context, config)) {
+            Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://0.0.0.0:0");
+            Endpoint repairEndpoint = new Endpoint("rs8m://0.0.0.0:0");
+            receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, sourceEndpoint);
+            receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, repairEndpoint);
+            //
+            int sourcePort = sourceEndpoint.getPort();
+            int repairPort = repairEndpoint.getPort();
+            assertNotEquals(0, sourcePort);
+            assertNotEquals(0, repairPort);
+            assertEquals("rtp+rs8m://0.0.0.0:" + sourcePort, sourceEndpoint.getUri());
+            assertEquals("rs8m://0.0.0.0:" + repairPort, repairEndpoint.getUri());
         }
     }
 
     @Test
     public void TestInvalidReceiverBind() throws Exception {
-        try (
-                    Receiver receiver = new Receiver(context, config);
-        ) {
-            assertThrows(IllegalArgumentException.class, () -> receiver.bind(null, Protocol.RTP, new Address(Family.AUTO, "0.0.0.0", 10001)));
-            assertThrows(IllegalArgumentException.class, () -> receiver.bind(PortType.AUDIO_SOURCE, null, new Address(Family.AUTO, "0.0.0.0", 10001)));
-            assertThrows(IllegalArgumentException.class, () -> receiver.bind(PortType.AUDIO_SOURCE, Protocol.RTP, null));
+        try (Receiver receiver = new Receiver(context, config)) {
+            assertThrows(IllegalArgumentException.class, () -> receiver.bind(null, Interface.AUDIO_SOURCE, new Endpoint("rtp://0.0.0.0")));
+            assertThrows(IllegalArgumentException.class, () -> receiver.bind(Slot.DEFAULT, null, new Endpoint("rtp://0.0.0.0")));
+            assertThrows(IllegalArgumentException.class, () -> receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, null));
         }
     }
 
     @Test
     public void TestInvalidReadFloatArray() throws Exception {
-        try (
-                Receiver receiver = new Receiver(context, config);
-        ) {
-            receiver.bind(PortType.AUDIO_SOURCE, Protocol.RTP, new Address(Family.AUTO, "0.0.0.0", 10001));
-            receiver.bind(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "0.0.0.0", 10002));
+        try (Receiver receiver = new Receiver(context, config)) {
+            receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:0"));
+            receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://127.0.0.1:0"));
             assertThrows(IllegalArgumentException.class, () -> receiver.read(null));
         }
     }
 
     @Test
+    public void TestReceiverSetMulticastGroup() throws Exception {
+        try (Receiver receiver = new Receiver(context, config)) {
+            assertDoesNotThrow(() -> {
+                receiver.setMulticastGroup(Slot.DEFAULT, Interface.AUDIO_SOURCE, "0.0.0.0");
+                receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://224.0.0.1:0"));
+            });
+        }
+    }
+
+    @Test
     public void TestReceiverReadZeroizedArray() throws Exception {
-        try (
-                Receiver receiver = new Receiver(context, config);
-        ) {
-            receiver.bind(PortType.AUDIO_SOURCE, Protocol.RTP, new Address(Family.AUTO, "0.0.0.0", 10001));
-            receiver.bind(PortType.AUDIO_REPAIR, Protocol.RS8M_REPAIR, new Address(Family.AUTO, "0.0.0.0", 10002));
-            float[] samples = { 1.0f, 1.0f};
+        try (Receiver receiver = new Receiver(context, config)) {
+            receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:0"));
+            receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:0"));
+            float[] samples = {1.0f, 1.0f};
             receiver.read(samples);
             assertArrayEquals(new float[]{0.0f, 0.0f}, samples);
         }

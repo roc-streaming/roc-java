@@ -1,11 +1,13 @@
 #include "org_rocstreaming_roctoolkit_Sender.h"
 #include "common.h"
+#include "clock_source.h"
 #include "channel_set.h"
 #include "frame_encoding.h"
 #include "packet_encoding.h"
+#include "resampler_backend.h"
 #include "resampler_profile.h"
-#include "fec_code.h"
-#include "address.h"
+#include "fec_encoding.h"
+#include "endpoint.h"
 
 #include <roc/sender.h>
 #include <roc/frame.h>
@@ -13,9 +15,9 @@
 #define SENDER_CLASS                PACKAGE_BASE_NAME "/Sender"
 #define SENDER_CONFIG_CLASS         PACKAGE_BASE_NAME "/SenderConfig"
 
-char sender_config_unmarshall(JNIEnv *env, roc_sender_config* config, jobject jconfig) {
-    jobject tempObject;
-    jclass senderConfigClass;
+char sender_config_unmarshal(JNIEnv *env, roc_sender_config* config, jobject jconfig) {
+    jobject tempObject = NULL;
+    jclass senderConfigClass = NULL;
     char err = 0;
 
     senderConfigClass = env->FindClass(SENDER_CONFIG_CLASS);
@@ -45,14 +47,18 @@ char sender_config_unmarshall(JNIEnv *env, roc_sender_config* config, jobject jc
     if (err) return err;
     config->packet_interleaving = get_uint_field_value(env, senderConfigClass, jconfig, "packetInterleaving", &err);
     if (err) return err;
-    config->automatic_timing = get_boolean_field_value(env, senderConfigClass, jconfig, "automaticTiming", &err);
-    if (err) return err;
+
+    tempObject = get_object_field(env, senderConfigClass, jconfig, "clockSource", "L" CLOCK_SOURCE_CLASS ";");
+    config->clock_source = get_clock_source(env, tempObject);
+
+    tempObject = get_object_field(env, senderConfigClass, jconfig, "resamplerBackend", "L" RESAMPLER_BACKEND_CLASS ";");
+    config->resampler_backend = get_resampler_backend(env, tempObject);
 
     tempObject = get_object_field(env, senderConfigClass, jconfig, "resamplerProfile", "L" RESAMPLER_PROFILE_CLASS ";");
     config->resampler_profile = (roc_resampler_profile) get_resampler_profile(env, tempObject);
 
-    tempObject = get_object_field(env, senderConfigClass, jconfig, "fecCode", "L" FEC_CODE_CLASS ";");
-    config->fec_code = (roc_fec_code) get_fec_code(env, tempObject);
+    tempObject = get_object_field(env, senderConfigClass, jconfig, "fecEncoding", "L" FEC_ENCODING_CLASS ";");
+    config->fec_encoding = (roc_fec_encoding) get_fec_encoding(env, tempObject);
 
     config->fec_block_source_packets = get_uint_field_value(env, senderConfigClass, jconfig, "fecBlockSourcePackets", &err);
     if (err) return err;
@@ -61,19 +67,19 @@ char sender_config_unmarshall(JNIEnv *env, roc_sender_config* config, jobject jc
 }
 
 JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Sender_open(JNIEnv *env, jclass senderClass, jlong contextPtr, jobject jconfig) {
-    roc_context*            context;
-    roc_sender_config       config;
-    roc_sender*             sender;
+    roc_context*            context = NULL;
+    roc_sender_config       config = {};
+    roc_sender*             sender = NULL;
 
     context = (roc_context*) contextPtr;
 
-    if (sender_config_unmarshall(env, &config, jconfig) != 0) {
+    if (sender_config_unmarshal(env, &config, jconfig) != 0) {
         jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
         env->ThrowNew(exceptionClass, "Bad arguments");
         return (jlong) NULL;
     }
 
-    if ((sender = roc_sender_open(context, &config)) == NULL) {
+    if ((roc_sender_open(context, &config, &sender)) != 0) {
         jclass exceptionClass = env->FindClass(EXCEPTION);
         env->ThrowNew(exceptionClass, "Error opening sender");
         return (jlong) NULL;
@@ -92,63 +98,53 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_close(JNIEnv *env
     }
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_bind(JNIEnv *env, jobject thisObj, jlong senderPtr, jobject jaddress) {
-    roc_address     address;
-    roc_sender*     sender;
-    int             port;
-
-    if (jaddress == NULL) {
-        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Bad arguments");
-        return;
-    }
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_setOutgoingAddress(JNIEnv *env, jobject thisObj, jlong senderPtr, jint slot, jint interface, jstring jip) {
+    roc_sender*     sender = NULL;
+    const char*     ip = NULL;
 
     sender = (roc_sender*) senderPtr;
+    ip = env->GetStringUTFChars(jip, 0);
 
-    address_unmarshall(env, &address, jaddress);
-
-    if ((port = roc_address_port(&address)) < 0) {
-        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Error binding sender");
+    if (roc_sender_set_outgoing_address(sender, (roc_slot) slot, (roc_interface) interface, ip) != 0) {
+        env->ReleaseStringUTFChars(jip, ip);
+        jclass exceptionClass = env->FindClass(EXCEPTION);
+        env->ThrowNew(exceptionClass, "Couldn't set outgoing address");
         return;
     }
-
-    if (roc_sender_bind(sender, &address) != 0) {
-        jclass exceptionClass = env->FindClass(IO_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Error binding sender");
-        return;
-    }
-
-    // ephemeral port
-    if (!port) {
-        port = roc_address_port(&address);
-        address_set_port(env, jaddress, port);
-    }
+    env->ReleaseStringUTFChars(jip, ip);
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_connect(JNIEnv *env, jobject thisObj, jlong senderPtr, jint portType, jint protocol, jobject jaddress) {
-    roc_address     address;
-    roc_sender*     sender;
 
-    if (jaddress == NULL) {
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_connect(JNIEnv *env, jobject thisObj, jlong senderPtr, jint slot, jint interface, jobject jendpoint) {
+    roc_endpoint*   endpoint = NULL;
+    roc_sender*     sender = NULL;
+
+    if (jendpoint == NULL) {
         jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
         env->ThrowNew(exceptionClass, "Bad arguments");
         return;
     }
 
     sender = (roc_sender*) senderPtr;
-    address_unmarshall(env, &address, jaddress);
+    if (endpoint_unmarshal(env, &endpoint, jendpoint) != 0) {
+        jclass exceptionClass = env->FindClass(IO_EXCEPTION);
+        env->ThrowNew(exceptionClass, "Error unmarshalling endpoint");
+        return;
+    }
 
-    if (roc_sender_connect(sender, (roc_port_type) portType, (roc_protocol) protocol, &address) != 0) {
+    if (roc_sender_connect(sender, (roc_slot) slot, (roc_interface) interface, endpoint) != 0) {
+        roc_endpoint_deallocate(endpoint);
         jclass exceptionClass = env->FindClass(IO_EXCEPTION);
         env->ThrowNew(exceptionClass, "Error with sender connect");
+        return;
     }
+    roc_endpoint_deallocate(endpoint);
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_writeFloats(JNIEnv *env, jobject thisObj, jlong senderPtr, jfloatArray jsamples) {
-    jfloat*     samples;
-    jsize       len;
-    roc_frame   frame;
+    jfloat*     samples = NULL;
+    jsize       len = 0;
+    roc_frame   frame = {};
 
     if (jsamples == NULL) {
         jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);

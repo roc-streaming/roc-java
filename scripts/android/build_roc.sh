@@ -39,11 +39,6 @@ then
     mkdir -p "android/build/roc-toolkit"
     git clone -q --recurse-submodules https://github.com/roc-streaming/roc-toolkit.git \
         "android/build/roc-toolkit"
-    work_dir=$(pwd)
-    cd "android/build/roc-toolkit"
-    git checkout -q 863a0227b78464c3a56fc0484bec73c891e4b7a8
-    git submodule update --init --recursive
-    cd $work_dir
 fi
 
 if [ ! -d "android/build/libroc" ]
@@ -63,11 +58,10 @@ for i in "${!target_host[@]}"; do
         --mandir="${PWD}"/android/build/libroc/man/$abi \
         --disable-soversion \
         --disable-tools \
-        --disable-examples \
-        --disable-tests \
         --disable-pulseaudio \
         --disable-sox \
-        --build-3rdparty=libuv,openfec
+        --disable-openssl \
+        --build-3rdparty=libuv,openfec,speexdsp
 
     scons -Q -C android/build/roc-toolkit \
         --compiler=clang \
@@ -77,9 +71,8 @@ for i in "${!target_host[@]}"; do
         --mandir="${PWD}"/android/build/libroc/man/$abi \
         --disable-soversion \
         --disable-tools \
-        --disable-examples \
-        --disable-tests \
         --disable-pulseaudio \
         --disable-sox \
-        --build-3rdparty=libuv,openfec install
+        --disable-openssl \
+        --build-3rdparty=libuv,openfec,speexdsp install
 done

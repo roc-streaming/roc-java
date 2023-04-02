@@ -34,18 +34,22 @@ jobs:
           - os: linux
             image: ubuntu-latest
             java: 11
+            jacoco: yes
 
           - os: linux
             image: ubuntu-latest
             java: 8
+            jacoco: no
 
           - os: osx
             image: macos-latest
             java: 11
+            jacoco: no
 
           - os: osx
             image: macos-latest
             java: 8
+            jacoco: no
 
     name: ${{ matrix.os }}/java${{ matrix.java }}
 
@@ -68,6 +72,22 @@ jobs:
 
       - name: Build and test bindings
         run: scripts/${{ matrix.os }}/build_bindings.sh
+
+      - name: Add coverage to PR
+        if: ${{ matrix.jacoco == 'yes' }}
+        id: jacoco
+        uses: codecov/codecov-action@v3
+        with:
+          files: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
+
+      - name: Coveralls
+        if: ${{ matrix.jacoco == 'yes' }}
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-path: src/main/java
+          format: jacoco
+          file: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
 
   android-linux:
     strategy:

@@ -22,7 +22,7 @@ public class ReceiverTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Logger.setLevel(LogLevel.ERROR);
+        Logger.setLevel(LogLevel.INFO);
     }
 
     @BeforeEach

@@ -38,7 +38,7 @@ public class SenderTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Logger.setLevel(LogLevel.ERROR);
+        Logger.setLevel(LogLevel.INFO);
     }
 
     @BeforeEach

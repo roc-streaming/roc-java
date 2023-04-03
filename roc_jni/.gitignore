@@ -63,3 +63,7 @@ atlassian-ide-plugin.xml
 
 # NetBeans specific files/directories
 .nbattrs
+
+# LSP
+compile_commands.json
+.cache

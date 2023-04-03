@@ -18,7 +18,7 @@ int endpoint_unmarshal(JNIEnv* env, roc_endpoint** endpoint, jobject jendpoint) 
     const char* host = NULL;
     int port = 0;
     const char* resource = NULL;
-    char err = 0;
+    int err = 0;
 
     assert(*endpoint == NULL);
     if (jendpoint == NULL) return -1;
@@ -31,6 +31,7 @@ int endpoint_unmarshal(JNIEnv* env, roc_endpoint** endpoint, jobject jendpoint) 
     protocol = get_protocol(env, tempObject);
 
     if ((err = roc_endpoint_allocate(endpoint)) != 0) return err;
+
     if ((err = roc_endpoint_set_protocol(*endpoint, protocol)) != 0) {
         roc_endpoint_deallocate(*endpoint);
         *endpoint = NULL;
@@ -72,6 +73,7 @@ int endpoint_unmarshal(JNIEnv* env, roc_endpoint** endpoint, jobject jendpoint) 
         }
         env->ReleaseStringUTFChars(jstr, resource);
     }
+
     return 0;
 }
 

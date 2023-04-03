@@ -16,10 +16,10 @@
 #define SENDER_CLASS PACKAGE_BASE_NAME "/Sender"
 #define SENDER_CONFIG_CLASS PACKAGE_BASE_NAME "/SenderConfig"
 
-char sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobject jconfig) {
+int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobject jconfig) {
     jobject tempObject = NULL;
     jclass senderConfigClass = NULL;
-    char err = 0;
+    int err = 0;
 
     senderConfigClass = env->FindClass(SENDER_CONFIG_CLASS);
     assert(senderConfigClass != NULL);
@@ -76,9 +76,12 @@ char sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobject jco
     config->fec_block_source_packets
         = get_uint_field_value(env, senderConfigClass, jconfig, "fecBlockSourcePackets", &err);
     if (err) return err;
+
     config->fec_block_repair_packets
         = get_uint_field_value(env, senderConfigClass, jconfig, "fecBlockRepairPackets", &err);
-    return err;
+    if (err) return err;
+
+    return 0;
 }
 
 JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Sender_open(

@@ -4,6 +4,8 @@ project(RocJni)
 
 set(CMAKE_CXX_STANDARD 11)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 if(APPLE)
     # on macOs 10.14+ /usr/local/include and /usr/local/lib are not in SDK
     # compiler and linker PATH so let's add them explicitly
@@ -79,3 +81,10 @@ else()
         target_link_libraries(roc_jni -lroc)
     endif()
 endif()
+
+add_custom_command(TARGET roc_jni POST_BUILD
+    COMMENT "Copying compile_commands.json to project root"
+    COMMAND "${CMAKE_COMMAND}" -E copy
+        "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json"
+        "${PROJECT_SOURCE_DIR}/compile_commands.json"
+    )

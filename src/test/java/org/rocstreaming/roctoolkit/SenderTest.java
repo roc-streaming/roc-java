@@ -175,7 +175,7 @@ public class SenderTest {
             sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
             Exception exception = assertThrows(Exception.class, () -> sender.setOutgoingAddress(Slot.DEFAULT, Interface.AUDIO_SOURCE, "127.0.0.1"));
-            assertEquals("Couldn't set outgoing address", exception.getMessage());
+            assertEquals("Can't set outgoing address", exception.getMessage());
         }
     }
 }

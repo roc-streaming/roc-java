@@ -7,9 +7,9 @@
 #define CONTEXT_CLASS PACKAGE_BASE_NAME "/Context"
 #define CONTEXT_CONFIG_CLASS PACKAGE_BASE_NAME "/ContextConfig"
 
-char context_config_unmarshal(JNIEnv* env, roc_context_config* conf, jobject jconfig) {
+int context_config_unmarshal(JNIEnv* env, roc_context_config* conf, jobject jconfig) {
     jclass contextConfigClass = NULL;
-    char err = 0;
+    int err = 0;
 
     contextConfigClass = env->FindClass(CONTEXT_CONFIG_CLASS);
     assert(contextConfigClass != NULL);
@@ -19,9 +19,12 @@ char context_config_unmarshal(JNIEnv* env, roc_context_config* conf, jobject jco
     conf->max_packet_size
         = get_uint_field_value(env, contextConfigClass, jconfig, "maxPacketSize", &err);
     if (err) return err;
+
     conf->max_frame_size
         = get_uint_field_value(env, contextConfigClass, jconfig, "maxFrameSize", &err);
-    return err;
+    if (err) return err;
+
+    return 0;
 }
 
 JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Context_open(

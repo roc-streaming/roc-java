@@ -13,10 +13,10 @@
 #define RECEIVER_CLASS PACKAGE_BASE_NAME "/Receiver"
 #define RECEIVER_CONFIG_CLASS PACKAGE_BASE_NAME "/ReceiverConfig"
 
-char receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, jobject jconfig) {
+int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, jobject jconfig) {
     jobject tempObject = NULL;
     jclass receiverConfigClass = NULL;
-    char err = 0;
+    int err = 0;
 
     receiverConfigClass = env->FindClass(RECEIVER_CONFIG_CLASS);
     assert(receiverConfigClass != NULL);
@@ -50,21 +50,28 @@ char receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, jobject
     config->target_latency
         = get_ullong_field_value(env, receiverConfigClass, jconfig, "targetLatency", &err);
     if (err) return err;
+
     config->max_latency_overrun
         = get_ullong_field_value(env, receiverConfigClass, jconfig, "maxLatencyOverrun", &err);
     if (err) return err;
+
     config->max_latency_underrun
         = get_ullong_field_value(env, receiverConfigClass, jconfig, "maxLatencyUnderrun", &err);
     if (err) return err;
+
     config->no_playback_timeout
         = get_llong_field_value(env, receiverConfigClass, jconfig, "noPlaybackTimeout", &err);
     if (err) return err;
+
     config->broken_playback_timeout
         = get_llong_field_value(env, receiverConfigClass, jconfig, "brokenPlaybackTimeout", &err);
     if (err) return err;
+
     config->breakage_detection_window = get_ullong_field_value(
         env, receiverConfigClass, jconfig, "breakageDetectionWindow", &err);
-    return err;
+    if (err) return err;
+
+    return 0;
 }
 
 JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Receiver_open(

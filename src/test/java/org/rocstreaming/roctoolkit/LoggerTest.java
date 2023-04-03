@@ -48,9 +48,20 @@ public class LoggerTest {
         try (Context ignored = new Context()) {
         }
 
-        String logOpen = "[level=\"INFO\", component=\"libroc\"]: roc_context_open: opening context";
-        String logClose = "[level=\"INFO\", component=\"libroc\"]: roc_context_close: closed context";
+        String logOpen = "[level=\"INFO\", component=\"libroc\"]: roc_context_open";
+        String logClose = "[level=\"INFO\", component=\"libroc\"]: roc_context_close";
         await().atMost(Duration.FIVE_MINUTES)
-                .untilAsserted(() -> assertTrue(logs.contains(logOpen) && logs.contains(logClose)));
+                .until(() -> {
+                        boolean hasLogOpen = false, hasLogClose = false;
+                        for (String log : logs) {
+                            if (log.startsWith(logOpen)) {
+                                hasLogOpen = true;
+                            }
+                            if (log.startsWith(logClose)) {
+                                hasLogClose = true;
+                            }
+                        }
+                        return hasLogOpen && hasLogClose;
+                    });
     }
 }

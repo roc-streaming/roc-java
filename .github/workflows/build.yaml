@@ -80,15 +80,6 @@ jobs:
         with:
           files: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
 
-      - name: Coveralls
-        if: ${{ matrix.jacoco == 'yes' }}
-        uses: coverallsapp/github-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          base-path: src/main/java
-          format: jacoco
-          file: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
-
   android-linux:
     strategy:
       fail-fast: false

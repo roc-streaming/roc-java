@@ -73,7 +73,7 @@ jobs:
       - name: Build and test bindings
         run: scripts/${{ matrix.os }}/build_bindings.sh
 
-      - name: Add coverage to PR
+      - name: Upload test coverage
         if: ${{ matrix.jacoco == 'yes' }}
         id: jacoco
         uses: codecov/codecov-action@v3

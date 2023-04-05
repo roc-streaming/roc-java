@@ -13,7 +13,6 @@
 #include <roc/frame.h>
 #include <roc/sender.h>
 
-#define SENDER_CLASS PACKAGE_BASE_NAME "/Sender"
 #define SENDER_CONFIG_CLASS PACKAGE_BASE_NAME "/SenderConfig"
 
 static int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobject jconfig) {
@@ -21,7 +20,7 @@ static int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobje
     jobject jobj = NULL;
     int err = 0;
 
-    senderConfigClass = env->FindClass(SENDER_CONFIG_CLASS);
+    senderConfigClass = (*env)->FindClass(env, SENDER_CONFIG_CLASS);
     assert(senderConfigClass != NULL);
 
     // set all fields to zeros
@@ -111,14 +110,14 @@ JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Sender_open(
     context = (roc_context*) contextPtr;
 
     if (sender_config_unmarshal(env, &config, jconfig) != 0) {
-        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Bad config argument");
+        jclass exceptionClass = (*env)->FindClass(env, ILLEGAL_ARGUMENTS_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Bad config argument");
         goto out;
     }
 
     if ((roc_sender_open(context, &config, &sender)) != 0) {
-        jclass exceptionClass = env->FindClass(EXCEPTION);
-        env->ThrowNew(exceptionClass, "Error opening sender");
+        jclass exceptionClass = (*env)->FindClass(env, EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Error opening sender");
         sender = NULL;
         goto out;
     }
@@ -134,18 +133,18 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_setOutgoingAddres
 
     sender = (roc_sender*) senderPtr;
 
-    ip = env->GetStringUTFChars(jip, 0);
+    ip = (*env)->GetStringUTFChars(env, jip, 0);
     assert(ip != NULL);
 
     if (roc_sender_set_outgoing_address(sender, (roc_slot) slot, (roc_interface) interface, ip)
         != 0) {
-        jclass exceptionClass = env->FindClass(EXCEPTION);
-        env->ThrowNew(exceptionClass, "Can't set outgoing address");
+        jclass exceptionClass = (*env)->FindClass(env, EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Can't set outgoing address");
         goto out;
     }
 
 out:
-    if (ip != NULL) env->ReleaseStringUTFChars(jip, ip);
+    if (ip != NULL) (*env)->ReleaseStringUTFChars(env, jip, ip);
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_connect(
@@ -156,20 +155,20 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_connect(
     sender = (roc_sender*) senderPtr;
 
     if (jendpoint == NULL) {
-        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Bad endpoint argument");
+        jclass exceptionClass = (*env)->FindClass(env, ILLEGAL_ARGUMENTS_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Bad endpoint argument");
         goto out;
     }
 
     if (endpoint_unmarshal(env, &endpoint, jendpoint) != 0) {
-        jclass exceptionClass = env->FindClass(IO_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Error unmarshalling endpoint");
+        jclass exceptionClass = (*env)->FindClass(env, IO_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Error unmarshalling endpoint");
         goto out;
     }
 
     if (roc_sender_connect(sender, (roc_slot) slot, (roc_interface) interface, endpoint) != 0) {
-        jclass exceptionClass = env->FindClass(IO_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Error connecting sender");
+        jclass exceptionClass = (*env)->FindClass(env, IO_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Error connecting sender");
         goto out;
     }
 
@@ -189,12 +188,12 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_writeFloats(
     sender = (roc_sender*) senderPtr;
 
     if (jsamples == NULL) {
-        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Bad samples argument");
+        jclass exceptionClass = (*env)->FindClass(env, ILLEGAL_ARGUMENTS_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Bad samples argument");
         goto out;
     }
-    samples = env->GetFloatArrayElements(jsamples, 0);
-    len = env->GetArrayLength(jsamples);
+    samples = (*env)->GetFloatArrayElements(env, jsamples, 0);
+    len = (*env)->GetArrayLength(env, jsamples);
     assert(samples != NULL);
 
     memset(&frame, 0, sizeof(frame));
@@ -202,13 +201,13 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_writeFloats(
     frame.samples_size = len * sizeof(float);
 
     if (roc_sender_write(sender, &frame) != 0) {
-        jclass exceptionClass = env->FindClass(IO_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Error writing frame");
+        jclass exceptionClass = (*env)->FindClass(env, IO_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Error writing frame");
         goto out;
     }
 
 out:
-    if (samples != NULL) env->ReleaseFloatArrayElements(jsamples, samples, 0);
+    if (samples != NULL) (*env)->ReleaseFloatArrayElements(env, jsamples, samples, 0);
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_close(
@@ -217,7 +216,7 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_close(
     roc_sender* sender = (roc_sender*) senderPtr;
 
     if (roc_sender_close(sender) != 0) {
-        jclass exceptionClass = env->FindClass(IO_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Error closing sender");
+        jclass exceptionClass = (*env)->FindClass(env, IO_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Error closing sender");
     }
 }

@@ -4,14 +4,13 @@
 
 #include <roc/context.h>
 
-#define CONTEXT_CLASS PACKAGE_BASE_NAME "/Context"
 #define CONTEXT_CONFIG_CLASS PACKAGE_BASE_NAME "/ContextConfig"
 
 static int context_config_unmarshal(JNIEnv* env, roc_context_config* conf, jobject jconfig) {
     jclass contextConfigClass = NULL;
     int err = 0;
 
-    contextConfigClass = env->FindClass(CONTEXT_CONFIG_CLASS);
+    contextConfigClass = (*env)->FindClass(env, CONTEXT_CONFIG_CLASS);
     assert(contextConfigClass != NULL);
 
     memset(conf, 0, sizeof(roc_context_config));
@@ -33,14 +32,14 @@ JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Context_open(
     roc_context_config context_config = {};
 
     if (context_config_unmarshal(env, &context_config, config) != 0) {
-        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Wrong context configuration values");
+        jclass exceptionClass = (*env)->FindClass(env, ILLEGAL_ARGUMENTS_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Wrong context configuration values");
         return (jlong) NULL;
     }
 
     if (roc_context_open(&context_config, &context) != 0) {
-        jclass exceptionClass = env->FindClass(EXCEPTION);
-        env->ThrowNew(exceptionClass, "Error opening context");
+        jclass exceptionClass = (*env)->FindClass(env, EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Error opening context");
         return (jlong) NULL;
     }
 
@@ -53,7 +52,7 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Context_close(
     roc_context* context = (roc_context*) nativePtr;
 
     if (roc_context_close(context) != 0) {
-        jclass exceptionClass = env->FindClass(EXCEPTION);
-        env->ThrowNew(exceptionClass, "Error closing context");
+        jclass exceptionClass = (*env)->FindClass(env, EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Error closing context");
     }
 }

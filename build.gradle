@@ -32,7 +32,7 @@ ext {
 }
 
 compileJava {
-    options.headerOutputDirectory = file(project(":roc_jni").projectDir.absolutePath + "/src/main/public")
+    options.headerOutputDirectory = file(project(":roc_jni").projectDir.absolutePath + "/src/main/export")
 }
 
 tasks.register('copyNativeDebugDeps') {

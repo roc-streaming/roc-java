@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-project(RocJni)
-
-set(CMAKE_CXX_STANDARD 11)
+project(RocJni C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -14,21 +12,28 @@ if(APPLE)
 endif()
 
 add_library(roc_jni SHARED
-        src/main/cpp/channel_set.cpp
-        src/main/cpp/clock_source.cpp
-        src/main/cpp/common.cpp
-        src/main/cpp/context.cpp
-        src/main/cpp/endpoint.cpp
-        src/main/cpp/fec_encoding.cpp
-        src/main/cpp/frame_encoding.cpp
-        src/main/cpp/logger.cpp
-        src/main/cpp/packet_encoding.cpp
-        src/main/cpp/protocol.cpp
-        src/main/cpp/receiver.cpp
-        src/main/cpp/resampler_backend.cpp
-        src/main/cpp/resampler_profile.cpp
-        src/main/cpp/sender.cpp
+        src/main/impl/channel_set.c
+        src/main/impl/clock_source.c
+        src/main/impl/common.c
+        src/main/impl/context.c
+        src/main/impl/endpoint.c
+        src/main/impl/fec_encoding.c
+        src/main/impl/frame_encoding.c
+        src/main/impl/logger.c
+        src/main/impl/packet_encoding.c
+        src/main/impl/protocol.c
+        src/main/impl/receiver.c
+        src/main/impl/resampler_backend.c
+        src/main/impl/resampler_profile.c
+        src/main/impl/sender.c
         )
+
+target_compile_options(roc_jni PRIVATE
+    -Wall
+    -Wextra
+    -Wno-system-headers
+    -Wno-unused-parameter
+    )
 
 if(NOT ANDROID)
     if (NOT CMAKE_CROSSCOMPILING)
@@ -39,8 +44,8 @@ if(NOT ANDROID)
 endif()
 
 target_include_directories(roc_jni
-                    PRIVATE src/main/headers/
-                    PUBLIC src/main/public/
+                    PRIVATE src/main/impl/
+                    PUBLIC src/main/export/
                     )
 
 if(ANDROID)

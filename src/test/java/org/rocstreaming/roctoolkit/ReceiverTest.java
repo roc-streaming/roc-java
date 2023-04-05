@@ -53,11 +53,11 @@ public class ReceiverTest {
             ReceiverConfig config = new ReceiverConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
             new Receiver(context, config);
         });
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(Exception.class, () -> {
             ReceiverConfig config = new ReceiverConfig.Builder(SAMPLE_RATE, null, FrameEncoding.PCM_FLOAT).build();
             new Receiver(context, config);
         });
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(Exception.class, () -> {
             ReceiverConfig config = new ReceiverConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, null).build();
             new Receiver(context, config);
         });

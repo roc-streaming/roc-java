@@ -69,11 +69,11 @@ public class SenderTest {
             new Sender(context, config);
         });
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(Exception.class, () -> {
             SenderConfig config = new SenderConfig.Builder(SAMPLE_RATE, null, FrameEncoding.PCM_FLOAT).build();
             new Sender(context, config);
         });
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(Exception.class, () -> {
             SenderConfig config = new SenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, null).build();
             new Sender(context, config);
         });

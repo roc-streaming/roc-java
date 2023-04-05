@@ -21,6 +21,9 @@ int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, jobject 
     receiverConfigClass = env->FindClass(RECEIVER_CONFIG_CLASS);
     assert(receiverConfigClass != NULL);
 
+    // set all fields to zeros
+    memset(config, 0, sizeof(*config));
+
     // frame_sample_rate
     config->frame_sample_rate
         = get_uint_field_value(env, receiverConfigClass, jconfig, "frameSampleRate", &err);
@@ -29,29 +32,28 @@ int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, jobject 
     // frame_channels
     jobj = get_object_field(
         env, receiverConfigClass, jconfig, "frameChannels", "L" CHANNEL_SET_CLASS ";");
-    if (jobj == NULL) return -1;
-    config->frame_channels = (roc_channel_set) get_channel_set(env, jobj);
+    if (jobj != NULL) config->frame_channels = (roc_channel_set) get_channel_set(env, jobj);
 
     // frame_encoding
     jobj = get_object_field(
         env, receiverConfigClass, jconfig, "frameEncoding", "L" FRAME_ENCODING_CLASS ";");
-    if (jobj == NULL) return -1;
-    config->frame_encoding = (roc_frame_encoding) get_frame_encoding(env, jobj);
+    if (jobj != NULL) config->frame_encoding = (roc_frame_encoding) get_frame_encoding(env, jobj);
 
     // clock_source
     jobj = get_object_field(
         env, receiverConfigClass, jconfig, "clockSource", "L" CLOCK_SOURCE_CLASS ";");
-    config->clock_source = get_clock_source(env, jobj);
+    if (jobj != NULL) config->clock_source = get_clock_source(env, jobj);
 
     // resampler_backend
     jobj = get_object_field(
         env, receiverConfigClass, jconfig, "resamplerBackend", "L" RESAMPLER_BACKEND_CLASS ";");
-    config->resampler_backend = get_resampler_backend(env, jobj);
+    if (jobj != NULL) config->resampler_backend = get_resampler_backend(env, jobj);
 
     // resampler_profile
     jobj = get_object_field(
         env, receiverConfigClass, jconfig, "resamplerProfile", "L" RESAMPLER_PROFILE_CLASS ";");
-    config->resampler_profile = (roc_resampler_profile) get_resampler_profile(env, jobj);
+    if (jobj != NULL)
+        config->resampler_profile = (roc_resampler_profile) get_resampler_profile(env, jobj);
 
     // target_latency
     config->target_latency

@@ -24,6 +24,9 @@ int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobject jcon
     senderConfigClass = env->FindClass(SENDER_CONFIG_CLASS);
     assert(senderConfigClass != NULL);
 
+    // set all fields to zeros
+    memset(config, 0, sizeof(*config));
+
     // frame_sample_rate
     config->frame_sample_rate
         = get_uint_field_value(env, senderConfigClass, jconfig, "frameSampleRate", &err);
@@ -32,14 +35,12 @@ int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobject jcon
     // frame_channels
     jobj = get_object_field(
         env, senderConfigClass, jconfig, "frameChannels", "L" CHANNEL_SET_CLASS ";");
-    if (jobj == NULL) return -1;
-    config->frame_channels = (roc_channel_set) get_channel_set(env, jobj);
+    if (jobj != NULL) config->frame_channels = (roc_channel_set) get_channel_set(env, jobj);
 
     // frame_encoding
     jobj = get_object_field(
         env, senderConfigClass, jconfig, "frameEncoding", "L" FRAME_ENCODING_CLASS ";");
-    if (jobj == NULL) return -1;
-    config->frame_encoding = (roc_frame_encoding) get_frame_encoding(env, jobj);
+    if (jobj != NULL) config->frame_encoding = (roc_frame_encoding) get_frame_encoding(env, jobj);
 
     // packet_sample_rate
     config->packet_sample_rate
@@ -49,12 +50,13 @@ int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobject jcon
     // packet_channels
     jobj = get_object_field(
         env, senderConfigClass, jconfig, "packetChannels", "L" CHANNEL_SET_CLASS ";");
-    config->packet_channels = (roc_channel_set) get_channel_set(env, jobj);
+    if (jobj != NULL) config->packet_channels = (roc_channel_set) get_channel_set(env, jobj);
 
     // packet_encoding
     jobj = get_object_field(
         env, senderConfigClass, jconfig, "packetEncoding", "L" PACKET_ENCODING_CLASS ";");
-    config->packet_encoding = (roc_packet_encoding) get_packet_encoding(env, jobj);
+    if (jobj != NULL)
+        config->packet_encoding = (roc_packet_encoding) get_packet_encoding(env, jobj);
 
     // packet_length
     config->packet_length
@@ -69,22 +71,23 @@ int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobject jcon
     // clock_source
     jobj = get_object_field(
         env, senderConfigClass, jconfig, "clockSource", "L" CLOCK_SOURCE_CLASS ";");
-    config->clock_source = get_clock_source(env, jobj);
+    if (jobj != NULL) config->clock_source = get_clock_source(env, jobj);
 
     // resampler_backend
     jobj = get_object_field(
         env, senderConfigClass, jconfig, "resamplerBackend", "L" RESAMPLER_BACKEND_CLASS ";");
-    config->resampler_backend = get_resampler_backend(env, jobj);
+    if (jobj != NULL) config->resampler_backend = get_resampler_backend(env, jobj);
 
     // resampler_profile
     jobj = get_object_field(
         env, senderConfigClass, jconfig, "resamplerProfile", "L" RESAMPLER_PROFILE_CLASS ";");
-    config->resampler_profile = (roc_resampler_profile) get_resampler_profile(env, jobj);
+    if (jobj != NULL)
+        config->resampler_profile = (roc_resampler_profile) get_resampler_profile(env, jobj);
 
     // fec_encoding
     jobj = get_object_field(
         env, senderConfigClass, jconfig, "fecEncoding", "L" FEC_ENCODING_CLASS ";");
-    config->fec_encoding = (roc_fec_encoding) get_fec_encoding(env, jobj);
+    if (jobj != NULL) config->fec_encoding = (roc_fec_encoding) get_fec_encoding(env, jobj);
 
     // fec_block_source_packets
     config->fec_block_source_packets

@@ -7,7 +7,7 @@
 #define CONTEXT_CLASS PACKAGE_BASE_NAME "/Context"
 #define CONTEXT_CONFIG_CLASS PACKAGE_BASE_NAME "/ContextConfig"
 
-int context_config_unmarshal(JNIEnv* env, roc_context_config* conf, jobject jconfig) {
+static int context_config_unmarshal(JNIEnv* env, roc_context_config* conf, jobject jconfig) {
     jclass contextConfigClass = NULL;
     int err = 0;
 

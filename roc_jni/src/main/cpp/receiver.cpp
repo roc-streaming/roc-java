@@ -13,7 +13,7 @@
 #define RECEIVER_CLASS PACKAGE_BASE_NAME "/Receiver"
 #define RECEIVER_CONFIG_CLASS PACKAGE_BASE_NAME "/ReceiverConfig"
 
-int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, jobject jconfig) {
+static int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, jobject jconfig) {
     jclass receiverConfigClass = NULL;
     jobject jobj = NULL;
     int err = 0;

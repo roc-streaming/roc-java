@@ -16,7 +16,7 @@
 #define SENDER_CLASS PACKAGE_BASE_NAME "/Sender"
 #define SENDER_CONFIG_CLASS PACKAGE_BASE_NAME "/SenderConfig"
 
-int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobject jconfig) {
+static int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobject jconfig) {
     jclass senderConfigClass = NULL;
     jobject jobj = NULL;
     int err = 0;

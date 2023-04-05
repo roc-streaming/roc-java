@@ -45,6 +45,26 @@ public class ReceiverTest {
     }
 
     @Test
+    public void TestValidReceiverCreationAndDeinitializationWithFullConfig() {
+        ReceiverConfig config = new ReceiverConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT)
+                .clockSource(ClockSource.INTERNAL)
+                .resamplerBackend(ResamplerBackend.BUILTIN)
+                .resamplerProfile(ResamplerProfile.HIGH)
+                .targetLatency(1000)
+                .maxLatencyOverrun(500)
+                .maxLatencyUnderrun(500)
+                .noPlaybackTimeout(2000)
+                .brokenPlaybackTimeout(2000)
+                .breakageDetectionWindow(2000)
+                .build();
+        assertDoesNotThrow(() -> {
+            //noinspection EmptyTryBlock
+            try (Receiver ignored = new Receiver(context, config)) {
+            }
+        });
+    }
+
+    @Test
     @SuppressWarnings("resource")
     public void TestInvalidReceiverCreation() {
         assertThrows(IllegalArgumentException.class, () -> new Receiver(null, config));

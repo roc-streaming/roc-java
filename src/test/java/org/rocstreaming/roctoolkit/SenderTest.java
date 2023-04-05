@@ -60,6 +60,27 @@ public class SenderTest {
     }
 
     @Test
+    public void TestValidSenderCreationAndDeinitializationWithFullConfig() {
+        SenderConfig config = new SenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT)
+                .packetSampleRate(44100)
+                .packetChannels(ChannelSet.STEREO)
+                .packetLength(2000)
+                .packetInterleaving(1)
+                .clockSource(ClockSource.INTERNAL)
+                .resamplerBackend(ResamplerBackend.BUILTIN)
+                .resamplerProfile(ResamplerProfile.HIGH)
+                .fecEncoding(FecEncoding.RS8M)
+                .fecBlockSourcePackets(10)
+                .fecBlockRepairPackets(10)
+                .build();
+        assertDoesNotThrow(() -> {
+            //noinspection EmptyTryBlock
+            try (Sender ignored = new Sender(context, config)) {
+            }
+        });
+    }
+
+    @Test
     @SuppressWarnings("resource")
     public void TestInvalidSenderCreation() {
         assertThrows(IllegalArgumentException.class, () -> new Sender(null, config));

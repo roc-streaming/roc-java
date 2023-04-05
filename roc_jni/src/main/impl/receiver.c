@@ -10,7 +10,6 @@
 
 #include <roc/receiver.h>
 
-#define RECEIVER_CLASS PACKAGE_BASE_NAME "/Receiver"
 #define RECEIVER_CONFIG_CLASS PACKAGE_BASE_NAME "/ReceiverConfig"
 
 static int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, jobject jconfig) {
@@ -18,7 +17,7 @@ static int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, j
     jobject jobj = NULL;
     int err = 0;
 
-    receiverConfigClass = env->FindClass(RECEIVER_CONFIG_CLASS);
+    receiverConfigClass = (*env)->FindClass(env, RECEIVER_CONFIG_CLASS);
     assert(receiverConfigClass != NULL);
 
     // set all fields to zeros
@@ -97,14 +96,14 @@ JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Receiver_open(
     context = (roc_context*) contextPtr;
 
     if (receiver_config_unmarshal(env, &receiverConfig, jconfig) != 0) {
-        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Bad config argument");
+        jclass exceptionClass = (*env)->FindClass(env, ILLEGAL_ARGUMENTS_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Bad config argument");
         goto out;
     }
 
     if ((roc_receiver_open(context, &receiverConfig, &receiver)) != 0) {
-        jclass exceptionClass = env->FindClass(EXCEPTION);
-        env->ThrowNew(exceptionClass, "Error opening receiver");
+        jclass exceptionClass = (*env)->FindClass(env, EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Error opening receiver");
         receiver = NULL;
         goto out;
     }
@@ -120,18 +119,18 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_setMulticastGro
 
     receiver = (roc_receiver*) receiverPtr;
 
-    ip = env->GetStringUTFChars(jip, 0);
+    ip = (*env)->GetStringUTFChars(env, jip, 0);
     assert(ip != NULL);
 
     if (roc_receiver_set_multicast_group(receiver, (roc_slot) slot, (roc_interface) interface, ip)
         != 0) {
-        jclass exceptionClass = env->FindClass(EXCEPTION);
-        env->ThrowNew(exceptionClass, "Can't set multicast group");
+        jclass exceptionClass = (*env)->FindClass(env, EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Can't set multicast group");
         goto out;
     }
 
 out:
-    if (ip != NULL) env->ReleaseStringUTFChars(jip, ip);
+    if (ip != NULL) (*env)->ReleaseStringUTFChars(env, jip, ip);
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(
@@ -143,14 +142,14 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(
     receiver = (roc_receiver*) receiverPtr;
 
     if (endpoint_unmarshal(env, &endpoint, jendpoint) != 0) {
-        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Bad endpoint argument");
+        jclass exceptionClass = (*env)->FindClass(env, ILLEGAL_ARGUMENTS_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Bad endpoint argument");
         goto out;
     }
 
     if (roc_receiver_bind(receiver, (roc_slot) slot, (roc_interface) interface, endpoint) != 0) {
-        jclass exceptionClass = env->FindClass(EXCEPTION);
-        env->ThrowNew(exceptionClass, "Error binding receiver");
+        jclass exceptionClass = (*env)->FindClass(env, EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Error binding receiver");
         goto out;
     }
 
@@ -176,12 +175,12 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_readFloats(
     receiver = (roc_receiver*) receiverPtr;
 
     if (jsamples == NULL) {
-        jclass exceptionClass = env->FindClass(ILLEGAL_ARGUMENTS_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Bad samples argument");
+        jclass exceptionClass = (*env)->FindClass(env, ILLEGAL_ARGUMENTS_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Bad samples argument");
         goto out;
     }
-    samples = env->GetFloatArrayElements(jsamples, 0);
-    len = env->GetArrayLength(jsamples);
+    samples = (*env)->GetFloatArrayElements(env, jsamples, 0);
+    len = (*env)->GetArrayLength(env, jsamples);
     assert(samples != NULL);
 
     memset(&frame, 0, sizeof(frame));
@@ -189,13 +188,13 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_readFloats(
     frame.samples_size = len * sizeof(float);
 
     if (roc_receiver_read(receiver, &frame) != 0) {
-        jclass exceptionClass = env->FindClass(IO_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Error reading frame");
+        jclass exceptionClass = (*env)->FindClass(env, IO_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Error reading frame");
         goto out;
     }
 
 out:
-    if (samples != NULL) env->ReleaseFloatArrayElements(jsamples, samples, 0);
+    if (samples != NULL) (*env)->ReleaseFloatArrayElements(env, jsamples, samples, 0);
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_close(
@@ -204,7 +203,7 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_close(
     roc_receiver* receiver = (roc_receiver*) receiverPtr;
 
     if (roc_receiver_close(receiver) != 0) {
-        jclass exceptionClass = env->FindClass(IO_EXCEPTION);
-        env->ThrowNew(exceptionClass, "Error closing receiver");
+        jclass exceptionClass = (*env)->FindClass(env, IO_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Error closing receiver");
     }
 }

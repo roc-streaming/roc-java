@@ -21,7 +21,7 @@ public class CMakeLibraryPlugin implements Plugin<Project> {
         // Add a CMake extension to the Gradle model
         final CMakeExtension extension = project.getExtensions().create("cmake", CMakeExtension.class,
                 project.getLayout(), project.getObjects());
-        extension.getSrcDirs().convention(Arrays.asList("src/main/cpp", "src/main/public", "src/main/headers"));
+        extension.getSrcDirs().convention(Arrays.asList("src/main/export", "src/main/impl"));
 
         /*
          * Create some tasks to drive the CMake build

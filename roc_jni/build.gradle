@@ -10,7 +10,6 @@ cmake {
         platform System.getProperty("platform")
     }
 
-    //srcDirs "src/main/cpp", "src/main/public", "src/main/headers"
     generator System.getProperty("generator")
 
     arguments "-DROC_INCLUDE_PATH=" + System.getProperty("ROC_INCLUDE_PATH"),

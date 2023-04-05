@@ -4,7 +4,7 @@
 roc_frame_encoding get_frame_encoding(JNIEnv* env, jobject jframe_encoding) {
     jclass frameEncodingClass = NULL;
 
-    frameEncodingClass = env->FindClass(FRAME_ENCODING_CLASS);
+    frameEncodingClass = (*env)->FindClass(env, FRAME_ENCODING_CLASS);
     assert(frameEncodingClass != NULL);
 
     return (roc_frame_encoding) get_enum_value(env, frameEncodingClass, jframe_encoding);

@@ -40,21 +40,16 @@ Documentation for the C API can be found [here](https://roc-streaming.org/toolki
 ```java
 import org.rocstreaming.roctoolkit;
 
-final String MY_RECEIVER_IP = "192.168.0.1";
-final int MY_RECEIVER_SOURCE_PORT = 10001;
-final int MY_RECEIVER_REPAIR_PORT = 10002;
-final int MY_SAMPLE_RATE = 44100;
-
 try (Context context = new Context()) {
-    SenderConfig config = new SenderConfig.Builder(SAMPLE_RATE,
+    SenderConfig config = new SenderConfig.Builder(44100,
         ChannelSet.STEREO,
         FrameEncoding.PCM_FLOAT)
         .fecEncoding(FecEncoding.RS8M)
         .build();
                                         
     try (Sender sender = new Sender(context, config)) {
-        Endpoint sourceEndpoint = new Endpoint(Protocol.RTP_RS8M_SOURCE, MY_RECEIVER_IP, MY_RECEIVER_SOURCE_PORT);
-        Endpoint repairEndpoint = new Endpoint(Protocol.RS8M_REPAIR, MY_RECEIVER_IP, MY_RECEIVER_REPAIR_PORT);
+        Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://192.168.0.1:10001");
+        Endpoint repairEndpoint = new Endpoint("rs8m://192.168.0.1:10002");
 
         sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, sourceEndpoint);
         sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, repairEndpoint);
@@ -73,27 +68,21 @@ try (Context context = new Context()) {
 ```java
 import org.rocstreaming.roctoolkit;
 
-final String MY_RECEIVER_IP = "0.0.0.0";
-final int MY_RECEIVER_SOURCE_PORT = 10001;
-final int MY_RECEIVER_REPAIR_PORT = 10002;
-final int MY_SAMPLE_RATE = 44100;
-final int MY_SAMPLE_BATCH = 320;
-
 try (Context context = new Context()) {
-    ReceiverConfig config = new ReceiverConfig.Builder(SAMPLE_RATE,
+    ReceiverConfig config = new ReceiverConfig.Builder(44100,
         ChannelSet.STEREO,
         FrameEncoding.PCM_FLOAT)
         .build();
                                         
     try (Receiver receiver = new Receiver(context, config)) {
-        Endpoint sourceEndpoint = new Endpoint(Protocol.RTP_RS8M_SOURCE, MY_RECEIVER_IP, MY_RECEIVER_SOURCE_PORT);
-        Endpoint repairEndpoint = new Endpoint(Protocol.RS8M_REPAIR, MY_RECEIVER_IP, MY_RECEIVER_REPAIR_PORT);
+        Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://0.0.0.0:10001");
+        Endpoint repairEndpoint = new Endpoint("rs8m://0.0.0.0:10001");
 
         receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, sourceEndpoint);
         receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, repairEndpoint);
         
         while (/* not stopped */) {
-            float[] samples = new float[MY_SAMPLE_BATCH];
+            float[] samples = new float[320];
             receiver.read(samples);
 
             /* process received samples */

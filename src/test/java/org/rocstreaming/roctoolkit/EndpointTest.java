@@ -177,6 +177,17 @@ class EndpointTest {
         }
         {
             Params params = new Params();
+            params.name = "empty host";
+            params.uri = "rtsp://:12345";
+            params.protocol = Protocol.RTSP;
+            params.host = "";
+            params.port = 12345;
+            params.uriException = IllegalArgumentException.class;
+            params.componentsException = IllegalArgumentException.class;
+            result.add(params);
+        }
+        {
+            Params params = new Params();
             params.name = "port out of range";
             params.uri = "rtsp://192.168.0.1:65536";
             params.protocol = Protocol.RTSP;
@@ -265,11 +276,46 @@ class EndpointTest {
         assertEquals(params.uri, endpoint.getUri());
     }
 
+    @MethodSource("endpointsSource")
+    @ParameterizedTest(name = "{0}")
+    public void endpointBuilderTest(Params params) {
+        if (params.componentsException != null) {
+            assertThrows(params.componentsException, () -> new Endpoint.Builder()
+                    .setProtocol(params.protocol)
+                    .setHost(params.host)
+                    .setPort(params.port)
+                    .setResource(params.resource)
+                    .build());
+            return;
+        }
+        Endpoint endpoint = new Endpoint.Builder()
+                .setProtocol(params.protocol)
+                .setHost(params.host)
+                .setPort(params.port)
+                .setResource(params.resource)
+                .build();
+        assertEquals(params.protocol, endpoint.getProtocol());
+        assertEquals(params.host, endpoint.getHost());
+        assertEquals(params.port, endpoint.getPort());
+        assertEquals(params.resource, endpoint.getResource());
+        assertEquals(params.uri, endpoint.getUri());
+    }
+
     @Test
     public void EndpointBuilderInvalidTest() {
         assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().build());
         assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().setHost("host").build());
         assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().setHost("host").setPort(1).build());
         assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().setHost("host").setResource("/resource").build());
+    }
+
+    @Test
+    public void EndpointMinimalConstructorTest() {
+        Endpoint endpoint = new Endpoint(Protocol.RTP, "192.168.0.1", 12345);
+        assertEquals(Protocol.RTP, endpoint.getProtocol());
+        assertEquals("192.168.0.1", endpoint.getHost());
+        assertEquals(12345, endpoint.getPort());
+        assertNull(endpoint.getResource());
+        assertEquals("rtp://192.168.0.1:12345", endpoint.getUri());
     }
 }

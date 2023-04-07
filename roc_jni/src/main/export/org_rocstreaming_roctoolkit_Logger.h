@@ -17,10 +17,10 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setLevel
 
 /*
  * Class:     org_rocstreaming_roctoolkit_Logger
- * Method:    setCallback
+ * Method:    setCallback0
  * Signature: (Lorg/rocstreaming/roctoolkit/LogHandler;)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setCallback
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setCallback0
   (JNIEnv *, jclass, jobject);
 
 #ifdef __cplusplus

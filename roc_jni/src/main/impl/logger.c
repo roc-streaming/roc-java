@@ -172,7 +172,7 @@ out:
     }
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setCallback(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setCallback0(
     JNIEnv* env, jclass clazz, jobject jhandler) {
     jclass handlerClass = NULL;
     jmethodID handlerMethod = NULL;

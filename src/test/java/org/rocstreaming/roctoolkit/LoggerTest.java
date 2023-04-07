@@ -64,4 +64,14 @@ public class LoggerTest {
                         return hasLogOpen && hasLogClose;
                     });
     }
+
+    @Test
+    public void TestInvalidLoggerNotThrows() throws Exception {
+        assertDoesNotThrow(() -> Logger.setCallback((level, component, message) -> {
+            throw new RuntimeException("Fails to log");
+        }));
+        //noinspection EmptyTryBlock
+        try (Context ignored = new Context()) {
+        }
+    }
 }

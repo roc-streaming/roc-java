@@ -24,8 +24,6 @@ public class Logger {
         switch (level) {
             case NONE:
                 return java.util.logging.Level.OFF;
-            case ERROR:
-                return java.util.logging.Level.SEVERE;
             case INFO:
                 return java.util.logging.Level.INFO;
             case DEBUG:

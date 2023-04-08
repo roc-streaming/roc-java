@@ -10,6 +10,8 @@ for niface in "${nifaces[@]}"; do
     adb shell "su 0 ip route add 224.0.0.0/4 dev ${niface} table local" || continue
 done
 
+adb shell "ip a"
+
 cd android
 
 ./gradlew cAT --info --stacktrace || \

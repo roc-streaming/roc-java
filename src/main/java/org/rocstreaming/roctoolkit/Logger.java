@@ -15,9 +15,9 @@ public class Logger {
 
     static {
         RocLibrary.loadLibrary();
-        setCallback0(DEFAULT_HANDLER);
+        setCallbackNative(DEFAULT_HANDLER);
         // Jvm could be terminated before roclib, so we need to clear callback to avoid crash
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> setCallback0(null)));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> setCallbackNative(null)));
     }
 
     private static java.util.logging.Level mapLogLevel(LogLevel level) {
@@ -60,7 +60,7 @@ public class Logger {
      */
     public static void setCallback(LogHandler handler) {
         if (handler == null) {
-            setCallback0(DEFAULT_HANDLER);
+            setCallbackNative(DEFAULT_HANDLER);
         } else {
             LogHandler wrapper = (level, component, message) -> {
                 try {
@@ -69,11 +69,11 @@ public class Logger {
                     LOGGER.log(Level.SEVERE, "Logger failed to log message", e);
                 }
             };
-            setCallback0(wrapper);
+            setCallbackNative(wrapper);
         }
     }
 
-    private native static void setCallback0(LogHandler handler);
+    private native static void setCallbackNative(LogHandler handler);
 
     private Logger() {
     }

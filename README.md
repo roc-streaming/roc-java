@@ -252,7 +252,7 @@ It is used in docker and on CI, but you can also use it directly. Supported comm
 * `create` an AVD:
 
     ```
-    ./scripts/android_device.sh create --api=<API> --image=<IMAGE> --arch=<ARCH> --name=<AVD-NAME>
+    ./scripts/android_device.sh --api <API> --image <IMAGE> --arch <ARCH> --name <AVD-NAME> create 
     ```
 
     The string ``"system-images;android-<API>;<IMAGE>;<ARCH>"`` defines the emulator system image to be installed (it must be present in the list offered by ``sdkmanager --list``)
@@ -260,7 +260,7 @@ It is used in docker and on CI, but you can also use it directly. Supported comm
 * `start` device and wait until boot is completed:
 
     ```
-    ./scripts/android_device.sh start --name=<AVD-NAME>
+    ./scripts/android_device.sh --name <AVD-NAME> start
     ```
 
 #### Documentation build

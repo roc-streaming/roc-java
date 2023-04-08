@@ -13,12 +13,19 @@ fi
 
 case "$OSTYPE" in
     darwin*)
-        export PATH="${ndk_root}/toolchains/llvm/prebuilt/darwin-$(uname -m)/bin:${PATH}"
+        toolchain="${ndk_root}/toolchains/llvm/prebuilt/darwin-$(uname -m)/bin"
         ;;
     linux*)
-        export PATH="${ndk_root}/toolchains/llvm/prebuilt/linux-$(uname -m)/bin:${PATH}"
+        toolchain="${ndk_root}/toolchains/llvm/prebuilt/linux-$(uname -m)/bin"
         ;;
 esac
+
+if [ ! -d "$toolchain" ];
+then
+    echo "Toolchain not found at $toolchain"
+    exit 1
+fi
+export PATH="${toolchain}:${PATH}"
 
 target_host=(
     "aarch64-linux-android"

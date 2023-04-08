@@ -31,13 +31,13 @@ public class RocContextTest {
     @Test
     public void ContextCloseWithAttachedSender() {
         assertThrows(Exception.class, () -> {
-            Sender sender = null;
+            RocSender sender = null;
             try (RocContext context = new RocContext()) {
-                SenderConfig config = new SenderConfig.Builder(44100,
+                RocSenderConfig config = new RocSenderConfig.Builder(44100,
                                                             ChannelSet.STEREO,
                                                             FrameEncoding.PCM_FLOAT)
                                                         .build();
-                sender = new Sender(context, config);
+                sender = new RocSender(context, config);
             } finally {
                 if (sender != null) sender.close();
             }

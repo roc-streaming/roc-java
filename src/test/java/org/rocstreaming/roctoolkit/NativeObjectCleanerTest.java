@@ -21,9 +21,9 @@ class NativeObjectCleanerTest {
     void senderAutoClosingTest() throws Exception {
         RocContext context = new RocContext();
 
-        SenderConfig config = new SenderConfig.Builder(44100, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
+        RocSenderConfig config = new RocSenderConfig.Builder(44100, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
         @SuppressWarnings("unused")
-        Sender sender = new Sender(context, config);
+        RocSender sender = new RocSender(context, config);
 
         Exception exception = assertThrows(Exception.class, context::close);
         assertEquals("Error closing context", exception.getMessage()); // sender still using context

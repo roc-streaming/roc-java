@@ -3,12 +3,12 @@ package org.rocstreaming.roctoolkit;
 /**
  * Sender configuration.
  * <p>
- * SenderConfig object can be instantiated with {@link SenderConfig.Builder SenderConfig.Builder} objects.
+ * SenderConfig object can be instantiated with {@link RocSenderConfig.Builder SenderConfig.Builder} objects.
  *
- * @see Sender
- * @see SenderConfig.Builder
+ * @see RocSender
+ * @see RocSenderConfig.Builder
  */
-public class SenderConfig {
+public class RocSenderConfig {
 
     private int frameSampleRate;
     private ChannelSet frameChannels;
@@ -25,7 +25,7 @@ public class SenderConfig {
     private int fecBlockSourcePackets;
     private int fecBlockRepairPackets;
 
-    private SenderConfig(
+    private RocSenderConfig(
             int frameSampleRate,
             ChannelSet frameChannels,
             FrameEncoding frameEncoding,
@@ -57,9 +57,9 @@ public class SenderConfig {
     }
 
     /**
-     * Builder class for {@link SenderConfig SenderConfig} objects
+     * Builder class for {@link RocSenderConfig SenderConfig} objects
      *
-     * @see SenderConfig
+     * @see RocSenderConfig
      */
     public static class Builder {
         private final int frameSampleRate;
@@ -78,7 +78,7 @@ public class SenderConfig {
         private int fecBlockRepairPackets;
 
         /**
-         * Create a Builder object for building {@link SenderConfig SenderConfig}
+         * Create a Builder object for building {@link RocSenderConfig SenderConfig}
          *
          * @param frameSampleRate The rate of the samples in the frames passed to sender.
          *                        Number of samples per channel per second.
@@ -218,12 +218,12 @@ public class SenderConfig {
         }
 
         /**
-         * Build the {@link SenderConfig SenderConfig} object with <code>Builder</code> parameters.
+         * Build the {@link RocSenderConfig SenderConfig} object with <code>Builder</code> parameters.
          *
-         * @return the new {@link SenderConfig SenderConfig}
+         * @return the new {@link RocSenderConfig SenderConfig}
          */
-        public SenderConfig build() {
-            return new SenderConfig(frameSampleRate, frameChannels, frameEncoding, packetSampleRate,
+        public RocSenderConfig build() {
+            return new RocSenderConfig(frameSampleRate, frameChannels, frameEncoding, packetSampleRate,
                     packetChannels, packetEncoding, packetLength, packetInterleaving,
                     clockSource, resamplerBackend, resamplerProfile, fecEncoding,
                     fecBlockSourcePackets, fecBlockRepairPackets);

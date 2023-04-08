@@ -17,7 +17,7 @@ package org.rocstreaming.roctoolkit;
  * any thread. However, the user should ensure that the context is not closed
  * until there are no objects attached to the context.
  *
- * @see Sender
+ * @see RocSender
  * @see Receiver
  */
 public class RocContext extends NativeObject {

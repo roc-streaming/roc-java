@@ -20,15 +20,15 @@ import java.io.IOException;
  * <h3>Lifecycle</h3>
  * <p>
  *     <ul>
- *         <li>A sender is created using {@link Sender#Sender Sender()}.</li>
+ *         <li>A sender is created using {@link RocSender#RocSender Sender()}.</li>
  *         <li>Optionally, the sender parameters may be fine-tuned using
- *         {@link Sender#setOutgoingAddress(Slot, Interface, String)} function.</li>
- *         <li>The sender either binds local endpoints using {@link Sender#bind bind()},
+ *         {@link RocSender#setOutgoingAddress(Slot, Interface, String)} function.</li>
+ *         <li>The sender either binds local endpoints using {@link RocSender#bind bind()},
  *         allowing receivers connecting to them, or itself connects to remote receiver endpoints
- *         using {@link Sender#connect connect()}. What approach to use is up to the user.</li>
- *         <li>The audio stream is iteratively written to the sender using {@link Sender#write write()}.
+ *         using {@link RocSender#connect connect()}. What approach to use is up to the user.</li>
+ *         <li>The audio stream is iteratively written to the sender using {@link RocSender#write write()}.
  *         The sender encodes the stream into packets and send to connected receiver(s).</li>
- *         <li>The sender is destroyed using {@link Sender#close close()}.</li>
+ *         <li>The sender is destroyed using {@link RocSender#close close()}.</li>
  *     </ul>
  * <p>
  * <code>Sender</code> class implements {@link AutoCloseable AutoCloseable} so if it is used in a
@@ -46,10 +46,10 @@ import java.io.IOException;
  * <p>
  * Supported actions with the interface:
  * <ul>
- *     <li>Call {@link Sender#bind bind()} to bind the interface to a local {@link Endpoint}.
+ *     <li>Call {@link RocSender#bind bind()} to bind the interface to a local {@link Endpoint}.
  *     In this case the sender accepts connections from receivers and sends media stream
  *     to all connected receivers.</li>
- *     <li>Call {@link Sender#connect(Slot, Interface, Endpoint)} to connect the interface
+ *     <li>Call {@link RocSender#connect(Slot, Interface, Endpoint)} to connect the interface
  *     to a remote {@link Endpoint}. In this case the sender initiates connection to the
  *     receiver and starts sending media stream to it.</li>
  * </ul>
@@ -142,10 +142,10 @@ import java.io.IOException;
  * </pre>
  *
  * @see RocContext
- * @see SenderConfig
+ * @see RocSenderConfig
  * @see java.lang.AutoCloseable
  */
-public class Sender extends NativeObject {
+public class RocSender extends NativeObject {
 
     /**
      * Validate sender constructor parameters and open a new sender if validation is successful.
@@ -156,7 +156,7 @@ public class Sender extends NativeObject {
      * @throws IllegalArgumentException if the arguments are invalid.
      * @throws Exception                if an error occurred when creating the sender.
      */
-    private static long tryOpen(RocContext context, SenderConfig config) throws IllegalArgumentException, Exception {
+    private static long tryOpen(RocContext context, RocSenderConfig config) throws IllegalArgumentException, Exception {
         if (context == null || config == null) throw new IllegalArgumentException();
         return open(context.getPtr(), config);
     }
@@ -170,8 +170,8 @@ public class Sender extends NativeObject {
      * @throws IllegalArgumentException if the arguments are invalid.
      * @throws Exception                if an error occurred when creating the sender.
      */
-    public Sender(RocContext context, SenderConfig config) throws IllegalArgumentException, Exception {
-        super(tryOpen(context, config), context, Sender::close);
+    public RocSender(RocContext context, RocSenderConfig config) throws IllegalArgumentException, Exception {
+        super(tryOpen(context, config), context, RocSender::close);
     }
 
     /**
@@ -190,8 +190,8 @@ public class Sender extends NativeObject {
      * By default, the outgoing address is not set.
      * <p>
      * Each slot's interface can have only one outgoing address. The function should be called
-     * before calling {@link Sender#connect connect()} for this slot and interface. It should not be
-     * called when calling {@link Sender#bind bind()} for the interface.
+     * before calling {@link RocSender#connect connect()} for this slot and interface. It should not be
+     * called when calling {@link RocSender#bind bind()} for the interface.
      * <p>
      * Automatically initializes slot with given index if it's used first time.
      * <p>
@@ -257,7 +257,7 @@ public class Sender extends NativeObject {
         writeFloats(getPtr(), samples);
     }
 
-    private static native long open(long contextPtr, SenderConfig config) throws IllegalArgumentException, Exception;
+    private static native long open(long contextPtr, RocSenderConfig config) throws IllegalArgumentException, Exception;
 
     private native void setOutgoingAddress(long senderPtr, int slot, int iface, String ip) throws Exception;
 

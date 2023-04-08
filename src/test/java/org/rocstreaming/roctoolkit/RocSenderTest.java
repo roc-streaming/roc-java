@@ -6,13 +6,13 @@ import java.io.IOException;
 import static java.lang.Math.sin;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SenderTest {
+public class RocSenderTest {
 
     private final int SAMPLE_RATE = 44100;
     private final int SINE_RATE = 440;
     private final int SINE_SAMPLES = (SAMPLE_RATE * 5);
     private final int BUFFER_SIZE = 100;
-    private SenderConfig config;
+    private RocSenderConfig config;
     private float[] samples;
     private RocContext context;
 
@@ -27,8 +27,8 @@ public class SenderTest {
         }
     }
 
-    SenderTest() {
-        this.config = new SenderConfig.Builder(SAMPLE_RATE,
+    RocSenderTest() {
+        this.config = new RocSenderConfig.Builder(SAMPLE_RATE,
                                                 ChannelSet.STEREO,
                                                 FrameEncoding.PCM_FLOAT)
                                         .build();
@@ -55,13 +55,13 @@ public class SenderTest {
     public void TestValidSenderCreationAndDeinitialization() {
         assertDoesNotThrow(() -> {
             //noinspection EmptyTryBlock
-            try (Sender ignored = new Sender(context, config)) {}
+            try (RocSender ignored = new RocSender(context, config)) {}
         });
     }
 
     @Test
     public void TestValidSenderCreationAndDeinitializationWithFullConfig() {
-        SenderConfig config = new SenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT)
+        RocSenderConfig config = new RocSenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT)
                 .packetSampleRate(44100)
                 .packetChannels(ChannelSet.STEREO)
                 .packetLength(2000)
@@ -75,7 +75,7 @@ public class SenderTest {
                 .build();
         assertDoesNotThrow(() -> {
             //noinspection EmptyTryBlock
-            try (Sender ignored = new Sender(context, config)) {
+            try (RocSender ignored = new RocSender(context, config)) {
             }
         });
     }
@@ -83,27 +83,27 @@ public class SenderTest {
     @Test
     @SuppressWarnings("resource")
     public void TestInvalidSenderCreation() {
-        assertThrows(IllegalArgumentException.class, () -> new Sender(null, config));
-        assertThrows(IllegalArgumentException.class, () -> new Sender(context, null));
+        assertThrows(IllegalArgumentException.class, () -> new RocSender(null, config));
+        assertThrows(IllegalArgumentException.class, () -> new RocSender(context, null));
         assertThrows(IllegalArgumentException.class, () -> {
-            SenderConfig config = new SenderConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
-            new Sender(context, config);
+            RocSenderConfig config = new RocSenderConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
+            new RocSender(context, config);
         });
 
         assertThrows(Exception.class, () -> {
-            SenderConfig config = new SenderConfig.Builder(SAMPLE_RATE, null, FrameEncoding.PCM_FLOAT).build();
-            new Sender(context, config);
+            RocSenderConfig config = new RocSenderConfig.Builder(SAMPLE_RATE, null, FrameEncoding.PCM_FLOAT).build();
+            new RocSender(context, config);
         });
         assertThrows(Exception.class, () -> {
-            SenderConfig config = new SenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, null).build();
-            new Sender(context, config);
+            RocSenderConfig config = new RocSenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, null).build();
+            new RocSender(context, config);
         });
     }
 
     @Disabled("bind not implemented in roc 0.2.x yet")
     @Test
     public void TestValidSenderBind() throws Exception {
-        try (Sender sender = new Sender(context, config)) {
+        try (RocSender sender = new RocSender(context, config)) {
             assertDoesNotThrow(() -> sender.bind(new Endpoint("rtp+rs8m://127.0.0.1:0")));
         }
     }
@@ -111,7 +111,7 @@ public class SenderTest {
     @Disabled("bind not implemented in roc 0.2.x yet")
     @Test
     public void TestSenderBindEphemeralPort() throws Exception {
-        try (Sender sender = new Sender(context, config)) {
+        try (RocSender sender = new RocSender(context, config)) {
             Endpoint senderEndpoint = new Endpoint("rtp+rs8m://127.0.0.1:0");
             sender.bind(senderEndpoint);
             assertNotEquals(0, senderEndpoint.getPort());
@@ -121,7 +121,7 @@ public class SenderTest {
     @Disabled("bind not implemented in roc 0.2.x yet")
     @Test
     public void TestInvalidSenderBind() throws Exception {
-        try (Sender sender = new Sender(context, config)) {
+        try (RocSender sender = new RocSender(context, config)) {
             assertThrows(IllegalArgumentException.class, () -> sender.bind(null));
             sender.bind(new Endpoint("rtp+rs8m://127.0.0.1:0"));
             assertThrows(IOException.class, () -> {
@@ -132,7 +132,7 @@ public class SenderTest {
 
     @Test
     public void TestValidSenderConnect() throws Exception {
-        try (Sender sender = new Sender(context, config)) {
+        try (RocSender sender = new RocSender(context, config)) {
             assertDoesNotThrow(() -> {
                 sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:10001"));
                 sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://127.0.0.1:10002"));
@@ -142,7 +142,7 @@ public class SenderTest {
 
     @Test
     public void TestInvalidSenderConnect() throws Exception {
-        try (Sender sender = new Sender(context, config)) {
+        try (RocSender sender = new RocSender(context, config)) {
             assertThrows(IllegalArgumentException.class, () -> {
                 sender.connect(null, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             });
@@ -157,7 +157,7 @@ public class SenderTest {
 
     @Test
     public void TestValidSenderWriteFloatArray() throws Exception {
-        try (Sender sender = new Sender(context, config)) {
+        try (RocSender sender = new RocSender(context, config)) {
             sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
             for (int i = 0; i < SINE_SAMPLES / BUFFER_SIZE; i++) {
@@ -168,7 +168,7 @@ public class SenderTest {
 
     @Test
     public void TestInvalidSenderWriteFloatArray() throws Exception {
-        try (Sender sender = new Sender(context, config)) {
+        try (RocSender sender = new RocSender(context, config)) {
             // bind not implemented in roc 0.2.x yet
             // assertThrows(IOException.class, () -> sender.write(samples)); // write before bind
             // sender.bind();
@@ -180,7 +180,7 @@ public class SenderTest {
 
     @Test
     public void TestInvalidConnectAfterWrite() throws Exception {
-        try (Sender sender = new Sender(context, config)) {
+        try (RocSender sender = new RocSender(context, config)) {
             sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
             sender.write(samples);
@@ -192,7 +192,7 @@ public class SenderTest {
 
     @Test
     void TestSetOutgoingAddressAfterConnect() throws Exception {
-        try (Sender sender = new Sender(context, config)) {
+        try (RocSender sender = new RocSender(context, config)) {
             sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
             Exception exception = assertThrows(Exception.class, () -> sender.setOutgoingAddress(Slot.DEFAULT, Interface.AUDIO_SOURCE, "127.0.0.1"));

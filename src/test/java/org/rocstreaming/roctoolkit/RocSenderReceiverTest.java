@@ -13,15 +13,15 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 
-public class SenderReceiverTest {
+public class RocSenderReceiverTest {
 
     private static final int SAMPLE_RATE = 44100;
 
-    private final SenderConfig senderConfig;
+    private final RocSenderConfig senderConfig;
     private final ReceiverConfig receiverConfig;
 
-    public SenderReceiverTest() {
-        this.senderConfig = new SenderConfig.Builder(SAMPLE_RATE,
+    public RocSenderReceiverTest() {
+        this.senderConfig = new RocSenderConfig.Builder(SAMPLE_RATE,
                 ChannelSet.STEREO,
                 FrameEncoding.PCM_FLOAT)
                 .build();
@@ -41,7 +41,7 @@ public class SenderReceiverTest {
     void WriteReadTest() throws Exception {
         try (
                 RocContext context = new RocContext();
-                Sender sender = new Sender(context, senderConfig);
+                RocSender sender = new RocSender(context, senderConfig);
                 Receiver receiver = new Receiver(context, receiverConfig)
         ) {
 

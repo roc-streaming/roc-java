@@ -19,15 +19,15 @@ import java.io.IOException;
  *
  * <h3>Lifecycle</h3>
  * <ul>
- *     <li>A receiver is created using {@link Receiver#Receiver Receiver()}.</li>
+ *     <li>A receiver is created using {@link RocReceiver#RocReceiver Receiver()}.</li>
  *     <li>Optionally, the receiver parameters may be fine-tuned using
- *     {@link Receiver#setMulticastGroup setMulticastGroup()} function.</li>
- *     <li>The receiver either binds local endpoints using {@link Receiver#bind bind()},
+ *     {@link RocReceiver#setMulticastGroup setMulticastGroup()} function.</li>
+ *     <li>The receiver either binds local endpoints using {@link RocReceiver#bind bind()},
  *     allowing senders connecting to them, or itself connects to remote sender endpoints
- *     using {@link Receiver#connect connect()}. What approach to use is up to the user.</li>
- *     <li>The audio stream is iteratively read from the receiver using {@link Receiver#read read()}.
+ *     using {@link RocReceiver#connect connect()}. What approach to use is up to the user.</li>
+ *     <li>The audio stream is iteratively read from the receiver using {@link RocReceiver#read read()}.
  *     Receiver returns the mixed stream from all connected senders.</li>
- *     <li>The receiver is destroyed using {@link Receiver#close close()}. <code>Receiver</code>
+ *     <li>The receiver is destroyed using {@link RocReceiver#close close()}. <code>Receiver</code>
  *     class implements {@link AutoCloseable AutoCloseable} so if it is used in a try-with-resources
  *     statement the object is closed automatically at the end of the statement.</li>
  * </ul>
@@ -44,9 +44,9 @@ import java.io.IOException;
  * <p>
  * Supported actions with the interface:
  * <ul>
- *     <li>Call {@link Receiver#bind bind()} to bind the interface to a local {@link Endpoint}.
+ *     <li>Call {@link RocReceiver#bind bind()} to bind the interface to a local {@link Endpoint}.
  *     In this case the receiver accepts connections from senders mixes their streams into the single output stream.</li>
- *     <li>Call {@link Receiver#connect connect()} to connect the interface to a remote {@link Endpoint}.
+ *     <li>Call {@link RocReceiver#connect connect()} to connect the interface to a remote {@link Endpoint}.
  *     In this case the receiver initiates connection to the sender and requests it to
  *     start sending media stream to the receiver.</li>
  * </ul>
@@ -162,10 +162,10 @@ import java.io.IOException;
  * </pre>
  *
  * @see RocContext
- * @see ReceiverConfig
+ * @see RocReceiverConfig
  * @see java.lang.AutoCloseable
  */
-public class Receiver extends NativeObject {
+public class RocReceiver extends NativeObject {
 
     /**
      * Validate receiver constructor parameters and open a new receiver if validation is successful.
@@ -176,7 +176,7 @@ public class Receiver extends NativeObject {
      * @throws IllegalArgumentException if the arguments are invalid.
      * @throws Exception                if an error occurred when creating the receiver.
      */
-    private static long tryOpen(RocContext context, ReceiverConfig config) throws IllegalArgumentException, Exception {
+    private static long tryOpen(RocContext context, RocReceiverConfig config) throws IllegalArgumentException, Exception {
         if (context == null || config == null) throw new IllegalArgumentException();
         return open(context.getPtr(), config);
     }
@@ -191,8 +191,8 @@ public class Receiver extends NativeObject {
      * @throws IllegalArgumentException if the arguments are invalid.
      * @throws Exception                if an error occurred when creating the receiver.
      */
-    public Receiver(RocContext context, ReceiverConfig config) throws IllegalArgumentException, Exception {
-        super(tryOpen(context, config), context, Receiver::close);
+    public RocReceiver(RocContext context, RocReceiverConfig config) throws IllegalArgumentException, Exception {
+        super(tryOpen(context, config), context, RocReceiver::close);
     }
 
     /**
@@ -213,8 +213,8 @@ public class Receiver extends NativeObject {
      * may not be desirable for security reasons.
      * <p>
      * Each slot's interface can have only one multicast group. The function should be called
-     * before calling {@link Receiver#bind bind()} for the interface. It should not be called when
-     * calling {@link Receiver#connect connect()} for the interface.
+     * before calling {@link RocReceiver#bind bind()} for the interface. It should not be called when
+     * calling {@link RocReceiver#connect connect()} for the interface.
      * <p>
      * Automatically initializes slot with given index if it's used first time.
      *
@@ -281,7 +281,7 @@ public class Receiver extends NativeObject {
         readFloats(getPtr(), samples);
     }
 
-    private static native long open(long contextPtr, ReceiverConfig config) throws IllegalArgumentException, Exception;
+    private static native long open(long contextPtr, RocReceiverConfig config) throws IllegalArgumentException, Exception;
 
     private native void setMulticastGroup(long receiverPtr, int slot, int iface, String ip) throws IllegalArgumentException;
 

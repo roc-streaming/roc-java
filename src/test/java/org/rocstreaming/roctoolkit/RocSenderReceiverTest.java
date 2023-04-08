@@ -18,7 +18,7 @@ public class RocSenderReceiverTest {
     private static final int SAMPLE_RATE = 44100;
 
     private final RocSenderConfig senderConfig;
-    private final ReceiverConfig receiverConfig;
+    private final RocReceiverConfig receiverConfig;
 
     public RocSenderReceiverTest() {
         this.senderConfig = new RocSenderConfig.Builder(SAMPLE_RATE,
@@ -26,7 +26,7 @@ public class RocSenderReceiverTest {
                 FrameEncoding.PCM_FLOAT)
                 .build();
 
-        this.receiverConfig = new ReceiverConfig.Builder(SAMPLE_RATE,
+        this.receiverConfig = new RocReceiverConfig.Builder(SAMPLE_RATE,
                 ChannelSet.STEREO,
                 FrameEncoding.PCM_FLOAT)
                 .build();
@@ -42,7 +42,7 @@ public class RocSenderReceiverTest {
         try (
                 RocContext context = new RocContext();
                 RocSender sender = new RocSender(context, senderConfig);
-                Receiver receiver = new Receiver(context, receiverConfig)
+                RocReceiver receiver = new RocReceiver(context, receiverConfig)
         ) {
 
             Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://127.0.0.1:10001");

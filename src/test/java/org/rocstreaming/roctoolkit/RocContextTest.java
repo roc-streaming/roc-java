@@ -47,13 +47,13 @@ public class RocContextTest {
     @Test
     public void ContextCloseWithAttachedReceiver() {
         assertThrows(Exception.class, () -> {
-            Receiver receiver = null;
+            RocReceiver receiver = null;
             try (RocContext context = new RocContext()) {
-                ReceiverConfig config = new ReceiverConfig.Builder(44100,
+                RocReceiverConfig config = new RocReceiverConfig.Builder(44100,
                                                                     ChannelSet.STEREO,
                                                                     FrameEncoding.PCM_FLOAT)
                                                             .build();
-                receiver = new Receiver(context, config);
+                receiver = new RocReceiver(context, config);
             } finally {
                 if (receiver != null) receiver.close();
             }

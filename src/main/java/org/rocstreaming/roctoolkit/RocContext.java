@@ -18,7 +18,7 @@ package org.rocstreaming.roctoolkit;
  * until there are no objects attached to the context.
  *
  * @see RocSender
- * @see Receiver
+ * @see RocReceiver
  */
 public class RocContext extends NativeObject {
 

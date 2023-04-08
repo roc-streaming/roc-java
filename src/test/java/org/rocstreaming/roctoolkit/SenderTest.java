@@ -14,7 +14,7 @@ public class SenderTest {
     private final int BUFFER_SIZE = 100;
     private SenderConfig config;
     private float[] samples;
-    private Context context;
+    private RocContext context;
 
     private void gensine(float[] samples) {
         double t = 0d;
@@ -43,7 +43,7 @@ public class SenderTest {
 
     @BeforeEach
     public void beforeEach() throws Exception {
-        this.context = new Context();
+        this.context = new RocContext();
     }
 
     @AfterEach

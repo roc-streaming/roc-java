@@ -19,7 +19,7 @@ class NativeObjectCleanerTest {
 
     @Test
     void senderAutoClosingTest() throws Exception {
-        Context context = new Context();
+        RocContext context = new RocContext();
 
         SenderConfig config = new SenderConfig.Builder(44100, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
         @SuppressWarnings("unused")
@@ -47,7 +47,7 @@ class NativeObjectCleanerTest {
 
     @Test
     void receiverAutoClosingTest() throws Exception {
-        Context context = new Context();
+        RocContext context = new RocContext();
 
         ReceiverConfig config = new ReceiverConfig.Builder(44100, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
         @SuppressWarnings("unused")

@@ -40,7 +40,7 @@ public class SenderReceiverTest {
     @Test
     void WriteReadTest() throws Exception {
         try (
-                Context context = new Context();
+                RocContext context = new RocContext();
                 Sender sender = new Sender(context, senderConfig);
                 Receiver receiver = new Receiver(context, receiverConfig)
         ) {

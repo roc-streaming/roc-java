@@ -8,8 +8,8 @@ package org.rocstreaming.roctoolkit;
  * to create a single context shared between multiple objects.
  * <p>
  * <h3>Lifecycle</h3>
- * A context is created using {@link #Context() Context()} or
- * {@link #Context(ContextConfig) Context(ContextConfig)} and destroyed using
+ * A context is created using {@link #RocContext() Context()} or
+ * {@link #RocContext(RocContextConfig) Context(ContextConfig)} and destroyed using
  * {@link #close() close()}. <code>Context</code> class implements
  * {@link AutoCloseable AutoCloseable} so if it is used in a try-with-resources
  * statement the object is closed automatically at the end of the statement.
@@ -20,7 +20,7 @@ package org.rocstreaming.roctoolkit;
  * @see Sender
  * @see Receiver
  */
-public class Context extends NativeObject {
+public class RocContext extends NativeObject {
 
     /**
      * Validate context constructor parameters and open a new context if validation is successful.
@@ -32,7 +32,7 @@ public class Context extends NativeObject {
      * @throws IllegalArgumentException     if the arguments are invalid.
      * @throws Exception                    if there are not enough resources.
      */
-    private static long tryOpen(ContextConfig config) throws IllegalArgumentException, Exception {
+    private static long tryOpen(RocContextConfig config) throws IllegalArgumentException, Exception {
         if (config == null) throw new IllegalArgumentException();
         return open(config);
     }
@@ -45,8 +45,8 @@ public class Context extends NativeObject {
      * @throws IllegalArgumentException if the arguments are invalid.
      * @throws Exception if there are not enough resources.
      */
-    public Context() throws Exception {
-        this(new ContextConfig.Builder().build());
+    public RocContext() throws Exception {
+        this(new RocContextConfig.Builder().build());
     }
 
     /**
@@ -59,10 +59,10 @@ public class Context extends NativeObject {
      * @throws IllegalArgumentException if the arguments are invalid.
      * @throws Exception if there are not enough resources.
      */
-    public Context(ContextConfig config) throws IllegalArgumentException, Exception {
-        super(tryOpen(config), null, Context::close);
+    public RocContext(RocContextConfig config) throws IllegalArgumentException, Exception {
+        super(tryOpen(config), null, RocContext::close);
     }
 
-    private static native long open(ContextConfig config) throws IllegalArgumentException, Exception;
+    private static native long open(RocContextConfig config) throws IllegalArgumentException, Exception;
     private static native void close(long nativePtr) throws Exception;
 }

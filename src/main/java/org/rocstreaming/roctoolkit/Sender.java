@@ -141,7 +141,7 @@ import java.io.IOException;
  * }
  * </pre>
  *
- * @see Context
+ * @see RocContext
  * @see SenderConfig
  * @see java.lang.AutoCloseable
  */
@@ -156,7 +156,7 @@ public class Sender extends NativeObject {
      * @throws IllegalArgumentException if the arguments are invalid.
      * @throws Exception                if an error occurred when creating the sender.
      */
-    private static long tryOpen(Context context, SenderConfig config) throws IllegalArgumentException, Exception {
+    private static long tryOpen(RocContext context, SenderConfig config) throws IllegalArgumentException, Exception {
         if (context == null || config == null) throw new IllegalArgumentException();
         return open(context.getPtr(), config);
     }
@@ -170,7 +170,7 @@ public class Sender extends NativeObject {
      * @throws IllegalArgumentException if the arguments are invalid.
      * @throws Exception                if an error occurred when creating the sender.
      */
-    public Sender(Context context, SenderConfig config) throws IllegalArgumentException, Exception {
+    public Sender(RocContext context, SenderConfig config) throws IllegalArgumentException, Exception {
         super(tryOpen(context, config), context, Sender::close);
     }
 

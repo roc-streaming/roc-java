@@ -50,7 +50,7 @@ public class LoggerTest {
             }
             // trigger info logs
             //noinspection EmptyTryBlock
-            try (Context ignored = new Context()) {
+            try (RocContext ignored = new RocContext()) {
             }
         });
         await().atMost(Duration.FIVE_MINUTES)
@@ -78,7 +78,7 @@ public class LoggerTest {
                 logs.add(String.format("[level=\"%s\", component=\"%s\"]: %s", level, component, message)));
 
         //noinspection EmptyTryBlock
-        try (Context ignored = new Context()) {
+        try (RocContext ignored = new RocContext()) {
         }
 
         String logOpen = "[level=\"INFO\", component=\"libroc\"]: roc_context_open";
@@ -107,7 +107,7 @@ public class LoggerTest {
                 throw new RuntimeException("Fails to log");
             });
             //noinspection EmptyTryBlock
-            try (Context ignored = new Context()) {
+            try (RocContext ignored = new RocContext()) {
             }
         });
         latch.await();

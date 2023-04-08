@@ -11,7 +11,7 @@ public class ReceiverTest {
 
     private static final int SAMPLE_RATE = 44100;
     private final ReceiverConfig config;
-    private Context context;
+    private RocContext context;
 
     ReceiverTest() {
         this.config = new ReceiverConfig.Builder(SAMPLE_RATE,
@@ -27,7 +27,7 @@ public class ReceiverTest {
 
     @BeforeEach
     public void beforeEach() throws Exception {
-        this.context = new Context();
+        this.context = new RocContext();
     }
 
     @AfterEach

@@ -1,10 +1,10 @@
-#include "org_rocstreaming_roctoolkit_Context.h"
+#include "org_rocstreaming_roctoolkit_RocContext.h"
 
 #include "common.h"
 
 #include <roc/context.h>
 
-#define CONTEXT_CONFIG_CLASS PACKAGE_BASE_NAME "/ContextConfig"
+#define CONTEXT_CONFIG_CLASS PACKAGE_BASE_NAME "/RocContextConfig"
 
 static int context_config_unmarshal(JNIEnv* env, roc_context_config* conf, jobject jconfig) {
     jclass contextConfigClass = NULL;
@@ -26,7 +26,7 @@ static int context_config_unmarshal(JNIEnv* env, roc_context_config* conf, jobje
     return 0;
 }
 
-JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Context_open(
+JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_RocContext_open(
     JNIEnv* env, jclass contextClass, jobject config) {
     roc_context* context = NULL;
     roc_context_config context_config = {};
@@ -46,7 +46,7 @@ JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Context_open(
     return (jlong) context;
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Context_close(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocContext_close(
     JNIEnv* env, jclass contextClass, jlong nativePtr) {
 
     roc_context* context = (roc_context*) nativePtr;

@@ -161,7 +161,7 @@ import java.io.IOException;
  * }
  * </pre>
  *
- * @see Context
+ * @see RocContext
  * @see ReceiverConfig
  * @see java.lang.AutoCloseable
  */
@@ -176,7 +176,7 @@ public class Receiver extends NativeObject {
      * @throws IllegalArgumentException if the arguments are invalid.
      * @throws Exception                if an error occurred when creating the receiver.
      */
-    private static long tryOpen(Context context, ReceiverConfig config) throws IllegalArgumentException, Exception {
+    private static long tryOpen(RocContext context, ReceiverConfig config) throws IllegalArgumentException, Exception {
         if (context == null || config == null) throw new IllegalArgumentException();
         return open(context.getPtr(), config);
     }
@@ -191,7 +191,7 @@ public class Receiver extends NativeObject {
      * @throws IllegalArgumentException if the arguments are invalid.
      * @throws Exception                if an error occurred when creating the receiver.
      */
-    public Receiver(Context context, ReceiverConfig config) throws IllegalArgumentException, Exception {
+    public Receiver(RocContext context, ReceiverConfig config) throws IllegalArgumentException, Exception {
         super(tryOpen(context, config), context, Receiver::close);
     }
 

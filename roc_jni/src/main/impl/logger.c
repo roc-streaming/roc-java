@@ -8,15 +8,16 @@
 
 #define LOG_LEVEL_CLASS PACKAGE_BASE_NAME "/LogLevel"
 
-static pthread_mutex_t handler_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t logMutex = PTHREAD_MUTEX_INITIALIZER;
 
 static struct {
     JavaVM* vm;
-    jobject object;
-    jmethodID method;
-} handler = { 0 };
+    jclass levelClass;
+    jobject handlerObject;
+    jmethodID handlerMethod;
+} logState = { 0 };
 
-static const char* msgLevelMapping(roc_log_level level) {
+static const char* logLevelMapping(roc_log_level level) {
     const char* ret = "ERROR";
     switch (level) {
     case ROC_LOG_NONE:
@@ -42,27 +43,49 @@ static const char* msgLevelMapping(roc_log_level level) {
 
 JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     JNIEnv* env = NULL;
+    jclass levelClass = NULL;
+    jint result = JNI_VERSION;
+
+    pthread_mutex_lock(&logMutex);
 
     if ((*vm)->GetEnv(vm, (void**) &env, JNI_VERSION) != JNI_OK) {
-        return JNI_ERR;
+        result = JNI_ERR;
+        goto out;
     }
 
-    return JNI_VERSION;
+    assert(env != NULL);
+
+    levelClass = (*env)->FindClass(env, LOG_LEVEL_CLASS);
+    assert(levelClass != NULL);
+
+    logState.levelClass = (jclass) (*env)->NewGlobalRef(env, levelClass);
+    assert(logState.levelClass != NULL);
+
+out:
+    pthread_mutex_unlock(&logMutex);
+
+    return result;
 }
 
 JNIEXPORT void JNI_OnUnload(JavaVM* vm, void* reserved) {
-    pthread_mutex_lock(&handler_mutex);
+    JNIEnv* env = NULL;
 
-    handler.vm = NULL;
-    handler.object = NULL;
-    handler.method = NULL;
+    pthread_mutex_lock(&logMutex);
 
-    pthread_mutex_unlock(&handler_mutex);
+    (*logState.vm)->GetEnv(vm, (void**) &env, JNI_VERSION);
+
+    assert(env != NULL);
+    (*env)->DeleteGlobalRef(env, logState.levelClass);
+
+    logState.vm = NULL;
+    logState.handlerObject = NULL;
+    logState.handlerMethod = NULL;
+
+    pthread_mutex_unlock(&logMutex);
 }
 
 static void logger_handler(const roc_log_message* message, void* argument) {
     JNIEnv* env = NULL;
-    jclass levelClass = NULL;
     jfieldID levelFieldID = NULL;
     jobject msgLevel = NULL;
     jstring msgModule = NULL;
@@ -70,18 +93,19 @@ static void logger_handler(const roc_log_message* message, void* argument) {
     jint result = 0;
     int detach = 0;
 
-    pthread_mutex_lock(&handler_mutex);
+    pthread_mutex_lock(&logMutex);
 
-    if (handler.vm == NULL || handler.object == NULL || handler.method == NULL) {
+    if (logState.vm == NULL || logState.handlerObject == NULL || logState.handlerMethod == NULL) {
         goto out;
     }
 
     // check if it is needed to attach current thread
-    if ((result = (*handler.vm)->GetEnv(handler.vm, (void**) &env, JNI_VERSION)) == JNI_EDETACHED) {
+    if ((result = (*logState.vm)->GetEnv(logState.vm, (void**) &env, JNI_VERSION))
+        == JNI_EDETACHED) {
 #ifdef __ANDROID__
-        if ((*handler.vm)->AttachCurrentThread(handler.vm, &env, 0) == JNI_OK)
+        if ((*logState.vm)->AttachCurrentThread(logState.vm, &env, 0) == JNI_OK)
 #else
-        if ((*handler.vm)->AttachCurrentThread(handler.vm, (void**) &env, 0) == JNI_OK)
+        if ((*logState.vm)->AttachCurrentThread(logState.vm, (void**) &env, 0) == JNI_OK)
 #endif
             detach = 1;
         else {
@@ -95,14 +119,11 @@ static void logger_handler(const roc_log_message* message, void* argument) {
 
     assert(env != NULL);
 
-    levelClass = (*env)->FindClass(env, LOG_LEVEL_CLASS);
-    assert(levelClass != NULL);
-
     levelFieldID = (*env)->GetStaticFieldID(
-        env, levelClass, msgLevelMapping(message->level), "L" LOG_LEVEL_CLASS ";");
+        env, logState.levelClass, logLevelMapping(message->level), "L" LOG_LEVEL_CLASS ";");
     assert(levelFieldID != NULL);
 
-    msgLevel = (*env)->GetStaticObjectField(env, levelClass, levelFieldID);
+    msgLevel = (*env)->GetStaticObjectField(env, logState.levelClass, levelFieldID);
     assert(msgLevel != NULL);
 
     msgModule = (*env)->NewStringUTF(env, message->module);
@@ -111,7 +132,8 @@ static void logger_handler(const roc_log_message* message, void* argument) {
     msgText = (*env)->NewStringUTF(env, message->text);
     assert(msgText != NULL);
 
-    (*env)->CallVoidMethod(env, handler.object, handler.method, msgLevel, msgModule, msgText);
+    (*env)->CallVoidMethod(
+        env, logState.handlerObject, logState.handlerMethod, msgLevel, msgModule, msgText);
 
     if ((*env)->ExceptionCheck(env)) {
         (*env)->ExceptionDescribe(env);
@@ -120,39 +142,47 @@ static void logger_handler(const roc_log_message* message, void* argument) {
 
 out:
     if (detach) {
-        (*handler.vm)->DetachCurrentThread(handler.vm);
+        (*logState.vm)->DetachCurrentThread(logState.vm);
     }
 
-    pthread_mutex_unlock(&handler_mutex);
+    pthread_mutex_unlock(&logMutex);
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setLevel(
     JNIEnv* env, jclass clazz, jobject jlevel) {
-    jclass levelClass = NULL;
     roc_log_level level = (roc_log_level) 0;
+    int success = 0;
+
+    pthread_mutex_lock(&logMutex);
 
     if (jlevel == NULL) {
         jclass exceptionClass = (*env)->FindClass(env, ILLEGAL_ARGUMENTS_EXCEPTION);
         (*env)->ThrowNew(env, exceptionClass, "no logger level provided");
-        return;
+        goto out;
     }
 
-    levelClass = (*env)->FindClass(env, LOG_LEVEL_CLASS);
-    assert(levelClass != NULL);
+    level = (roc_log_level) get_enum_value(env, logState.levelClass, jlevel);
+    success = 1;
 
-    level = (roc_log_level) get_enum_value(env, levelClass, jlevel);
+out:
+    pthread_mutex_unlock(&logMutex);
 
-    roc_log_set_level(level);
+    if (success) {
+        roc_log_set_level(level);
+    }
 }
 
 JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setCallback(
     JNIEnv* env, jclass clazz, jobject jhandler) {
     jclass handlerClass = NULL;
     jmethodID handlerMethod = NULL;
+    int success = 0;
+
+    pthread_mutex_lock(&logMutex);
 
     if (jhandler == NULL) {
         roc_log_set_handler(NULL, NULL);
-        return;
+        goto out;
     }
 
     handlerClass = (*env)->GetObjectClass(env, jhandler);
@@ -162,18 +192,21 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setCallback(
         env, handlerClass, "log", "(L" LOG_LEVEL_CLASS ";Ljava/lang/String;Ljava/lang/String;)V");
     assert(handlerMethod != NULL);
 
-    pthread_mutex_lock(&handler_mutex);
-
-    if (handler.vm == NULL) {
-        (*env)->GetJavaVM(env, &handler.vm);
+    if (logState.vm == NULL) {
+        (*env)->GetJavaVM(env, &logState.vm);
     }
-    if (handler.object != NULL) {
-        (*env)->DeleteGlobalRef(env, handler.object);
+    if (logState.handlerObject != NULL) {
+        (*env)->DeleteGlobalRef(env, logState.handlerObject);
     }
-    handler.object = (jobject) (*env)->NewGlobalRef(env, jhandler);
-    handler.method = handlerMethod;
+    logState.handlerObject = (jobject) (*env)->NewGlobalRef(env, jhandler);
+    logState.handlerMethod = handlerMethod;
 
-    pthread_mutex_unlock(&handler_mutex);
+    success = 1;
 
-    roc_log_set_handler(logger_handler, NULL);
+out:
+    pthread_mutex_unlock(&logMutex);
+
+    if (success) {
+        roc_log_set_handler(logger_handler, NULL);
+    }
 }

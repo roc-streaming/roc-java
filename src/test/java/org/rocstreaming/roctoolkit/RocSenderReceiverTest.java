@@ -34,7 +34,7 @@ public class RocSenderReceiverTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Logger.setLevel(LogLevel.INFO);
+        RocLogger.setLevel(RocLogLevel.INFO);
     }
 
     @Test

@@ -10,7 +10,7 @@ public class RocContextTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Logger.setLevel(LogLevel.INFO);
+        RocLogger.setLevel(RocLogLevel.INFO);
     }
 
     @Test

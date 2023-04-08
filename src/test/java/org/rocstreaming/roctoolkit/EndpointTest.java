@@ -14,7 +14,7 @@ class EndpointTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Logger.setLevel(LogLevel.INFO);
+        RocLogger.setLevel(RocLogLevel.INFO);
     }
 
     static class Params {

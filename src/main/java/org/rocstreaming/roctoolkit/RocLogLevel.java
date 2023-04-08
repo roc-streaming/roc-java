@@ -3,9 +3,9 @@ package org.rocstreaming.roctoolkit;
 /**
  * Log level.
  *
- * @see Logger#setLevel(LogLevel)
+ * @see RocLogger#setLevel(RocLogLevel)
  */
-public enum LogLevel {
+public enum RocLogLevel {
 
     /**
      * No messages.
@@ -41,7 +41,7 @@ public enum LogLevel {
 
     private final int value;
 
-    LogLevel(int value) {
+    RocLogLevel(int value) {
         this.value = value;
     }
 

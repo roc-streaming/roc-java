@@ -14,7 +14,7 @@ class NativeObjectCleanerTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Logger.setLevel(LogLevel.DEBUG);
+        RocLogger.setLevel(RocLogLevel.DEBUG);
     }
 
     @Test

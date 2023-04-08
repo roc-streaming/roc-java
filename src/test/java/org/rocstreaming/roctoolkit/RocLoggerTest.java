@@ -17,32 +17,32 @@ import java.util.stream.Stream;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class LoggerTest {
+public class RocLoggerTest {
 
     @BeforeEach
     public void beforeEach() {
-        Logger.setLevel(LogLevel.INFO);
+        RocLogger.setLevel(RocLogLevel.INFO);
     }
 
     private static Stream<Arguments> TestValidLoggerSetLevelProvider() {
         return Stream.of(
-                Arguments.of(LogLevel.NONE, false, false),
-                Arguments.of(LogLevel.ERROR, true, false),
-                Arguments.of(LogLevel.INFO, true, true),
-                Arguments.of(LogLevel.DEBUG, true, true),
-                Arguments.of(LogLevel.TRACE, true, true)
+                Arguments.of(RocLogLevel.NONE, false, false),
+                Arguments.of(RocLogLevel.ERROR, true, false),
+                Arguments.of(RocLogLevel.INFO, true, true),
+                Arguments.of(RocLogLevel.DEBUG, true, true),
+                Arguments.of(RocLogLevel.TRACE, true, true)
         );
     }
 
     @ParameterizedTest
     @MethodSource("TestValidLoggerSetLevelProvider")
-    public void TestValidLoggerSetLevel(LogLevel level, boolean expectError, boolean expectInfo) {
-        Map<LogLevel, Integer> msgCount = new ConcurrentHashMap<>();
-        LogHandler handler = (lvl, component, message) -> msgCount.compute(lvl, (k, v) -> v == null ? 1 : v + 1);
-        Logger.setCallback(handler);
+    public void TestValidLoggerSetLevel(RocLogLevel level, boolean expectError, boolean expectInfo) {
+        Map<RocLogLevel, Integer> msgCount = new ConcurrentHashMap<>();
+        RocLogHandler handler = (lvl, component, message) -> msgCount.compute(lvl, (k, v) -> v == null ? 1 : v + 1);
+        RocLogger.setHandler(handler);
 
         assertDoesNotThrow(() -> {
-            Logger.setLevel(level);
+            RocLogger.setLevel(level);
             try {
                 // trigger error logs
                 new Endpoint("invalid");
@@ -55,26 +55,26 @@ public class LoggerTest {
         });
         await().atMost(Duration.FIVE_MINUTES)
                 .untilAsserted(() -> {
-                    assertEquals(expectError, msgCount.containsKey(LogLevel.ERROR));
-                    assertEquals(expectInfo, msgCount.containsKey(LogLevel.INFO));
+                    assertEquals(expectError, msgCount.containsKey(RocLogLevel.ERROR));
+                    assertEquals(expectInfo, msgCount.containsKey(RocLogLevel.INFO));
                 });
-        Logger.setCallback(null);
+        RocLogger.setHandler(null);
     }
 
     @Test
     public void TestInvalidLoggerSetLevel() {
-        assertThrows(IllegalArgumentException.class, () -> Logger.setLevel(null));
+        assertThrows(IllegalArgumentException.class, () -> RocLogger.setLevel(null));
     }
 
     @Test
     public void TestLoggerSetNullCallback() {
-        assertDoesNotThrow(() -> Logger.setCallback(null));
+        assertDoesNotThrow(() -> RocLogger.setHandler(null));
     }
 
     @Test
     public void TestValidLoggerSetCallback() throws Exception {
         Set<String> logs = Collections.newSetFromMap(new ConcurrentHashMap<>());
-        Logger.setCallback((level, component, message) ->
+        RocLogger.setHandler((level, component, message) ->
                 logs.add(String.format("[level=\"%s\", component=\"%s\"]: %s", level, component, message)));
 
         //noinspection EmptyTryBlock
@@ -102,7 +102,7 @@ public class LoggerTest {
     public void TestInvalidLoggerNotThrows() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         assertDoesNotThrow(() -> {
-            Logger.setCallback((level, component, message) -> {
+            RocLogger.setHandler((level, component, message) -> {
                 latch.countDown();
                 throw new RuntimeException("Fails to log");
             });
@@ -111,6 +111,6 @@ public class LoggerTest {
             }
         });
         latch.await();
-        Logger.setCallback(null);
+        RocLogger.setHandler(null);
     }
 }

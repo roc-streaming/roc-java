@@ -4,15 +4,18 @@ import org.awaitility.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.stream.Stream;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LoggerTest {
 
@@ -21,9 +24,23 @@ public class LoggerTest {
         Logger.setLevel(LogLevel.INFO);
     }
 
+    private static Stream<Arguments> TestValidLoggerSetLevelProvider() {
+        return Stream.of(
+                Arguments.of(LogLevel.NONE, false, false),
+                Arguments.of(LogLevel.ERROR, true, false),
+                Arguments.of(LogLevel.INFO, true, true),
+                Arguments.of(LogLevel.DEBUG, true, true),
+                Arguments.of(LogLevel.TRACE, true, true)
+        );
+    }
+
     @ParameterizedTest
-    @EnumSource(LogLevel.class)
-    public void TestValidLoggerSetLevel(LogLevel level) {
+    @MethodSource("TestValidLoggerSetLevelProvider")
+    public void TestValidLoggerSetLevel(LogLevel level, boolean expectError, boolean expectInfo) {
+        Map<LogLevel, Integer> msgCount = new ConcurrentHashMap<>();
+        LogHandler handler = (lvl, component, message) -> msgCount.compute(lvl, (k, v) -> v == null ? 1 : v + 1);
+        Logger.setCallback(handler);
+
         assertDoesNotThrow(() -> {
             Logger.setLevel(level);
             try {
@@ -36,6 +53,12 @@ public class LoggerTest {
             try (Context ignored = new Context()) {
             }
         });
+        await().atMost(Duration.FIVE_MINUTES)
+                .untilAsserted(() -> {
+                    assertEquals(expectError, msgCount.containsKey(LogLevel.ERROR));
+                    assertEquals(expectInfo, msgCount.containsKey(LogLevel.INFO));
+                });
+        Logger.setCallback(null);
     }
 
     @Test
@@ -76,15 +99,18 @@ public class LoggerTest {
     }
 
     @Test
-    public void TestInvalidLoggerNotThrows() {
+    public void TestInvalidLoggerNotThrows() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
         assertDoesNotThrow(() -> {
             Logger.setCallback((level, component, message) -> {
+                latch.countDown();
                 throw new RuntimeException("Fails to log");
             });
             //noinspection EmptyTryBlock
             try (Context ignored = new Context()) {
             }
         });
+        latch.await();
         Logger.setCallback(null);
     }
 }

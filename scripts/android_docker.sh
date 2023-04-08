@@ -131,6 +131,7 @@ then
 
     # start container in background mode, ignore its entrypoint
     run_cmd docker run --name roc_android \
+            --net host \
             -d --entrypoint "" \
             "${docker_args[@]}" \
            rocstreaming/env-android:jdk"${JAVA_VERSION}" \

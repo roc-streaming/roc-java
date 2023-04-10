@@ -4,6 +4,7 @@ set -euxo pipefail
 export TERM=dumb
 
 adb shell "ip a"
+adb shell "ip r"
 # add route for multicast traffic
 nifaces=( $(adb shell "ip a" | grep 'state UP' | cut -d: -f2 | awk '{print $1}') )
 for niface in "${nifaces[@]}"; do
@@ -11,6 +12,7 @@ for niface in "${nifaces[@]}"; do
 done
 
 adb shell "ip a"
+adb shell "ip r"
 
 cd android
 

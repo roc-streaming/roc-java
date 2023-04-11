@@ -87,7 +87,7 @@ dependencies {
     testImplementation 'org.awaitility:awaitility:3.1.6'
 }
 
-test {
+androidTest {
     excludeTest "org.rocstreaming.roctoolkit.ReceiverTest.TestReceiverSetMulticastGroup"
 }
 

@@ -8,9 +8,9 @@ package org.rocstreaming.roctoolkit;
  * to create a single context shared between multiple objects.
  * <p>
  * <h3>Lifecycle</h3>
- * A context is created using {@link #RocContext() Context()} or
- * {@link #RocContext(RocContextConfig) Context(ContextConfig)} and destroyed using
- * {@link #close() close()}. <code>Context</code> class implements
+ * A context is created using {@link #RocContext() RocContext()} or
+ * {@link #RocContext(RocContextConfig) RocContext(RocContextConfig)} and destroyed using
+ * {@link #close() close()}. <code>RocContext</code> class implements
  * {@link AutoCloseable AutoCloseable} so if it is used in a try-with-resources
  * statement the object is closed automatically at the end of the statement.
  * Objects can be attached and detached to an opened context at any moment from

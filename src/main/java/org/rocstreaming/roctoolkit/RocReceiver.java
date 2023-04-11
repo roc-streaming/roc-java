@@ -19,7 +19,7 @@ import java.io.IOException;
  *
  * <h3>Lifecycle</h3>
  * <ul>
- *     <li>A receiver is created using {@link RocReceiver#RocReceiver Receiver()}.</li>
+ *     <li>A receiver is created using {@link RocReceiver#RocReceiver RocReceiver()}.</li>
  *     <li>Optionally, the receiver parameters may be fine-tuned using
  *     {@link RocReceiver#setMulticastGroup setMulticastGroup()} function.</li>
  *     <li>The receiver either binds local endpoints using {@link RocReceiver#bind bind()},
@@ -27,7 +27,7 @@ import java.io.IOException;
  *     using {@link RocReceiver#connect connect()}. What approach to use is up to the user.</li>
  *     <li>The audio stream is iteratively read from the receiver using {@link RocReceiver#read read()}.
  *     Receiver returns the mixed stream from all connected senders.</li>
- *     <li>The receiver is destroyed using {@link RocReceiver#close close()}. <code>Receiver</code>
+ *     <li>The receiver is destroyed using {@link RocReceiver#close close()}. <code>RocReceiver</code>
  *     class implements {@link AutoCloseable AutoCloseable} so if it is used in a try-with-resources
  *     statement the object is closed automatically at the end of the statement.</li>
  * </ul>
@@ -145,13 +145,13 @@ import java.io.IOException;
  * <h3>Example</h3>
  * <pre>
  * {@code
- * ReceiverConfig config = ReceiverConfig.Builder(SAMPLE_RATE,
+ * RocReceiverConfig config = RocReceiverConfig.Builder(SAMPLE_RATE,
  *                 ChannelSet.STEREO,
  *                 FrameEncoding.PCM_FLOAT)
  *                 .build();
  * try (
- *     Context context = new Context();
- *     Receiver receiver = new Receiver(context, config);
+ *     RocContext context = new RocContext();
+ *     RocReceiver receiver = new RocReceiver(context, config);
  * ) {
  *     receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:0"));
  *     receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:0"));

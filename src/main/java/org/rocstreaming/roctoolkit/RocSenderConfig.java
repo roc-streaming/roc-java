@@ -3,7 +3,7 @@ package org.rocstreaming.roctoolkit;
 /**
  * Sender configuration.
  * <p>
- * SenderConfig object can be instantiated with {@link RocSenderConfig.Builder SenderConfig.Builder} objects.
+ * RocSenderConfig object can be instantiated with {@link RocSenderConfig.Builder RocSenderConfig.Builder} objects.
  *
  * @see RocSender
  * @see RocSenderConfig.Builder
@@ -57,7 +57,7 @@ public class RocSenderConfig {
     }
 
     /**
-     * Builder class for {@link RocSenderConfig SenderConfig} objects
+     * Builder class for {@link RocSenderConfig RocSenderConfig} objects
      *
      * @see RocSenderConfig
      */
@@ -78,7 +78,7 @@ public class RocSenderConfig {
         private int fecBlockRepairPackets;
 
         /**
-         * Create a Builder object for building {@link RocSenderConfig SenderConfig}
+         * Create a Builder object for building {@link RocSenderConfig RocSenderConfig}
          *
          * @param frameSampleRate The rate of the samples in the frames passed to sender.
          *                        Number of samples per channel per second.
@@ -218,9 +218,9 @@ public class RocSenderConfig {
         }
 
         /**
-         * Build the {@link RocSenderConfig SenderConfig} object with <code>Builder</code> parameters.
+         * Build the {@link RocSenderConfig RocSenderConfig} object with <code>Builder</code> parameters.
          *
-         * @return the new {@link RocSenderConfig SenderConfig}
+         * @return the new {@link RocSenderConfig RocSenderConfig}
          */
         public RocSenderConfig build() {
             return new RocSenderConfig(frameSampleRate, frameChannels, frameEncoding, packetSampleRate,

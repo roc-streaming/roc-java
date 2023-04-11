@@ -3,7 +3,7 @@ package org.rocstreaming.roctoolkit;
 /**
  * Receiver configuration.
  * <p>
- * ReceiverConfig object can be instantiated with {@link RocReceiverConfig.Builder ReceiverConfig.Builder} objects.
+ * RocReceiverConfig object can be instantiated with {@link RocReceiverConfig.Builder RocReceiverConfig.Builder} objects.
  *
  * @see RocReceiver
  * @see RocReceiverConfig.Builder
@@ -51,7 +51,7 @@ public class RocReceiverConfig {
     }
 
     /**
-     *  Builder class for {@link RocReceiverConfig ReceiverConfig} objects
+     *  Builder class for {@link RocReceiverConfig RocReceiverConfig} objects
      * @see RocReceiverConfig
      */
     public static class Builder {
@@ -69,7 +69,7 @@ public class RocReceiverConfig {
         private long breakageDetectionWindow;
 
         /**
-         * Create a Builder object for building {@link RocReceiverConfig ReceiverConfig}
+         * Create a Builder object for building {@link RocReceiverConfig RocReceiverConfig}
          *
          * @param frameSampleRate   The rate of the samples in the frames returned to the user.
          *                          Number of samples per channel per second.
@@ -205,8 +205,8 @@ public class RocReceiverConfig {
         }
 
         /**
-         *  Build the {@link RocReceiverConfig ReceiverConfig} object with <code>Builder</code> parameters.
-         * @return the new {@link RocReceiverConfig ReceiverConfig}
+         *  Build the {@link RocReceiverConfig RocReceiverConfig} object with <code>Builder</code> parameters.
+         * @return the new {@link RocReceiverConfig RocReceiverConfig}
          */
         public RocReceiverConfig build() {
             return new RocReceiverConfig(frameSampleRate, frameChannels, frameEncoding, clockSource, resamplerBackend,

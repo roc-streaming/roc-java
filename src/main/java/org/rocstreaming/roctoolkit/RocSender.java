@@ -5,7 +5,7 @@ import java.io.IOException;
 /**
  * Sender peer.
  * <p>
- * <i><code>Sender</code></i> gets an audio stream from the user, encodes it into network packets, and
+ * Sender gets an audio stream from the user, encodes it into network packets, and
  * transmits them to a remote receiver.
  *
  * <h3>Context</h3>
@@ -20,7 +20,7 @@ import java.io.IOException;
  * <h3>Lifecycle</h3>
  * <p>
  *     <ul>
- *         <li>A sender is created using {@link RocSender#RocSender Sender()}.</li>
+ *         <li>A sender is created using {@link RocSender#RocSender RocSender()}.</li>
  *         <li>Optionally, the sender parameters may be fine-tuned using
  *         {@link RocSender#setOutgoingAddress(Slot, Interface, String)} function.</li>
  *         <li>The sender either binds local endpoints using {@link RocSender#bind bind()},
@@ -31,7 +31,7 @@ import java.io.IOException;
  *         <li>The sender is destroyed using {@link RocSender#close close()}.</li>
  *     </ul>
  * <p>
- * <code>Sender</code> class implements {@link AutoCloseable AutoCloseable} so if it is used in a
+ * <code>RocSender</code> class implements {@link AutoCloseable AutoCloseable} so if it is used in a
  * try-with-resources statement the object is closed automatically at the end of the statement.
  *
  * <h3>Slots, interfaces, and endpoints</h3>
@@ -123,15 +123,15 @@ import java.io.IOException;
  * <h3>Example</h3>
  * <pre>
  * {@code
- * SenderConfig config = new SenderConfig.Builder(SAMPLE_RATE,
+ * RocSenderConfig config = new RocSenderConfig.Builder(SAMPLE_RATE,
  *                 ChannelSet.STEREO,
  *                 FrameEncoding.PCM_FLOAT)
  *                 .resamplerProfile(ResamplerProfile.DISABLE)
  *                 .fecCode(FecEncoding.RS8M)
  *                 .build();
  * try (
- *     Context context = new Context();
- *     Sender sender = new Sender(context, config);
+ *     RocContext context = new RocContext();
+ *     RocSender sender = new RocSender(context, config);
  * ) {
  *     sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
  *     sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));

@@ -24,7 +24,7 @@ public class RocLoggerTest {
         RocLogger.setLevel(RocLogLevel.INFO);
     }
 
-    private static Stream<Arguments> TestValidLoggerSetLevelProvider() {
+    private static Stream<Arguments> testSetLevelProvider() {
         return Stream.of(
                 Arguments.of(RocLogLevel.NONE, false, false),
                 Arguments.of(RocLogLevel.ERROR, true, false),
@@ -35,8 +35,8 @@ public class RocLoggerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("TestValidLoggerSetLevelProvider")
-    public void TestValidLoggerSetLevel(RocLogLevel level, boolean expectError, boolean expectInfo) {
+    @MethodSource("testSetLevelProvider")
+    public void testSetLevel(RocLogLevel level, boolean expectError, boolean expectInfo) {
         Map<RocLogLevel, Integer> msgCount = new ConcurrentHashMap<>();
         RocLogHandler handler = (lvl, component, message) -> msgCount.compute(lvl, (k, v) -> v == null ? 1 : v + 1);
         RocLogger.setHandler(handler);
@@ -62,17 +62,17 @@ public class RocLoggerTest {
     }
 
     @Test
-    public void TestInvalidLoggerSetLevel() {
+    public void testSetNullLevel() {
         assertThrows(IllegalArgumentException.class, () -> RocLogger.setLevel(null));
     }
 
     @Test
-    public void TestLoggerSetNullHandler() {
+    public void testSetNullCallback() {
         assertDoesNotThrow(() -> RocLogger.setHandler(null));
     }
 
     @Test
-    public void TestValidLoggerSetHandler() throws Exception {
+    public void testSetHandler() throws Exception {
         Set<String> logs = Collections.newSetFromMap(new ConcurrentHashMap<>());
         RocLogger.setHandler((level, component, message) ->
                 logs.add(String.format("[level=\"%s\", component=\"%s\"]: %s", level, component, message)));
@@ -99,7 +99,7 @@ public class RocLoggerTest {
     }
 
     @Test
-    public void TestInvalidLoggerNotThrows() throws InterruptedException {
+    public void testInvalidLoggerNotThrows() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         assertDoesNotThrow(() -> {
             RocLogger.setHandler((level, component, message) -> {

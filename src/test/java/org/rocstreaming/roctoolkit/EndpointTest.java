@@ -258,7 +258,7 @@ class EndpointTest {
 
     @MethodSource("endpointsSource")
     @ParameterizedTest(name = "{0}")
-    public void endpointUriTest(Params params) {
+    public void testEndpointUri(Params params) {
         if (params.uriException != null) {
             assertThrows(params.uriException, () -> new Endpoint(params.uri));
             return;
@@ -273,7 +273,7 @@ class EndpointTest {
 
     @MethodSource("endpointsSource")
     @ParameterizedTest(name = "{0}")
-    public void endpointComponentsTest(Params params) {
+    public void testEndpointComponents(Params params) {
         if (params.componentsException != null) {
             Throwable e = assertThrows(
                     params.componentsException,
@@ -292,7 +292,7 @@ class EndpointTest {
 
     @MethodSource("endpointsSource")
     @ParameterizedTest(name = "{0}")
-    public void endpointBuilderTest(Params params) {
+    public void testEndpointBuilder(Params params) {
         if (params.componentsException != null) {
             assertThrows(params.componentsException, () -> new Endpoint.Builder()
                     .setProtocol(params.protocol)
@@ -316,7 +316,7 @@ class EndpointTest {
     }
 
     @Test
-    public void EndpointBuilderInvalidTest() {
+    public void testInvalidEndpointBuilder() {
         assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().build());
         assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().setHost("host").build());
         assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().setHost("host").setPort(1).build());
@@ -324,7 +324,7 @@ class EndpointTest {
     }
 
     @Test
-    public void EndpointMinimalConstructorTest() {
+    public void testEndpointMinimalConstructor() {
         Endpoint endpoint = new Endpoint(Protocol.RTP, "192.168.0.1", 12345);
         assertEquals(Protocol.RTP, endpoint.getProtocol());
         assertEquals("192.168.0.1", endpoint.getHost());

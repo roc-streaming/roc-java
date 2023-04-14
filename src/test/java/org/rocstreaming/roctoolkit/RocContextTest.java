@@ -13,7 +13,7 @@ public class RocContextTest {
     }
 
     @Test
-    public void ContextDefaultConfigTest() {
+    public void testWithDefaultConfig() {
         assertDoesNotThrow(() -> {
             RocContext context = new RocContext();
             context.close();
@@ -21,7 +21,7 @@ public class RocContextTest {
     }
 
     @Test
-    public void ContextWithInvalidConfigTest() {
+    public void testWithInvalidConfig() {
         //noinspection resource
         IllegalArgumentException e = assertThrows(
                 IllegalArgumentException.class,
@@ -31,14 +31,14 @@ public class RocContextTest {
     }
 
     @Test
-    public void ContextWithNullConfigTest() {
+    public void testWithNullConfig() {
         //noinspection resource
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> new RocContext(null));
         assertEquals("config must not be null", e.getMessage());
     }
 
     @Test
-    public void ContextCloseWithAttachedSender() {
+    public void testCloseWithAttachedSender() {
         assertThrows(Exception.class, () -> {
             RocSender sender = null;
             try (RocContext context = new RocContext()) {
@@ -54,7 +54,7 @@ public class RocContextTest {
     }
 
     @Test
-    public void ContextCloseWithAttachedReceiver() {
+    public void testCloseWithAttachedReceiver() {
         assertThrows(Exception.class, () -> {
             RocReceiver receiver = null;
             try (RocContext context = new RocContext()) {

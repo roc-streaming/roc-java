@@ -1,14 +1,19 @@
 package org.rocstreaming.roctoolkit;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.util.stream.Stream;
+
 import static java.lang.Math.sin;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RocSenderTest {
 
-    private final int SAMPLE_RATE = 44100;
+    private static final int SAMPLE_RATE = 44100;
     private final int SINE_RATE = 440;
     private final int SINE_SAMPLES = (SAMPLE_RATE * 5);
     private final int BUFFER_SIZE = 100;
@@ -80,24 +85,83 @@ public class RocSenderTest {
         });
     }
 
-    @Test
-    @SuppressWarnings("resource")
-    public void TestInvalidSenderCreation() {
-        assertThrows(IllegalArgumentException.class, () -> new RocSender(null, config));
-        assertThrows(IllegalArgumentException.class, () -> new RocSender(context, null));
-        assertThrows(IllegalArgumentException.class, () -> {
-            RocSenderConfig config = new RocSenderConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
-            new RocSender(context, config);
-        });
+    private static Stream<Arguments> testInvalidSenderCreationArguments() throws Exception {
+        return Stream.of(
+                Arguments.of(
+                        "context must not be null",
+                        IllegalArgumentException.class,
+                        null,
+                        new RocSenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build()),
+                Arguments.of(
+                        "config must not be null",
+                        IllegalArgumentException.class,
+                        new RocContext(),
+                        null),
+                Arguments.of(
+                        "Bad config argument",
+                        IllegalArgumentException.class,
+                        new RocContext(),
+                        new RocSenderConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build()),
+                Arguments.of(
+                        "Error opening sender",
+                        Exception.class,
+                        new RocContext(),
+                        new RocSenderConfig.Builder(SAMPLE_RATE, null, FrameEncoding.PCM_FLOAT).build()),
+                Arguments.of(
+                        "Error opening sender",
+                        Exception.class,
+                        new RocContext(),
+                        new RocSenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, null).build())
+        );
+    }
 
-        assertThrows(Exception.class, () -> {
-            RocSenderConfig config = new RocSenderConfig.Builder(SAMPLE_RATE, null, FrameEncoding.PCM_FLOAT).build();
-            new RocSender(context, config);
-        });
-        assertThrows(Exception.class, () -> {
-            RocSenderConfig config = new RocSenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, null).build();
-            new RocSender(context, config);
-        });
+    @ParameterizedTest
+    @MethodSource("testInvalidSenderCreationArguments")
+    public void TestInvalidSenderCreation(String errorMessage, Class<Exception> exceptionClass, RocContext context, RocSenderConfig config) {
+        Exception exception = assertThrows(exceptionClass, () -> new RocSender(context, config));
+        assertEquals(errorMessage, exception.getMessage());
+    }
+
+    private static Stream<Arguments> testInvalidSenderSetOutgoingAddressArguments() {
+        return Stream.of(
+                Arguments.of(
+                        "slot must not be null",
+                        null,
+                        Interface.AUDIO_SOURCE,
+                        "0.0.0.0"),
+                Arguments.of(
+                        "iface must not be null",
+                        Slot.DEFAULT,
+                        null,
+                        "0.0.0.0"),
+                Arguments.of(
+                        "ip must not be empty",
+                        Slot.DEFAULT,
+                        Interface.AUDIO_SOURCE,
+                        null)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("testInvalidSenderSetOutgoingAddressArguments")
+    public void TestInvalidSenderSetOutgoingAddress(String errorMessage, Slot slot, Interface iface, String ip) throws Exception {
+        try (RocSender receiver = new RocSender(context, config)) {
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> receiver.setOutgoingAddress(slot, iface, ip)
+            );
+            assertEquals(errorMessage, exception.getMessage());
+        }
+    }
+
+    @Test
+    void TestSetOutgoingAddressAfterConnect() throws Exception {
+        try (RocSender sender = new RocSender(context, config)) {
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
+            Exception exception = assertThrows(Exception.class, () -> sender.setOutgoingAddress(Slot.DEFAULT, Interface.AUDIO_SOURCE, "127.0.0.1"));
+            assertEquals("Can't set outgoing address", exception.getMessage());
+        }
     }
 
     @Disabled("bind not implemented in roc 0.2.x yet")
@@ -140,18 +204,35 @@ public class RocSenderTest {
         }
     }
 
-    @Test
-    public void TestInvalidSenderConnect() throws Exception {
+    private static Stream<Arguments> testInvalidSenderConnectArguments() {
+        return Stream.of(
+                Arguments.of(
+                        "slot must not be null",
+                        null,
+                        Interface.AUDIO_SOURCE,
+                        new Endpoint("rtsp://0.0.0.0")),
+                Arguments.of(
+                        "iface must not be null",
+                        Slot.DEFAULT,
+                        null,
+                        new Endpoint("rtsp://0.0.0.0")),
+                Arguments.of(
+                        "endpoint must not be null",
+                        Slot.DEFAULT,
+                        Interface.AUDIO_SOURCE,
+                        null)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("testInvalidSenderConnectArguments")
+    public void TestInvalidSenderConnect(String errorMessage, Slot slot, Interface iface, Endpoint endpoint) throws Exception {
         try (RocSender sender = new RocSender(context, config)) {
-            assertThrows(IllegalArgumentException.class, () -> {
-                sender.connect(null, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
-            });
-            assertThrows(IllegalArgumentException.class, () -> {
-                sender.connect(Slot.DEFAULT, null, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
-            });
-            assertThrows(IllegalArgumentException.class, () -> {
-                sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, null);
-            });
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> sender.connect(slot, iface, endpoint)
+            );
+            assertEquals(errorMessage, exception.getMessage());
         }
     }
 
@@ -190,13 +271,4 @@ public class RocSenderTest {
         }
     }
 
-    @Test
-    void TestSetOutgoingAddressAfterConnect() throws Exception {
-        try (RocSender sender = new RocSender(context, config)) {
-            sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
-            sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
-            Exception exception = assertThrows(Exception.class, () -> sender.setOutgoingAddress(Slot.DEFAULT, Interface.AUDIO_SOURCE, "127.0.0.1"));
-            assertEquals("Can't set outgoing address", exception.getMessage());
-        }
-    }
 }

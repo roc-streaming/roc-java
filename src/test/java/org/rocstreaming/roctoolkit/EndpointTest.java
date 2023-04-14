@@ -26,6 +26,7 @@ class EndpointTest {
         int port;
         String resource;
         Class<? extends Throwable> componentsException;
+        String componentsExceptionMsg;
 
         @Override
         public String toString() {
@@ -154,6 +155,7 @@ class EndpointTest {
             params.uri = "";
             params.uriException = IllegalArgumentException.class;
             params.componentsException = IllegalArgumentException.class;
+            params.componentsExceptionMsg = "protocol must not be null";
             result.add(params);
         }
         {
@@ -163,6 +165,7 @@ class EndpointTest {
             params.protocol = Protocol.RTSP;
             params.uriException = IllegalArgumentException.class;
             params.componentsException = IllegalArgumentException.class;
+            params.componentsExceptionMsg = "host must not be empty";
             result.add(params);
         }
         {
@@ -173,6 +176,7 @@ class EndpointTest {
             params.port = 12345;
             params.uriException = IllegalArgumentException.class;
             params.componentsException = IllegalArgumentException.class;
+            params.componentsExceptionMsg = "host must not be empty";
             result.add(params);
         }
         {
@@ -184,6 +188,7 @@ class EndpointTest {
             params.port = 12345;
             params.uriException = IllegalArgumentException.class;
             params.componentsException = IllegalArgumentException.class;
+            params.componentsExceptionMsg = "host must not be empty";
             result.add(params);
         }
         {
@@ -195,6 +200,7 @@ class EndpointTest {
             params.port = 655356;
             params.uriException = IllegalArgumentException.class;
             params.componentsException = Exception.class;
+            params.componentsExceptionMsg = "Invalid roc_endpoint";
             result.add(params);
         }
         {
@@ -206,6 +212,7 @@ class EndpointTest {
             params.port = -2;
             params.uriException = IllegalArgumentException.class;
             params.componentsException = Exception.class;
+            params.componentsExceptionMsg = "Invalid roc_endpoint";
             result.add(params);
         }
         {
@@ -218,6 +225,7 @@ class EndpointTest {
             params.resource = "??";
             params.uriException = IllegalArgumentException.class;
             params.componentsException = Exception.class;
+            params.componentsExceptionMsg = "Invalid roc_endpoint";
             result.add(params);
         }
         {
@@ -230,6 +238,7 @@ class EndpointTest {
             params.resource = "/path";
             params.uriException = IllegalArgumentException.class;
             params.componentsException = Exception.class;
+            params.componentsExceptionMsg = "Invalid roc_endpoint";
             result.add(params);
         }
         {
@@ -241,6 +250,7 @@ class EndpointTest {
             params.port = -1;
             params.uriException = IllegalArgumentException.class;
             params.componentsException = Exception.class;
+            params.componentsExceptionMsg = "Invalid roc_endpoint";
             result.add(params);
         }
         return result;
@@ -265,7 +275,11 @@ class EndpointTest {
     @ParameterizedTest(name = "{0}")
     public void endpointComponentsTest(Params params) {
         if (params.componentsException != null) {
-            assertThrows(params.componentsException, () -> new Endpoint(params.protocol, params.host, params.port, params.resource));
+            Throwable e = assertThrows(
+                    params.componentsException,
+                    () -> new Endpoint(params.protocol, params.host, params.port, params.resource)
+            );
+            assertEquals(params.componentsExceptionMsg, e.getMessage());
             return;
         }
         Endpoint endpoint = new Endpoint(params.protocol, params.host, params.port, params.resource);

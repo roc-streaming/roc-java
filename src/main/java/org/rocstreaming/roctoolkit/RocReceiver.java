@@ -177,7 +177,8 @@ public class RocReceiver extends NativeObject {
      * @throws Exception                if an error occurred when creating the receiver.
      */
     private static long tryOpen(RocContext context, RocReceiverConfig config) throws IllegalArgumentException, Exception {
-        if (context == null || config == null) throw new IllegalArgumentException();
+        Check.notNull(context, "context");
+        Check.notNull(config, "config");
         return open(context.getPtr(), config);
     }
 
@@ -224,7 +225,9 @@ public class RocReceiver extends NativeObject {
      * @throws IllegalArgumentException if the arguments are invalid.
      */
     public void setMulticastGroup(Slot slot, Interface iface, String ip) throws IllegalArgumentException, Exception {
-        if (slot == null || iface == null || ip == null) throw new IllegalArgumentException();
+        Check.notNull(slot, "slot");
+        Check.notNull(iface, "iface");
+        Check.notEmpty(ip, "ip");
         setMulticastGroup(getPtr(), slot.getValue(), iface.getValue(), ip);
     }
 
@@ -250,7 +253,9 @@ public class RocReceiver extends NativeObject {
      * @throws IOException              if the address can't be bound or if there are not enough resources.
      */
     public void bind(Slot slot, Interface iface, Endpoint endpoint) throws IllegalArgumentException, IOException {
-        if (slot == null || iface == null || endpoint == null) throw new IllegalArgumentException();
+        Check.notNull(slot, "slot");
+        Check.notNull(iface, "iface");
+        Check.notNull(endpoint, "endpoint");
         bind(getPtr(), slot.getValue(), iface.getValue(), endpoint);
     }
 
@@ -277,7 +282,7 @@ public class RocReceiver extends NativeObject {
      * @throws IOException              if there are not enough resources.
      */
     public void read(float[] samples) throws IllegalArgumentException, IOException {
-        if (samples == null) throw new IllegalArgumentException();
+        Check.notNull(samples, "samples");
         readFloats(getPtr(), samples);
     }
 

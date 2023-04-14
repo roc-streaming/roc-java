@@ -67,12 +67,12 @@ public class RocLoggerTest {
     }
 
     @Test
-    public void TestLoggerSetNullCallback() {
+    public void TestLoggerSetNullHandler() {
         assertDoesNotThrow(() -> RocLogger.setHandler(null));
     }
 
     @Test
-    public void TestValidLoggerSetCallback() throws Exception {
+    public void TestValidLoggerSetHandler() throws Exception {
         Set<String> logs = Collections.newSetFromMap(new ConcurrentHashMap<>());
         RocLogger.setHandler((level, component, message) ->
                 logs.add(String.format("[level=\"%s\", component=\"%s\"]: %s", level, component, message)));

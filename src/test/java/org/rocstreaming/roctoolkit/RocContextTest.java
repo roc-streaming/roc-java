@@ -3,8 +3,7 @@ package org.rocstreaming.roctoolkit;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RocContextTest {
 
@@ -23,9 +22,19 @@ public class RocContextTest {
 
     @Test
     public void ContextWithInvalidConfigTest() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            try (RocContext context = new RocContext(new RocContextConfig.Builder().maxPacketSize(-1).maxFrameSize(-1).build())) {}
-        });
+        //noinspection resource
+        IllegalArgumentException e = assertThrows(
+                IllegalArgumentException.class,
+                () -> new RocContext(new RocContextConfig.Builder().maxPacketSize(-1).maxFrameSize(-1).build())
+        );
+        assertEquals("Wrong context configuration values", e.getMessage());
+    }
+
+    @Test
+    public void ContextWithNullConfigTest() {
+        //noinspection resource
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> new RocContext(null));
+        assertEquals("config must not be null", e.getMessage());
     }
 
     @Test

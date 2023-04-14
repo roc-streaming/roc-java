@@ -33,7 +33,7 @@ public class RocContext extends NativeObject {
      * @throws Exception                    if there are not enough resources.
      */
     private static long tryOpen(RocContextConfig config) throws IllegalArgumentException, Exception {
-        if (config == null) throw new IllegalArgumentException();
+        Check.notNull(config, "config");
         return open(config);
     }
 

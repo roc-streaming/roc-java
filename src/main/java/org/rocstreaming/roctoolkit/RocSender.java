@@ -157,7 +157,8 @@ public class RocSender extends NativeObject {
      * @throws Exception                if an error occurred when creating the sender.
      */
     private static long tryOpen(RocContext context, RocSenderConfig config) throws IllegalArgumentException, Exception {
-        if (context == null || config == null) throw new IllegalArgumentException();
+        Check.notNull(context, "context");
+        Check.notNull(config, "config");
         return open(context.getPtr(), config);
     }
 
@@ -203,7 +204,9 @@ public class RocSender extends NativeObject {
      * @throws Exception if an error occurred
      */
     public void setOutgoingAddress(Slot slot, Interface iface, String ip) throws Exception {
-        if (slot == null || iface == null || ip == null) throw new IllegalArgumentException();
+        Check.notNull(slot, "slot");
+        Check.notNull(iface, "iface");
+        Check.notEmpty(ip, "ip");
         setOutgoingAddress(getPtr(), slot.getValue(), iface.getValue(), ip);
     }
 
@@ -230,7 +233,9 @@ public class RocSender extends NativeObject {
      */
     public void connect(Slot slot, Interface iface, Endpoint endpoint) throws IllegalArgumentException,
             IOException {
-        if (slot == null || iface == null || endpoint == null) throw new IllegalArgumentException();
+        Check.notNull(slot, "slot");
+        Check.notNull(iface, "iface");
+        Check.notNull(endpoint, "endpoint");
         connect(getPtr(), slot.getValue(), iface.getValue(), endpoint);
     }
 
@@ -253,7 +258,7 @@ public class RocSender extends NativeObject {
      * @throws IOException              if the sender if there are not enough resources.
      */
     public void write(float[] samples) throws IllegalArgumentException, IOException {
-        if (samples == null) throw new IllegalArgumentException();
+        Check.notNull(samples, "samples");
         writeFloats(getPtr(), samples);
     }
 

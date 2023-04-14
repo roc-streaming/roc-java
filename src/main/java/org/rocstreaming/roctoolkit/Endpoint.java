@@ -80,9 +80,8 @@ public class Endpoint {
      * @param resource resource nullable. Specifies percent-encoded path and query
      */
     public Endpoint(Protocol protocol, String host, int port, String resource) {
-        if (protocol == null || host == null || host.isEmpty()) throw new IllegalArgumentException();
-        this.protocol = protocol;
-        this.host = host;
+        this.protocol = Check.notNull(protocol, "protocol");
+        this.host = Check.notEmpty(host, "host");
         this.port = port;
         this.resource = resource;
         validate();

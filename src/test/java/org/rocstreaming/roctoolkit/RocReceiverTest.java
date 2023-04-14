@@ -41,7 +41,7 @@ public class RocReceiverTest {
     }
 
     @Test
-    public void TestValidReceiverCreationAndDeinitialization() {
+    public void testCreationAndDeinitialization() {
         assertDoesNotThrow(() -> {
             //noinspection EmptyTryBlock
             try (RocReceiver ignored = new RocReceiver(context, config)) {
@@ -50,7 +50,7 @@ public class RocReceiverTest {
     }
 
     @Test
-    public void TestValidReceiverCreationAndDeinitializationWithFullConfig() {
+    public void testCreationAndDeinitializationWithFullConfig() {
         RocReceiverConfig config = new RocReceiverConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT)
                 .clockSource(ClockSource.INTERNAL)
                 .resamplerBackend(ResamplerBackend.BUILTIN)
@@ -69,7 +69,7 @@ public class RocReceiverTest {
         });
     }
 
-    private static Stream<Arguments> testInvalidReceiverCreationArguments() throws Exception {
+    private static Stream<Arguments> testInvalidCreationArguments() throws Exception {
         return Stream.of(
                 Arguments.of(
                         "context must not be null",
@@ -100,13 +100,13 @@ public class RocReceiverTest {
     }
 
     @ParameterizedTest
-    @MethodSource("testInvalidReceiverCreationArguments")
-    public void TestInvalidReceiverCreation(String errorMessage, Class<Exception> exceptionClass, RocContext context, RocReceiverConfig config) {
+    @MethodSource("testInvalidCreationArguments")
+    public void testInvalidCreation(String errorMessage, Class<Exception> exceptionClass, RocContext context, RocReceiverConfig config) {
         Exception exception = assertThrows(exceptionClass, () -> new RocReceiver(context, config));
         assertEquals(errorMessage, exception.getMessage());
     }
 
-    private static Stream<Arguments> testInvalidReceiverSetMulticastGroupArguments() {
+    private static Stream<Arguments> testInvalidSetMulticastGroupArguments() {
         return Stream.of(
                 Arguments.of(
                         "slot must not be null",
@@ -127,8 +127,8 @@ public class RocReceiverTest {
     }
 
     @ParameterizedTest
-    @MethodSource("testInvalidReceiverSetMulticastGroupArguments")
-    public void TestInvalidReceiverSetMulticastGroup(String errorMessage, Slot slot, Interface iface, String ip) throws Exception {
+    @MethodSource("testInvalidSetMulticastGroupArguments")
+    public void testInvalidSetMulticastGroup(String errorMessage, Slot slot, Interface iface, String ip) throws Exception {
         try (RocReceiver receiver = new RocReceiver(context, config)) {
             IllegalArgumentException exception = assertThrows(
                     IllegalArgumentException.class,
@@ -139,7 +139,7 @@ public class RocReceiverTest {
     }
 
     @Test
-    public void TestReceiverSetMulticastGroup() throws Exception {
+    public void testSetMulticastGroup() throws Exception {
         try (RocReceiver receiver = new RocReceiver(context, config)) {
             assertDoesNotThrow(() -> {
                 receiver.setMulticastGroup(Slot.DEFAULT, Interface.AUDIO_SOURCE, "0.0.0.0");
@@ -149,7 +149,7 @@ public class RocReceiverTest {
     }
 
     @Test
-    public void TestValidReceiverBind() throws Exception {
+    public void testBind() throws Exception {
         try (RocReceiver receiver = new RocReceiver(context, config)) {
             assertDoesNotThrow(() -> receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:0")));
             assertDoesNotThrow(() -> receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:0")));
@@ -157,7 +157,7 @@ public class RocReceiverTest {
     }
 
     @Test
-    public void TestReceiverBindEphemeralPort() throws Exception {
+    public void testBindEphemeralPort() throws Exception {
         try (RocReceiver receiver = new RocReceiver(context, config)) {
             Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://0.0.0.0:0");
             Endpoint repairEndpoint = new Endpoint("rs8m://0.0.0.0:0");
@@ -173,7 +173,7 @@ public class RocReceiverTest {
         }
     }
 
-    private static Stream<Arguments> testInvalidReceiverBindArguments() {
+    private static Stream<Arguments> testInvalidBindArguments() {
         return Stream.of(
                 Arguments.of(
                         "slot must not be null",
@@ -194,8 +194,8 @@ public class RocReceiverTest {
     }
 
     @ParameterizedTest
-    @MethodSource("testInvalidReceiverBindArguments")
-    public void TestInvalidReceiverBind(String errorMessage, Slot slot, Interface iface, Endpoint endpoint) throws Exception {
+    @MethodSource("testInvalidBindArguments")
+    public void testInvalidBind(String errorMessage, Slot slot, Interface iface, Endpoint endpoint) throws Exception {
         try (RocReceiver receiver = new RocReceiver(context, config)) {
             IllegalArgumentException exception = assertThrows(
                     IllegalArgumentException.class,
@@ -206,7 +206,7 @@ public class RocReceiverTest {
     }
 
     @Test
-    public void TestInvalidReadFloatArray() throws Exception {
+    public void testInvalidRead() throws Exception {
         try (RocReceiver receiver = new RocReceiver(context, config)) {
             receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:0"));
             receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://127.0.0.1:0"));
@@ -217,7 +217,7 @@ public class RocReceiverTest {
 
 
     @Test
-    public void TestReceiverReadZeroizedArray() throws Exception {
+    public void testReadZeroizedArray() throws Exception {
         try (RocReceiver receiver = new RocReceiver(context, config)) {
             receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:0"));
             receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:0"));

@@ -38,7 +38,7 @@ public class RocSenderReceiverTest {
     }
 
     @Test
-    void WriteReadTest() throws Exception {
+    void testWriteRead() throws Exception {
         try (
                 RocContext context = new RocContext();
                 RocSender sender = new RocSender(context, senderConfig);

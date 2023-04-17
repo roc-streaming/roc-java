@@ -14,16 +14,16 @@ class NativeObjectCleanerTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Logger.setLevel(LogLevel.DEBUG);
+        RocLogger.setLevel(RocLogLevel.DEBUG);
     }
 
     @Test
     void senderAutoClosingTest() throws Exception {
-        Context context = new Context();
+        RocContext context = new RocContext();
 
-        SenderConfig config = new SenderConfig.Builder(44100, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
+        RocSenderConfig config = new RocSenderConfig.Builder(44100, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
         @SuppressWarnings("unused")
-        Sender sender = new Sender(context, config);
+        RocSender sender = new RocSender(context, config);
 
         Exception exception = assertThrows(Exception.class, context::close);
         assertEquals("Error closing context", exception.getMessage()); // sender still using context
@@ -47,11 +47,11 @@ class NativeObjectCleanerTest {
 
     @Test
     void receiverAutoClosingTest() throws Exception {
-        Context context = new Context();
+        RocContext context = new RocContext();
 
-        ReceiverConfig config = new ReceiverConfig.Builder(44100, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
+        RocReceiverConfig config = new RocReceiverConfig.Builder(44100, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
         @SuppressWarnings("unused")
-        Receiver receiver = new Receiver(context, config);
+        RocReceiver receiver = new RocReceiver(context, config);
 
         Exception exception = assertThrows(Exception.class, context::close);
         assertEquals("Error closing context", exception.getMessage()); // receiver still using context

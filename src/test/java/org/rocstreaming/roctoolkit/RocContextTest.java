@@ -6,17 +6,17 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-public class ContextTest {
+public class RocContextTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Logger.setLevel(LogLevel.INFO);
+        RocLogger.setLevel(RocLogLevel.INFO);
     }
 
     @Test
     public void ContextDefaultConfigTest() {
         assertDoesNotThrow(() -> {
-            Context context = new Context();
+            RocContext context = new RocContext();
             context.close();
         });
     }
@@ -24,20 +24,20 @@ public class ContextTest {
     @Test
     public void ContextWithInvalidConfigTest() {
         assertThrows(IllegalArgumentException.class, () -> {
-            try (Context context = new Context(new ContextConfig.Builder().maxPacketSize(-1).maxFrameSize(-1).build())) {}
+            try (RocContext context = new RocContext(new RocContextConfig.Builder().maxPacketSize(-1).maxFrameSize(-1).build())) {}
         });
     }
 
     @Test
     public void ContextCloseWithAttachedSender() {
         assertThrows(Exception.class, () -> {
-            Sender sender = null;
-            try (Context context = new Context()) {
-                SenderConfig config = new SenderConfig.Builder(44100,
+            RocSender sender = null;
+            try (RocContext context = new RocContext()) {
+                RocSenderConfig config = new RocSenderConfig.Builder(44100,
                                                             ChannelSet.STEREO,
                                                             FrameEncoding.PCM_FLOAT)
                                                         .build();
-                sender = new Sender(context, config);
+                sender = new RocSender(context, config);
             } finally {
                 if (sender != null) sender.close();
             }
@@ -47,13 +47,13 @@ public class ContextTest {
     @Test
     public void ContextCloseWithAttachedReceiver() {
         assertThrows(Exception.class, () -> {
-            Receiver receiver = null;
-            try (Context context = new Context()) {
-                ReceiverConfig config = new ReceiverConfig.Builder(44100,
+            RocReceiver receiver = null;
+            try (RocContext context = new RocContext()) {
+                RocReceiverConfig config = new RocReceiverConfig.Builder(44100,
                                                                     ChannelSet.STEREO,
                                                                     FrameEncoding.PCM_FLOAT)
                                                             .build();
-                receiver = new Receiver(context, config);
+                receiver = new RocReceiver(context, config);
             } finally {
                 if (receiver != null) receiver.close();
             }

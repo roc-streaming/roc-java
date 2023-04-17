@@ -13,20 +13,20 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 
-public class SenderReceiverTest {
+public class RocSenderReceiverTest {
 
     private static final int SAMPLE_RATE = 44100;
 
-    private final SenderConfig senderConfig;
-    private final ReceiverConfig receiverConfig;
+    private final RocSenderConfig senderConfig;
+    private final RocReceiverConfig receiverConfig;
 
-    public SenderReceiverTest() {
-        this.senderConfig = new SenderConfig.Builder(SAMPLE_RATE,
+    public RocSenderReceiverTest() {
+        this.senderConfig = new RocSenderConfig.Builder(SAMPLE_RATE,
                 ChannelSet.STEREO,
                 FrameEncoding.PCM_FLOAT)
                 .build();
 
-        this.receiverConfig = new ReceiverConfig.Builder(SAMPLE_RATE,
+        this.receiverConfig = new RocReceiverConfig.Builder(SAMPLE_RATE,
                 ChannelSet.STEREO,
                 FrameEncoding.PCM_FLOAT)
                 .build();
@@ -34,15 +34,15 @@ public class SenderReceiverTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Logger.setLevel(LogLevel.INFO);
+        RocLogger.setLevel(RocLogLevel.INFO);
     }
 
     @Test
     void WriteReadTest() throws Exception {
         try (
-                Context context = new Context();
-                Sender sender = new Sender(context, senderConfig);
-                Receiver receiver = new Receiver(context, receiverConfig)
+                RocContext context = new RocContext();
+                RocSender sender = new RocSender(context, senderConfig);
+                RocReceiver receiver = new RocReceiver(context, receiverConfig)
         ) {
 
             Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://127.0.0.1:10001");

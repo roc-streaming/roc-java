@@ -1,12 +1,13 @@
 package org.rocstreaming.roctoolkit;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class Logger {
+public class RocLogger {
 
-    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(Logger.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RocLogger.class.getName());
 
-    private static final LogHandler DEFAULT_HANDLER = (level, component, message) -> {
+    private static final RocLogHandler DEFAULT_HANDLER = (level, component, message) -> {
         Level julLevel = mapLogLevel(level);
         if (LOGGER.isLoggable(julLevel)) {
             LOGGER.logp(julLevel, component, "", message);
@@ -15,23 +16,23 @@ public class Logger {
 
     static {
         RocLibrary.loadLibrary();
-        setCallbackNative(DEFAULT_HANDLER);
+        setHandlerNative(DEFAULT_HANDLER);
         // Jvm could be terminated before roclib, so we need to clear callback to avoid crash
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> setCallbackNative(null)));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> setHandlerNative(null)));
     }
 
-    private static java.util.logging.Level mapLogLevel(LogLevel level) {
+    private static Level mapLogLevel(RocLogLevel level) {
         switch (level) {
             case NONE:
-                return java.util.logging.Level.OFF;
+                return Level.OFF;
             case INFO:
-                return java.util.logging.Level.INFO;
+                return Level.INFO;
             case DEBUG:
-                return java.util.logging.Level.FINE;
+                return Level.FINE;
             case TRACE:
-                return java.util.logging.Level.FINER;
+                return Level.FINER;
             default:
-                return java.util.logging.Level.SEVERE;
+                return Level.SEVERE;
         }
     }
 
@@ -39,11 +40,11 @@ public class Logger {
      * Set maximum log level.
      * <p>
      * Messages with log levels higher than param level will be dropped.
-     * By default the log level is set to {@link LogLevel#ERROR ERROR}.
+     * By default the log level is set to {@link RocLogLevel#ERROR ERROR}.
      *
      * @param level maximum log level.
      */
-    public native static void setLevel(LogLevel level);
+    public native static void setLevel(RocLogLevel level);
 
     /**
      * Set log handler.
@@ -58,23 +59,23 @@ public class Logger {
      *
      * @param handler the log handler to set
      */
-    public static void setCallback(LogHandler handler) {
+    public static void setHandler(RocLogHandler handler) {
         if (handler == null) {
-            setCallbackNative(DEFAULT_HANDLER);
+            setHandlerNative(DEFAULT_HANDLER);
         } else {
-            LogHandler wrapper = (level, component, message) -> {
+            RocLogHandler wrapper = (level, component, message) -> {
                 try {
                     handler.log(level, component, message);
                 } catch (Throwable e) {
                     LOGGER.log(Level.SEVERE, "Logger failed to log message", e);
                 }
             };
-            setCallbackNative(wrapper);
+            setHandlerNative(wrapper);
         }
     }
 
-    private native static void setCallbackNative(LogHandler handler);
+    private native static void setHandlerNative(RocLogHandler handler);
 
-    private Logger() {
+    private RocLogger() {
     }
 }

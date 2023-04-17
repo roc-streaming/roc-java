@@ -3,10 +3,10 @@ package org.rocstreaming.roctoolkit;
 /**
  *  Log handler.
  *
- *  @see Logger#setCallback(LogHandler)
+ *  @see RocLogger#setHandler(RocLogHandler)
  */
 @FunctionalInterface
-public interface LogHandler {
+public interface RocLogHandler {
 
     /**
      *  Log handler function
@@ -14,5 +14,5 @@ public interface LogHandler {
      * @param component     defines the component that produces the message.
      * @param message       defines the message text.
      */
-    void log(LogLevel level, String component, String message);
+    void log(RocLogLevel level, String component, String message);
 }

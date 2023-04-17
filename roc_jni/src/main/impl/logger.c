@@ -1,4 +1,4 @@
-#include "org_rocstreaming_roctoolkit_Logger.h"
+#include "org_rocstreaming_roctoolkit_RocLogger.h"
 
 #include "common.h"
 
@@ -6,7 +6,7 @@
 
 #include <pthread.h>
 
-#define LOG_LEVEL_CLASS PACKAGE_BASE_NAME "/LogLevel"
+#define LOG_LEVEL_CLASS PACKAGE_BASE_NAME "/RocLogLevel"
 
 static pthread_mutex_t logMutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -148,7 +148,7 @@ out:
     pthread_mutex_unlock(&logMutex);
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setLevel(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocLogger_setLevel(
     JNIEnv* env, jclass clazz, jobject jlevel) {
     roc_log_level level = (roc_log_level) 0;
     int success = 0;
@@ -172,7 +172,7 @@ out:
     }
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Logger_setCallbackNative(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocLogger_setHandlerNative(
     JNIEnv* env, jclass clazz, jobject jhandler) {
     jclass handlerClass = NULL;
     jmethodID handlerMethod = NULL;

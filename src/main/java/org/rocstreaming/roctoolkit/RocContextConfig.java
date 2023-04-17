@@ -3,30 +3,30 @@ package org.rocstreaming.roctoolkit;
 /**
  * Context configuration.
  * <p>
- * ContextConfig object can be instantiated with {@link ContextConfig.Builder ContextConfig.Builder} objects.
+ * RocContextConfig object can be instantiated with {@link RocContextConfig.Builder RocContextConfig.Builder} objects.
  *
- * @see Context
+ * @see RocContext
  */
-public class ContextConfig {
+public class RocContextConfig {
 
     private int maxPacketSize;
     private int maxFrameSize;
 
-    private ContextConfig(int maxPacketSize, int maxFrameSize) {
+    private RocContextConfig(int maxPacketSize, int maxFrameSize) {
         this.maxPacketSize = maxPacketSize;
         this.maxFrameSize = maxFrameSize;
     }
 
     /**
-     *  Builder class for {@link ContextConfig ContextConfig} objects
-     * @see ContextConfig
+     *  Builder class for {@link RocContextConfig RocContextConfig} objects
+     * @see RocContextConfig
      */
     public static class Builder {
         private int maxPacketSize;
         private int maxFrameSize;
 
         /**
-         * Create a Builder object for building {@link ContextConfig ContextConfig}
+         * Create a Builder object for building {@link RocContextConfig RocContextConfig}
          */
         public Builder() {
             this.maxPacketSize = 0;
@@ -58,11 +58,11 @@ public class ContextConfig {
         }
 
         /**
-         * Build the {@link ContextConfig ContextConfig} object with <code>Builder</code> parameters.
-         * @return the new {@link ContextConfig ContextConfig}
+         * Build the {@link RocContextConfig RocContextConfig} object with <code>Builder</code> parameters.
+         * @return the new {@link RocContextConfig RocContextConfig}
          */
-        public ContextConfig build() {
-            return new ContextConfig(this.maxPacketSize, this.maxFrameSize);
+        public RocContextConfig build() {
+            return new RocContextConfig(this.maxPacketSize, this.maxFrameSize);
         }
     }
 

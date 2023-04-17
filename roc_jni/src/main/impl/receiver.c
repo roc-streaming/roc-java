@@ -1,4 +1,4 @@
-#include "org_rocstreaming_roctoolkit_Receiver.h"
+#include "org_rocstreaming_roctoolkit_RocReceiver.h"
 
 #include "channel_set.h"
 #include "clock_source.h"
@@ -10,7 +10,7 @@
 
 #include <roc/receiver.h>
 
-#define RECEIVER_CONFIG_CLASS PACKAGE_BASE_NAME "/ReceiverConfig"
+#define RECEIVER_CONFIG_CLASS PACKAGE_BASE_NAME "/RocReceiverConfig"
 
 static int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, jobject jconfig) {
     jclass receiverConfigClass = NULL;
@@ -87,7 +87,7 @@ static int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, j
     return 0;
 }
 
-JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Receiver_open(
+JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_open(
     JNIEnv* env, jclass receiverClass, jlong contextPtr, jobject jconfig) {
     roc_context* context = NULL;
     roc_receiver_config receiverConfig = {};
@@ -112,7 +112,7 @@ out:
     return (jlong) receiver;
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_setMulticastGroup(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_setMulticastGroup(
     JNIEnv* env, jobject thisObj, jlong receiverPtr, jint slot, jint interface, jstring jip) {
     roc_receiver* receiver = NULL;
     const char* ip = NULL;
@@ -133,7 +133,7 @@ out:
     if (ip != NULL) (*env)->ReleaseStringUTFChars(env, jip, ip);
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_bind(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_bind(
     JNIEnv* env, jobject thisObj, jlong receiverPtr, jint slot, jint interface, jobject jendpoint) {
     roc_receiver* receiver = NULL;
     roc_endpoint* endpoint = NULL;
@@ -165,7 +165,7 @@ out:
     }
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_readFloats(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_readFloats(
     JNIEnv* env, jobject thisObj, jlong receiverPtr, jfloatArray jsamples) {
     roc_receiver* receiver = NULL;
     jfloat* samples = NULL;
@@ -197,7 +197,7 @@ out:
     if (samples != NULL) (*env)->ReleaseFloatArrayElements(env, jsamples, samples, 0);
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Receiver_close(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_close(
     JNIEnv* env, jclass receiverClass, jlong receiverPtr) {
 
     roc_receiver* receiver = (roc_receiver*) receiverPtr;

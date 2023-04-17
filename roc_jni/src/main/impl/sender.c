@@ -1,4 +1,4 @@
-#include "org_rocstreaming_roctoolkit_Sender.h"
+#include "org_rocstreaming_roctoolkit_RocSender.h"
 
 #include "channel_set.h"
 #include "clock_source.h"
@@ -13,7 +13,7 @@
 #include <roc/frame.h>
 #include <roc/sender.h>
 
-#define SENDER_CONFIG_CLASS PACKAGE_BASE_NAME "/SenderConfig"
+#define SENDER_CONFIG_CLASS PACKAGE_BASE_NAME "/RocSenderConfig"
 
 static int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobject jconfig) {
     jclass senderConfigClass = NULL;
@@ -101,7 +101,7 @@ static int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobje
     return 0;
 }
 
-JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_Sender_open(
+JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_RocSender_open(
     JNIEnv* env, jclass senderClass, jlong contextPtr, jobject jconfig) {
     roc_context* context = NULL;
     roc_sender_config config = {};
@@ -126,7 +126,7 @@ out:
     return (jlong) sender;
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_setOutgoingAddress(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocSender_setOutgoingAddress(
     JNIEnv* env, jobject thisObj, jlong senderPtr, jint slot, jint interface, jstring jip) {
     roc_sender* sender = NULL;
     const char* ip = NULL;
@@ -147,7 +147,7 @@ out:
     if (ip != NULL) (*env)->ReleaseStringUTFChars(env, jip, ip);
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_connect(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocSender_connect(
     JNIEnv* env, jobject thisObj, jlong senderPtr, jint slot, jint interface, jobject jendpoint) {
     roc_sender* sender = NULL;
     roc_endpoint* endpoint = NULL;
@@ -178,7 +178,7 @@ out:
     }
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_writeFloats(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocSender_writeFloats(
     JNIEnv* env, jobject thisObj, jlong senderPtr, jfloatArray jsamples) {
     roc_sender* sender = NULL;
     jfloat* samples = NULL;
@@ -210,7 +210,7 @@ out:
     if (samples != NULL) (*env)->ReleaseFloatArrayElements(env, jsamples, samples, 0);
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Sender_close(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocSender_close(
     JNIEnv* env, jclass senderClass, jlong senderPtr) {
 
     roc_sender* sender = (roc_sender*) senderPtr;

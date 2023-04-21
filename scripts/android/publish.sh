@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -euxo pipefail
 
 export TERM=dumb

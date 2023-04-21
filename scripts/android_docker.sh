@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -euo pipefail
 
 function run_cmd() {
@@ -25,17 +26,17 @@ cd "$(dirname "$0")"/..
 
 # parse arguments
 action="${1:-}"
-case "$action" in
-    clean|build|test|publish)
+case "${action}" in
+    build|test|publish|clean|purge)
         ;;
     *)
-        echo "usage: $(basename $0) build|test|clean|publish" >&2
+        echo "usage: $(basename $0) build|test|publish|clean|purge" >&2
         exit 1
         ;;
 esac
 
-# remove everything we've created
-if [ "$action" = clean ]
+# remove docker stuff we've created
+if [[ "${action}" = purge ]]
 then
     if docker ps -a --format '{{.Names}}' | grep -qF roc_android
     then
@@ -46,7 +47,11 @@ then
     then
         run_cmd docker volume rm roc_android_sdk
     fi
+fi
 
+# remove build artifcats
+if [[ "${action}" = purge || "${action}" = clean ]]
+then
     run_cmd rm -rf android/build
     run_cmd rm -rf android/roc-android/build
     run_cmd rm -rf android/roc-android/.cxx
@@ -162,15 +167,17 @@ fi
 # build bindings and AAR
 run_cmd docker exec roc_android su -Ppc scripts/android/build_bindings.sh user
 
-# publish artifacts to artifactory
-if [ "$action" = publish ]
-then
-    run_cmd docker exec roc_android su -Ppc scripts/android/publish.sh user
-fi
-
 # run tests on emulator
-if [ "$action" = test ]
+if [[ "${action}" = test ]]
 then
     run_cmd docker exec roc_android scripts/android/start_emulator.sh
     run_cmd docker exec roc_android su -Ppc scripts/android/run_instrumented_tests.sh user
+    exit
+fi
+
+# publish artifacts to artifactory
+if [[ "${action}" = publish ]]
+then
+    run_cmd docker exec roc_android su -Ppc scripts/android/publish.sh user
+    exit
 fi

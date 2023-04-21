@@ -46,14 +46,14 @@ try (Context context = new Context()) {
         FrameEncoding.PCM_FLOAT)
         .fecEncoding(FecEncoding.RS8M)
         .build();
-                                        
+
     try (Sender sender = new Sender(context, config)) {
         Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://192.168.0.1:10001");
         Endpoint repairEndpoint = new Endpoint("rs8m://192.168.0.1:10002");
 
         sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, sourceEndpoint);
         sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, repairEndpoint);
-        
+
         while (/* not stopped */) {
             float[] samples = /* generate samples */
 
@@ -73,14 +73,14 @@ try (Context context = new Context()) {
         ChannelSet.STEREO,
         FrameEncoding.PCM_FLOAT)
         .build();
-                                        
+
     try (Receiver receiver = new Receiver(context, config)) {
         Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://0.0.0.0:10001");
         Endpoint repairEndpoint = new Endpoint("rs8m://0.0.0.0:10001");
 
         receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, sourceEndpoint);
         receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, repairEndpoint);
-        
+
         while (/* not stopped */) {
             float[] samples = new float[320];
             receiver.read(samples);
@@ -109,14 +109,16 @@ Note that prebuilt AAR package for Android already ships the right version of li
 ## Using prebuilt AAR for Android
 
 Add mavenCentral repository in `build.gradle` file:
-
-    repositories {
-        mavenCentral()
-    }
+```
+repositories {
+    mavenCentral()
+}
+```
 
 Add dependency to project ([versions](https://search.maven.org/artifact/org.roc-streaming.roctoolkit/roc-android)):
-
-    implementation 'org.roc-streaming.roctoolkit:roc-android:<VERSION>'
+```
+implementation 'org.roc-streaming.roctoolkit:roc-android:<VERSION>'
+```
 
 ## Building JAR from sources
 
@@ -142,7 +144,6 @@ This will start emulator inside docker and run tests on it:
 ## Building AAR from sources (manual way)
 
 First, export required environment variables:
-
 ```
 export API=28
 export NDK_VERSION=21.1.6352462
@@ -151,7 +152,6 @@ export CMAKE_VERSION=3.10.2.4988404
 ```
 
 Then install Android components:
-
 ```
 sdkmanager "platforms;android-${API}"
 sdkmanager "build-tools;${BUILD_TOOLS_VERSION}"
@@ -160,26 +160,22 @@ sdkmanager "cmake;${CMAKE_VERSION}"
 ```
 
 Also install build-time dependencies of Roc Toolkit, e.g. on macOS run:
-
 ```
 brew install scons ragel gengetopt
 ```
 
 Now we can download and build Roc Toolkit:
-
 ```
 ./scripts/android/build_roc.sh
 ```
 
 And finally build bindings and package everything into AAR:
-
 ```
 cd android
 ./gradlew build
 ```
 
 Optionally, run tests on device or emulator (you'll have to create one):
-
 ```
 cd android
 ./gradlew cAT --info --stacktrace
@@ -222,9 +218,14 @@ To run instrumented tests in Android emulator inside docker image, use this:
 ./scripts/android_docker.sh test
 ```
 
-To clean build results and remove docker container, run this:
+To remove build results, run:
 ```
 ./scripts/android_docker.sh clean
+```
+
+To remove build results and docker container, run:
+```
+./scripts/android_docker.sh purge
 ```
 
 If desired, you can export some variables for Android environment configuration; each variable has default value and is optional:
@@ -241,27 +242,6 @@ export AVD_ARCH=x86_64
 ```
 
 Additional information on the `env-android` docker image, which is used by this script, is available [here](https://roc-streaming.org/toolkit/docs/development/continuous_integration.html#android-environment).
-
-
-#### Device script
-
-There is a helper script named `scripts/android_device.sh` that takes care of creating and booting up AVDs.
-
-It is used in docker and on CI, but you can also use it directly. Supported commands are:
-
-* `create` an AVD:
-
-    ```
-    ./scripts/android_device.sh --api <API> --image <IMAGE> --arch <ARCH> --name <AVD-NAME> create 
-    ```
-
-    The string ``"system-images;android-<API>;<IMAGE>;<ARCH>"`` defines the emulator system image to be installed (it must be present in the list offered by ``sdkmanager --list``)
-
-* `start` device and wait until boot is completed:
-
-    ```
-    ./scripts/android_device.sh --name <AVD-NAME> start
-    ```
 
 #### Documentation build
 

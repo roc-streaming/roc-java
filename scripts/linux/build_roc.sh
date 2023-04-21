@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -euxo pipefail
 
 git clone --recurse-submodules https://github.com/roc-streaming/roc-toolkit.git /tmp/roc

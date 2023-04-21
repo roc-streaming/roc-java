@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -euxo pipefail
 
 if [ ! -z "${ANDROID_NDK_ROOT:-}" ]
@@ -7,7 +8,8 @@ then
 elif [ ! -z "${ANDROID_SDK_ROOT:-}" ]
 then
     ndk_root="${ANDROID_SDK_ROOT}/ndk/${NDK_VERSION}"
-else
+elif [ ! -z "${ANDROID_HOME:-}" ]
+then
     ndk_root="${ANDROID_HOME}/ndk/${NDK_VERSION}"
 fi
 
@@ -22,9 +24,10 @@ esac
 
 if [ ! -d "$toolchain" ];
 then
-    echo "Toolchain not found at $toolchain"
+    echo "error: toolchain not found at $toolchain" 1>&2
     exit 1
 fi
+
 export PATH="${toolchain}:${PATH}"
 
 target_host=(

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 set -euxo pipefail
 
 export PATH="$ANDROID_SDK_ROOT/tools/bin:${PATH}"
@@ -7,14 +8,13 @@ export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:${PATH}"
 # create avd if it doesn't exist
 if ! avdmanager list avd -c | grep -qF roc_device
 then
-    "$(dirname "$0")"/../android_device.sh \
-        --name roc_device --image "${AVD_IMAGE}" --arch "${AVD_ARCH}" --api "${API}" \
-        create
+    device --name roc_device \
+           --image "${AVD_IMAGE}" --arch "${AVD_ARCH}" --api "${API}" \
+           create
 fi
 
 # restart emulator
-"$(dirname "$0")"/../android_device.sh \
-    --name roc_device \
+device --name roc_device \
     start
 
 # show avd list

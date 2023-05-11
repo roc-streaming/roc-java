@@ -1,7 +1,6 @@
 package org.rocstreaming.roctoolkit;
 
 import org.awaitility.Duration;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,32 +16,29 @@ import java.util.stream.Stream;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RocLoggerTest {
+public class RocLoggerTest extends BaseTest {
 
-    @BeforeEach
-    public void beforeEach() {
-        RocLogger.setLevel(RocLogLevel.INFO);
-    }
-
-    private static Stream<Arguments> testSetLevelProvider() {
+    private static Stream<Arguments> testLogLevelProvider() {
         return Stream.of(
-                Arguments.of(RocLogLevel.NONE, false, false),
-                Arguments.of(RocLogLevel.ERROR, true, false),
-                Arguments.of(RocLogLevel.INFO, true, true),
-                Arguments.of(RocLogLevel.DEBUG, true, true),
-                Arguments.of(RocLogLevel.TRACE, true, true)
+                Arguments.of(Level.OFF, false, false),
+                Arguments.of(Level.SEVERE, true, false),
+                Arguments.of(Level.INFO, true, true),
+                Arguments.of(Level.FINE, true, true),
+                Arguments.of(Level.FINER, true, true)
         );
     }
 
     @ParameterizedTest
-    @MethodSource("testSetLevelProvider")
-    public void testSetLevel(RocLogLevel level, boolean expectError, boolean expectInfo) {
+    @MethodSource("testLogLevelProvider")
+    public void testLogLevel(Level level, boolean expectError, boolean expectInfo) {
+        Level originalLevel = RocLogger.LOGGER.getLevel();
+
         Map<Level, Integer> msgCount = new ConcurrentHashMap<>();
         Handler handler = wrapHandler(record -> msgCount.compute(record.getLevel(), (k, v) -> v == null ? 1 : v + 1));
         RocLogger.LOGGER.addHandler(handler);
 
         assertDoesNotThrow(() -> {
-            RocLogger.setLevel(level);
+            RocLogger.LOGGER.setLevel(level);
             try {
                 // trigger error logs
                 new Endpoint("invalid");
@@ -59,11 +55,7 @@ public class RocLoggerTest {
                     assertEquals(expectInfo, msgCount.containsKey(Level.INFO));
                 });
         RocLogger.LOGGER.removeHandler(handler);
-    }
-
-    @Test
-    public void testSetNullLevel() {
-        assertThrows(IllegalArgumentException.class, () -> RocLogger.setLevel(null));
+        RocLogger.LOGGER.setLevel(originalLevel);
     }
 
     @Test

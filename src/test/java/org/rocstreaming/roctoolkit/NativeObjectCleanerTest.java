@@ -1,7 +1,6 @@
 package org.rocstreaming.roctoolkit;
 
 import org.awaitility.Duration;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
@@ -10,12 +9,7 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
-class NativeObjectCleanerTest {
-
-    @BeforeAll
-    public static void beforeAll() {
-        RocLogger.setLevel(RocLogLevel.DEBUG);
-    }
+class NativeObjectCleanerTest extends BaseTest {
 
     @Test
     void senderAutoClosingTest() throws Exception {

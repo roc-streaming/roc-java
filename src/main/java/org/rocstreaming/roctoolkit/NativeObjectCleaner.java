@@ -4,11 +4,17 @@ import java.lang.ref.ReferenceQueue;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static org.rocstreaming.roctoolkit.NativeObject.toHex;
 
 /**
  * Thread collecting references and closing {@link NativeObject}s when they become phantom reachable.
  */
 class NativeObjectCleaner extends Thread {
+
+    private static final Logger LOGGER = Logger.getLogger(NativeObjectCleaner.class.getName());
 
     /**
      * Singleton instance.
@@ -57,6 +63,7 @@ class NativeObjectCleaner extends Thread {
     NativeObjectPhantomReference register(NativeObject nativeObj, long ptr, NativeObject dependsOn, Destructor destructor) {
         NativeObjectPhantomReference reference = new NativeObjectPhantomReference(nativeObj, referenceQueue, ptr, dependsOn, destructor);
         set.add(reference);
+        LOGGER.log(Level.FINE, "added reference to queue, ptr={0}", new Object[]{toHex(ptr)});
         return reference;
     }
 
@@ -67,6 +74,7 @@ class NativeObjectCleaner extends Thread {
      */
     void unregister(NativeObjectPhantomReference reference) {
         set.remove(reference);
+        LOGGER.log(Level.FINE, "removed reference from queue, ptr={0}", new Object[]{toHex(reference.getPtr())});
     }
 
     /**
@@ -82,6 +90,7 @@ class NativeObjectCleaner extends Thread {
             try {
                 NativeObjectPhantomReference reference = (NativeObjectPhantomReference) referenceQueue.remove();
                 set.remove(reference);
+                LOGGER.log(Level.FINE, "collected reference from queue, ptr={0}", new Object[]{toHex(reference.getPtr())});
                 reference.close();
             } catch (Exception ignore) {
             }

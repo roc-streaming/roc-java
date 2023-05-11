@@ -1,16 +1,10 @@
 package org.rocstreaming.roctoolkit;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RocContextTest {
-
-    @BeforeAll
-    public static void beforeAll() {
-        RocLogger.setLevel(RocLogLevel.INFO);
-    }
+public class RocContextTest extends BaseTest {
 
     @Test
     public void testWithDefaultConfig() {

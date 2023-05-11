@@ -1,6 +1,8 @@
 package org.rocstreaming.roctoolkit;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Receiver peer.
@@ -168,6 +170,8 @@ import java.io.IOException;
  */
 public class RocReceiver extends NativeObject {
 
+    private static final Logger LOGGER = Logger.getLogger(RocReceiver.class.getName());
+
     /**
      * Validate receiver constructor parameters and open a new receiver if validation is successful.
      *
@@ -177,10 +181,27 @@ public class RocReceiver extends NativeObject {
      * @throws IllegalArgumentException if the arguments are invalid.
      * @throws Exception                if an error occurred when creating the receiver.
      */
-    private static long tryOpen(RocContext context, RocReceiverConfig config) throws IllegalArgumentException, Exception {
+    private static long construct(RocContext context, RocReceiverConfig config) throws IllegalArgumentException, Exception {
         Check.notNull(context, "context");
         Check.notNull(config, "config");
-        return open(context.getPtr(), config);
+
+        LOGGER.log(Level.FINE, "starting RocReceiver.open(), context ptr={0}, config={1}",
+                new Object[]{toHex(context.getPtr()), config});
+        long ptr = open(context.getPtr(), config);
+        LOGGER.log(Level.FINE, "finished RocReceiver.open(), context ptr={0}, ptr={1}",
+                new Object[]{toHex(context.getPtr()), toHex(ptr)});
+        return ptr;
+    }
+
+    /**
+     * Destruct native object
+     */
+    private static void destroy(long ptr, RocContext context) throws Exception {
+        LOGGER.log(Level.FINE, "starting RocReceiver.close(), context ptr={0}, ptr={1}",
+                new Object[]{toHex(context.getPtr()), toHex(ptr)});
+        close(ptr);
+        LOGGER.log(Level.FINE, "finished RocReceiver.close(), context ptr={0}, ptr={1}",
+                new Object[]{toHex(context.getPtr()), toHex(ptr)});
     }
 
     /**
@@ -194,7 +215,7 @@ public class RocReceiver extends NativeObject {
      * @throws Exception                if an error occurred when creating the receiver.
      */
     public RocReceiver(RocContext context, RocReceiverConfig config) throws IllegalArgumentException, Exception {
-        super(tryOpen(context, config), context, RocReceiver::close);
+        super(construct(context, config), context, ptr -> destroy(ptr, context));
     }
 
     /**
@@ -229,7 +250,11 @@ public class RocReceiver extends NativeObject {
         Check.notNull(slot, "slot");
         Check.notNull(iface, "iface");
         Check.notEmpty(ip, "ip");
+
+        LOGGER.log(Level.FINE, "starting RocReceiver.setMulticastGroup(), ptr={0}, slot={1}, iface={2}, ip={3}",
+                new Object[]{toHex(getPtr()), slot, iface, ip});
         setMulticastGroup(getPtr(), slot.getValue(), iface.value, ip);
+        LOGGER.log(Level.FINE, "finished RocReceiver.setMulticastGroup(), ptr={0}", new Object[]{toHex(getPtr())});
     }
 
     /**
@@ -257,7 +282,11 @@ public class RocReceiver extends NativeObject {
         Check.notNull(slot, "slot");
         Check.notNull(iface, "iface");
         Check.notNull(endpoint, "endpoint");
+
+        LOGGER.log(Level.FINE, "starting RocReceiver.bind(), ptr={0}, slot={1}, iface={2}, endpoint={3}",
+                new Object[]{toHex(getPtr()), slot, iface, endpoint});
         bind(getPtr(), slot.getValue(), iface.value, endpoint);
+        LOGGER.log(Level.FINE, "finished RocReceiver.bind(), ptr={0}, endpoint={1}", new Object[]{toHex(getPtr()), endpoint});
     }
 
     public void connect(Endpoint endpoint) {

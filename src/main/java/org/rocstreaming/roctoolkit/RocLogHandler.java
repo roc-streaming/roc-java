@@ -2,11 +2,9 @@ package org.rocstreaming.roctoolkit;
 
 /**
  *  Log handler.
- *
- *  @see RocLogger#setHandler(RocLogHandler)
  */
 @FunctionalInterface
-public interface RocLogHandler {
+interface RocLogHandler {
 
     /**
      *  Log handler function

@@ -7,11 +7,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.logging.*;
 import java.util.stream.Stream;
 
 import static org.awaitility.Awaitility.await;
@@ -37,9 +37,9 @@ public class RocLoggerTest {
     @ParameterizedTest
     @MethodSource("testSetLevelProvider")
     public void testSetLevel(RocLogLevel level, boolean expectError, boolean expectInfo) {
-        Map<RocLogLevel, Integer> msgCount = new ConcurrentHashMap<>();
-        RocLogHandler handler = (lvl, component, message) -> msgCount.compute(lvl, (k, v) -> v == null ? 1 : v + 1);
-        RocLogger.setHandler(handler);
+        Map<Level, Integer> msgCount = new ConcurrentHashMap<>();
+        Handler handler = wrapHandler(record -> msgCount.compute(record.getLevel(), (k, v) -> v == null ? 1 : v + 1));
+        RocLogger.LOGGER.addHandler(handler);
 
         assertDoesNotThrow(() -> {
             RocLogger.setLevel(level);
@@ -55,10 +55,10 @@ public class RocLoggerTest {
         });
         await().atMost(Duration.FIVE_MINUTES)
                 .untilAsserted(() -> {
-                    assertEquals(expectError, msgCount.containsKey(RocLogLevel.ERROR));
-                    assertEquals(expectInfo, msgCount.containsKey(RocLogLevel.INFO));
+                    assertEquals(expectError, msgCount.containsKey(Level.SEVERE));
+                    assertEquals(expectInfo, msgCount.containsKey(Level.INFO));
                 });
-        RocLogger.setHandler(null);
+        RocLogger.LOGGER.removeHandler(handler);
     }
 
     @Test
@@ -67,50 +67,38 @@ public class RocLoggerTest {
     }
 
     @Test
-    public void testSetNullCallback() {
-        assertDoesNotThrow(() -> RocLogger.setHandler(null));
-    }
-
-    @Test
     public void testSetHandler() throws Exception {
-        Set<String> logs = Collections.newSetFromMap(new ConcurrentHashMap<>());
-        RocLogger.setHandler((level, component, message) ->
-                logs.add(String.format("[level=\"%s\", component=\"%s\"]: %s", level, component, message)));
+        AtomicBoolean hasLogOpen = new AtomicBoolean();
+        AtomicBoolean hasLogClose = new AtomicBoolean();
+        Handler handler = wrapHandler(record -> {
+            if (!record.getSourceClassName().equals("libroc")) {
+                return;
+            }
+            if (record.getMessage().startsWith("roc_context_open")) {
+                hasLogOpen.set(true);
+            }
+            if (record.getMessage().startsWith("roc_context_close")) {
+                hasLogClose.set(true);
+            }
+        });
+        RocLogger.LOGGER.addHandler(handler);
 
         //noinspection EmptyTryBlock
         try (RocContext ignored = new RocContext()) {
         }
 
-        String logOpen = "[level=\"INFO\", component=\"libroc\"]: roc_context_open";
-        String logClose = "[level=\"INFO\", component=\"libroc\"]: roc_context_close";
         await().atMost(Duration.FIVE_MINUTES)
-                .until(() -> {
-                    boolean hasLogOpen = false, hasLogClose = false;
-                    for (String log : logs) {
-                        if (log.startsWith(logOpen)) {
-                            hasLogOpen = true;
-                        }
-                        if (log.startsWith(logClose)) {
-                            hasLogClose = true;
-                        }
-                    }
-                    return hasLogOpen && hasLogClose;
-                });
+                .until(() -> hasLogOpen.get() && hasLogClose.get());
+
+        RocLogger.LOGGER.removeHandler(handler);
     }
 
-    @Test
-    public void testInvalidLoggerNotThrows() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
-        assertDoesNotThrow(() -> {
-            RocLogger.setHandler((level, component, message) -> {
-                latch.countDown();
-                throw new RuntimeException("Fails to log");
-            });
-            //noinspection EmptyTryBlock
-            try (RocContext ignored = new RocContext()) {
+    private Handler wrapHandler(Consumer<LogRecord> consumer) {
+        return new MemoryHandler(new ConsoleHandler(), 1000, Level.ALL) {
+            @Override
+            public synchronized void publish(LogRecord record) {
+                consumer.accept(record);
             }
-        });
-        latch.await();
-        RocLogger.setHandler(null);
+        };
     }
 }

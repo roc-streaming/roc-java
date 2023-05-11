@@ -3,7 +3,7 @@ package org.rocstreaming.roctoolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RocLogger {
+class RocLogger {
 
     static final Logger LOGGER = Logger.getLogger(RocLogger.class.getName());
 
@@ -16,9 +16,10 @@ public class RocLogger {
 
     static {
         RocLibrary.loadLibrary();
-        setHandlerNative(DEFAULT_HANDLER);
+        setLevel(RocLogLevel.DEBUG); // set debug level and rely on jul to filter messages.
+        setHandler(DEFAULT_HANDLER);
         // Jvm could be terminated before roclib, so we need to clear callback to avoid crash
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> setHandlerNative(null)));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> setHandler(null)));
     }
 
     private static Level mapLogLevel(RocLogLevel level) {
@@ -44,9 +45,9 @@ public class RocLogger {
      *
      * @param level maximum log level.
      */
-    public native static void setLevel(RocLogLevel level);
+    private native static void setLevel(RocLogLevel level);
 
-    private native static void setHandlerNative(RocLogHandler handler);
+    private native static void setHandler(RocLogHandler handler);
 
     private RocLogger() {
     }

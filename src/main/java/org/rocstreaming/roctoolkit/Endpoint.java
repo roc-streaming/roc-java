@@ -184,6 +184,11 @@ public class Endpoint {
         return resource;
     }
 
+    @Override
+    public String toString() {
+        return getUri();
+    }
+
     public native String getUri();
 
     private native void init(String uri) throws IllegalArgumentException;

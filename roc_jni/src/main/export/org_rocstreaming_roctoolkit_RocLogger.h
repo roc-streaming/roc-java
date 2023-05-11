@@ -17,10 +17,10 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocLogger_setLevel
 
 /*
  * Class:     org_rocstreaming_roctoolkit_RocLogger
- * Method:    setHandlerNative
+ * Method:    setHandler
  * Signature: (Lorg/rocstreaming/roctoolkit/RocLogHandler;)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocLogger_setHandlerNative
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocLogger_setHandler
   (JNIEnv *, jclass, jobject);
 
 #ifdef __cplusplus

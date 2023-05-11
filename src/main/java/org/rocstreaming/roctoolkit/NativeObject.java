@@ -52,4 +52,8 @@ class NativeObject implements AutoCloseable {
         resource.clear();
         NATIVE_OBJECT_CLEANER.unregister(resource);
     }
+
+    static String toHex(long value) {
+        return Long.toHexString(value);
+    }
 }

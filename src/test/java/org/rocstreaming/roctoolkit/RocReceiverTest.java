@@ -1,7 +1,6 @@
 package org.rocstreaming.roctoolkit;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,7 +11,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RocReceiverTest {
+public class RocReceiverTest extends BaseTest {
 
     private static final int SAMPLE_RATE = 44100;
     public static final RocReceiverConfig CONFIG = RocReceiverConfig.builder()
@@ -21,11 +20,6 @@ public class RocReceiverTest {
             .frameEncoding(FrameEncoding.PCM_FLOAT)
             .build();
     private RocContext context;
-
-    @BeforeAll
-    public static void beforeAll() {
-        RocLogger.setLevel(RocLogLevel.INFO);
-    }
 
     @BeforeEach
     public void beforeEach() throws Exception {

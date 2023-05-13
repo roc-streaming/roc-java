@@ -69,6 +69,7 @@ public class RocSenderTest {
         RocSenderConfig config = new RocSenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT)
                 .packetSampleRate(44100)
                 .packetChannels(ChannelSet.STEREO)
+                .packetEncoding(PacketEncoding.AVP_L16)
                 .packetLength(2000)
                 .packetInterleaving(1)
                 .clockSource(ClockSource.INTERNAL)

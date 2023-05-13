@@ -144,7 +144,7 @@ This will start emulator inside docker and run tests on it:
 
 First, export required environment variables:
 ```
-export API=28
+export API=26
 export NDK_VERSION=21.1.6352462
 export BUILD_TOOLS_VERSION=28.0.3
 export CMAKE_VERSION=3.10.2.4988404
@@ -230,7 +230,7 @@ To remove build results and docker container, run:
 If desired, you can export some variables for Android environment configuration; each variable has default value and is optional:
 ```
 export JAVA_VERSION=8
-export API=28
+export API=26
 export NDK_VERSION=21.1.6352462
 export BUILD_TOOLS_VERSION=28.0.3
 export CMAKE_VERSION=3.10.2.4988404

@@ -9,7 +9,7 @@ function run_cmd() {
 
 # setup default values
 : "${JAVA_VERSION:=8}"
-: "${API:=28}"
+: "${API:=26}"
 : "${NDK_VERSION:=21.1.6352462}"
 : "${BUILD_TOOLS_VERSION:=28.0.3}"
 : "${CMAKE_VERSION:=3.10.2.4988404}"

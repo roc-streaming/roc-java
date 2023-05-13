@@ -47,6 +47,10 @@ package org.rocstreaming.roctoolkit;
  */
 public class Endpoint {
 
+    static {
+        RocLibrary.loadLibrary();
+    }
+
     private Protocol protocol;
 
     private String host;

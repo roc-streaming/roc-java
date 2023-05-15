@@ -142,6 +142,15 @@ public class RocSenderTest extends BaseTest {
     }
 
     @Test
+    void testSetOutgoingAddress() throws Exception {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
+            assertDoesNotThrow(() -> sender.setOutgoingAddress(Slot.DEFAULT, Interface.AUDIO_SOURCE, "127.0.0.1"));
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
+        }
+    }
+
+    @Test
     void testSetOutgoingAddressAfterConnect() throws Exception {
         try (RocSender sender = new RocSender(context, CONFIG)) {
             sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));

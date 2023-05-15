@@ -13,8 +13,8 @@ public class RocContextConfig {
     private int maxFrameSize;
 
     private RocContextConfig(int maxPacketSize, int maxFrameSize) {
-        this.maxPacketSize = maxPacketSize;
-        this.maxFrameSize = maxFrameSize;
+        this.maxPacketSize = Check.notNegative(maxPacketSize, "maxPacketSize");
+        this.maxFrameSize = Check.notNegative(maxFrameSize, "maxFrameSize");
     }
 
     /**
@@ -71,7 +71,7 @@ public class RocContextConfig {
     }
 
     public void setMaxPacketSize(int maxPacketSize) {
-        this.maxPacketSize = maxPacketSize;
+        this.maxPacketSize = Check.notNegative(maxPacketSize, "maxPacketSize");
     }
 
     public int getMaxFrameSize() {
@@ -79,6 +79,6 @@ public class RocContextConfig {
     }
 
     public void setMaxFrameSize(int maxFrameSize) {
-        this.maxFrameSize = maxFrameSize;
+        this.maxFrameSize = Check.notNegative(maxFrameSize, "maxFrameSize");;
     }
 }

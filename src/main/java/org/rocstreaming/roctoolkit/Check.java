@@ -17,4 +17,11 @@ class Check {
         }
         return value;
     }
+
+    static int notNegative(int value, String name) {
+        if (value < 0) {
+            throw new IllegalArgumentException(name + " must not be negative");
+        }
+        return value;
+    }
 }

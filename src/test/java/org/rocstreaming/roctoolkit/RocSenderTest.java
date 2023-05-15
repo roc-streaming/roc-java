@@ -118,12 +118,12 @@ public class RocSenderTest {
         assertEquals(errorMessage, exception.getMessage());
     }
 
-	@Test
-	public void testInvalidConfig() {
-		Exception exception = assertThrows(IllegalArgumentException.class,
-				() -> new RocSenderConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build());
-		assertEquals("frameSampleRate must not be negative", exception.getMessage());
-	}
+    @Test
+    public void testInvalidConfig() {
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> new RocSenderConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build());
+        assertEquals("frameSampleRate must not be negative", exception.getMessage());
+    }
 
     private static Stream<Arguments> testInvalidSetOutgoingAddressArguments() {
         return Stream.of(

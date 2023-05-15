@@ -27,7 +27,7 @@ public class RocContextTest {
                 IllegalArgumentException.class,
                 () -> new RocContext(new RocContextConfig.Builder().maxPacketSize(-1).maxFrameSize(-1).build())
         );
-        assertEquals("Wrong context configuration values", e.getMessage());
+        assertEquals("maxPacketSize must not be negative", e.getMessage());
     }
 
     @Test

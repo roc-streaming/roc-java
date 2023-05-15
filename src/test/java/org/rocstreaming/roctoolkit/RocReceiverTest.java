@@ -82,7 +82,7 @@ public class RocReceiverTest {
                         new RocContext(),
                         null),
                 Arguments.of(
-                        "Bad config argument",
+                        "frameSampleRate must not be negative",
                         IllegalArgumentException.class,
                         new RocContext(),
                         new RocReceiverConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build()),

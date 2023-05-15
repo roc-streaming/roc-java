@@ -99,11 +99,6 @@ public class RocSenderTest {
                         new RocContext(),
                         null),
                 Arguments.of(
-                        "frameSampleRate must not be negative",
-                        IllegalArgumentException.class,
-                        new RocContext(),
-                        new RocSenderConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build()),
-                Arguments.of(
                         "Error opening sender",
                         Exception.class,
                         new RocContext(),
@@ -122,6 +117,13 @@ public class RocSenderTest {
         Exception exception = assertThrows(exceptionClass, () -> new RocSender(context, config));
         assertEquals(errorMessage, exception.getMessage());
     }
+
+	@Test
+	public void testInvalidConfig() {
+		Exception exception = assertThrows(IllegalArgumentException.class,
+				() -> new RocSenderConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build());
+		assertEquals("frameSampleRate must not be negative", exception.getMessage());
+	}
 
     private static Stream<Arguments> testInvalidSetOutgoingAddressArguments() {
         return Stream.of(

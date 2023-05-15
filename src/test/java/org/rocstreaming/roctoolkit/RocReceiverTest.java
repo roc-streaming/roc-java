@@ -82,11 +82,6 @@ public class RocReceiverTest {
                         new RocContext(),
                         null),
                 Arguments.of(
-                        "frameSampleRate must not be negative",
-                        IllegalArgumentException.class,
-                        new RocContext(),
-                        new RocReceiverConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build()),
-                Arguments.of(
                         "Error opening receiver",
                         Exception.class,
                         new RocContext(),
@@ -104,6 +99,13 @@ public class RocReceiverTest {
     public void testInvalidCreation(String errorMessage, Class<Exception> exceptionClass, RocContext context, RocReceiverConfig config) {
         Exception exception = assertThrows(exceptionClass, () -> new RocReceiver(context, config));
         assertEquals(errorMessage, exception.getMessage());
+    }
+
+    @Test
+    public void testInvalidConfig() {
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> new RocReceiverConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build());
+        assertEquals("frameSampleRate must not be negative", exception.getMessage());
     }
 
     private static Stream<Arguments> testInvalidSetMulticastGroupArguments() {

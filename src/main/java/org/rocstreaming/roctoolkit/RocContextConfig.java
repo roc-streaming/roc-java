@@ -79,6 +79,6 @@ public class RocContextConfig {
     }
 
     public void setMaxFrameSize(int maxFrameSize) {
-        this.maxFrameSize = Check.notNegative(maxFrameSize, "maxFrameSize");;
+        this.maxFrameSize = Check.notNegative(maxFrameSize, "maxFrameSize");
     }
 }

@@ -40,10 +40,10 @@ public class RocSenderConfig {
             FecEncoding fecEncoding,
             int fecBlockSourcePackets,
             int fecBlockRepairPackets) {
-        this.frameSampleRate = Check.notNegative(frameSampleRate, "frameSampleRate");;
+        this.frameSampleRate = Check.notNegative(frameSampleRate, "frameSampleRate");
         this.frameChannels = frameChannels;
         this.frameEncoding = frameEncoding;
-        this.packetSampleRate = Check.notNegative(packetSampleRate, "packetSampleRate");;
+        this.packetSampleRate = Check.notNegative(packetSampleRate, "packetSampleRate");
         this.packetChannels = packetChannels;
         this.packetEncoding = packetEncoding;
         this.packetLength = packetLength;
@@ -235,7 +235,7 @@ public class RocSenderConfig {
     }
 
     public void setFrameSampleRate(int frameSampleRate) {
-        this.frameSampleRate = Check.notNegative(frameSampleRate, "frameSampleRate");;
+        this.frameSampleRate = Check.notNegative(frameSampleRate, "frameSampleRate");
     }
 
     public ChannelSet getFrameChannels() {
@@ -259,7 +259,7 @@ public class RocSenderConfig {
     }
 
     public void setPacketSampleRate(int packetSampleRate) {
-        this.packetSampleRate = Check.notNegative(packetSampleRate, "packetSampleRate");;
+        this.packetSampleRate = Check.notNegative(packetSampleRate, "packetSampleRate");
     }
 
     public ChannelSet getPacketChannels() {
@@ -331,7 +331,7 @@ public class RocSenderConfig {
     }
 
     public void setFecBlockSourcePackets(int fecBlockSourcePackets) {
-        this.fecBlockSourcePackets = Check.notNegative(fecBlockSourcePackets, "fecBlockSourcePackets");;
+        this.fecBlockSourcePackets = Check.notNegative(fecBlockSourcePackets, "fecBlockSourcePackets");
     }
 
     public int getFecBlockRepairPackets() {
@@ -339,6 +339,6 @@ public class RocSenderConfig {
     }
 
     public void setFecBlockRepairPackets(int fecBlockRepairPackets) {
-        this.fecBlockRepairPackets = Check.notNegative(fecBlockRepairPackets, "fecBlockRepairPackets");;
+        this.fecBlockRepairPackets = Check.notNegative(fecBlockRepairPackets, "fecBlockRepairPackets");
     }
 }

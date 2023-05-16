@@ -108,6 +108,13 @@ public class RocReceiverTest {
         assertEquals("frameSampleRate must not be negative", exception.getMessage());
     }
 
+    @Test
+    public void testSetNegativeFrameSampleRate() {
+        RocReceiverConfig config = new RocReceiverConfig.Builder(1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setFrameSampleRate(-1));
+        assertEquals("frameSampleRate must not be negative", e.getMessage());
+    }
+
     private static Stream<Arguments> testInvalidSetMulticastGroupArguments() {
         return Stream.of(
                 Arguments.of(

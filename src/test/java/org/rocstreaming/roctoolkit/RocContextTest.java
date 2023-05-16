@@ -31,6 +31,20 @@ public class RocContextTest {
     }
 
     @Test
+    public void testSetNegativeMaxPacketSize() {
+        RocContextConfig config = new RocContextConfig.Builder().maxPacketSize(1).maxFrameSize(1).build();
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setMaxPacketSize(-1));
+        assertEquals("maxPacketSize must not be negative", e.getMessage());
+    }
+
+    @Test
+    public void testSetNegativeMaxFrameSize() {
+        RocContextConfig config = new RocContextConfig.Builder().maxPacketSize(1).maxFrameSize(1).build();
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setMaxFrameSize(-1));
+        assertEquals("maxFrameSize must not be negative", e.getMessage());
+    }
+
+    @Test
     public void testWithNullConfig() {
         //noinspection resource
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> new RocContext(null));

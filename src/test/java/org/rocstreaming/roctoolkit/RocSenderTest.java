@@ -99,11 +99,6 @@ public class RocSenderTest {
                         new RocContext(),
                         null),
                 Arguments.of(
-                        "Bad config argument",
-                        IllegalArgumentException.class,
-                        new RocContext(),
-                        new RocSenderConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build()),
-                Arguments.of(
                         "Error opening sender",
                         Exception.class,
                         new RocContext(),
@@ -121,6 +116,41 @@ public class RocSenderTest {
     public void testInvalidCreation(String errorMessage, Class<Exception> exceptionClass, RocContext context, RocSenderConfig config) {
         Exception exception = assertThrows(exceptionClass, () -> new RocSender(context, config));
         assertEquals(errorMessage, exception.getMessage());
+    }
+
+    @Test
+    public void testInvalidConfig() {
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> new RocSenderConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build());
+        assertEquals("frameSampleRate must not be negative", exception.getMessage());
+    }
+
+    @Test
+    public void testSetNegativeFrameSampleRate() {
+        RocSenderConfig config = new RocSenderConfig.Builder(1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setFrameSampleRate(-1));
+        assertEquals("frameSampleRate must not be negative", e.getMessage());
+    }
+
+    @Test
+    public void testSetNegativePacketSampleRate() {
+        RocSenderConfig config = new RocSenderConfig.Builder(1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setPacketSampleRate(-1));
+        assertEquals("packetSampleRate must not be negative", e.getMessage());
+    }
+
+    @Test
+    public void testSetNegativeFecBlockSourcePackets() {
+        RocSenderConfig config = new RocSenderConfig.Builder(1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setFecBlockSourcePackets(-1));
+        assertEquals("fecBlockSourcePackets must not be negative", e.getMessage());
+    }
+
+    @Test
+    public void testSetNegativeFecBlockRepairPackets() {
+        RocSenderConfig config = new RocSenderConfig.Builder(1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setFecBlockRepairPackets(-1));
+        assertEquals("fecBlockRepairPackets must not be negative", e.getMessage());
     }
 
     private static Stream<Arguments> testInvalidSetOutgoingAddressArguments() {

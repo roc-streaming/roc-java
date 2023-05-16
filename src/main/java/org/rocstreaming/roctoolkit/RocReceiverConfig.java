@@ -36,7 +36,7 @@ public class RocReceiverConfig {
             long noPlaybackTimeout,
             long brokenPlaybackTimeout,
             long breakageDetectionWindow) {
-        this.frameSampleRate = frameSampleRate;
+        this.frameSampleRate = Check.notNegative(frameSampleRate, "frameSampleRate");
         this.frameChannels = frameChannels;
         this.frameEncoding = frameEncoding;
         this.clockSource = clockSource;
@@ -220,7 +220,7 @@ public class RocReceiverConfig {
     }
 
     public void setFrameSampleRate(int frameSampleRate) {
-        this.frameSampleRate = frameSampleRate;
+        this.frameSampleRate = Check.notNegative(frameSampleRate, "frameSampleRate");
     }
 
     public ChannelSet getFrameChannels() {

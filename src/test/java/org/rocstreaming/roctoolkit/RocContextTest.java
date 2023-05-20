@@ -32,12 +32,7 @@ public class RocContextTest {
         assertThrows(Exception.class, () -> {
             RocSender sender = null;
             try (RocContext context = new RocContext()) {
-                RocSenderConfig config = RocSenderConfig.builder()
-                        .frameSampleRate(44100)
-                        .frameChannels(ChannelSet.STEREO)
-                        .frameEncoding(FrameEncoding.PCM_FLOAT)
-                        .build();
-                sender = new RocSender(context, config);
+                sender = new RocSender(context, RocSenderTest.CONFIG);
             } finally {
                 if (sender != null) sender.close();
             }
@@ -49,12 +44,7 @@ public class RocContextTest {
         assertThrows(Exception.class, () -> {
             RocReceiver receiver = null;
             try (RocContext context = new RocContext()) {
-                RocReceiverConfig config = RocReceiverConfig.builder()
-                        .frameSampleRate(44100)
-                        .frameChannels(ChannelSet.STEREO)
-                        .frameEncoding(FrameEncoding.PCM_FLOAT)
-                        .build();
-                receiver = new RocReceiver(context, config);
+                receiver = new RocReceiver(context, RocReceiverTest.CONFIG);
             } finally {
                 if (receiver != null) receiver.close();
             }

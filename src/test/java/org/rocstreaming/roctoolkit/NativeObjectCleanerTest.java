@@ -21,13 +21,8 @@ class NativeObjectCleanerTest {
     void senderAutoClosingTest() throws Exception {
         RocContext context = new RocContext();
 
-        RocSenderConfig config = RocSenderConfig.builder()
-                .frameSampleRate(44100)
-                .frameChannels(ChannelSet.STEREO)
-                .frameEncoding(FrameEncoding.PCM_FLOAT)
-                .build();
         @SuppressWarnings("unused")
-        RocSender sender = new RocSender(context, config);
+        RocSender sender = new RocSender(context, RocSenderTest.CONFIG);
 
         Exception exception = assertThrows(Exception.class, context::close);
         assertEquals("Error closing context", exception.getMessage()); // sender still using context
@@ -52,13 +47,8 @@ class NativeObjectCleanerTest {
     @Test
     void receiverAutoClosingTest() throws Exception {
         RocContext context = new RocContext();
-        RocReceiverConfig config = RocReceiverConfig.builder()
-                .frameSampleRate(44100)
-                .frameChannels(ChannelSet.STEREO)
-                .frameEncoding(FrameEncoding.PCM_FLOAT)
-                .build();
         @SuppressWarnings("unused")
-        RocReceiver receiver = new RocReceiver(context, config);
+        RocReceiver receiver = new RocReceiver(context, RocReceiverTest.CONFIG);
 
         Exception exception = assertThrows(Exception.class, context::close);
         assertEquals("Error closing context", exception.getMessage()); // receiver still using context

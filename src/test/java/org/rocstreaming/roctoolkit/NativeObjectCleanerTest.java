@@ -21,7 +21,11 @@ class NativeObjectCleanerTest {
     void senderAutoClosingTest() throws Exception {
         RocContext context = new RocContext();
 
-        RocSenderConfig config = new RocSenderConfig.Builder(44100, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
+        RocSenderConfig config = RocSenderConfig.builder()
+                .frameSampleRate(44100)
+                .frameChannels(ChannelSet.STEREO)
+                .frameEncoding(FrameEncoding.PCM_FLOAT)
+                .build();
         @SuppressWarnings("unused")
         RocSender sender = new RocSender(context, config);
 
@@ -48,8 +52,11 @@ class NativeObjectCleanerTest {
     @Test
     void receiverAutoClosingTest() throws Exception {
         RocContext context = new RocContext();
-
-        RocReceiverConfig config = new RocReceiverConfig.Builder(44100, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
+        RocReceiverConfig config = RocReceiverConfig.builder()
+                .frameSampleRate(44100)
+                .frameChannels(ChannelSet.STEREO)
+                .frameEncoding(FrameEncoding.PCM_FLOAT)
+                .build();
         @SuppressWarnings("unused")
         RocReceiver receiver = new RocReceiver(context, config);
 

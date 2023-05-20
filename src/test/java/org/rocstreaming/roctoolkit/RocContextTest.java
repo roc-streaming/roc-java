@@ -21,30 +21,6 @@ public class RocContextTest {
     }
 
     @Test
-    public void testWithInvalidConfig() {
-        //noinspection resource
-        IllegalArgumentException e = assertThrows(
-                IllegalArgumentException.class,
-                () -> new RocContext(new RocContextConfig.Builder().maxPacketSize(-1).maxFrameSize(-1).build())
-        );
-        assertEquals("maxPacketSize must not be negative", e.getMessage());
-    }
-
-    @Test
-    public void testSetNegativeMaxPacketSize() {
-        RocContextConfig config = new RocContextConfig.Builder().maxPacketSize(1).maxFrameSize(1).build();
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setMaxPacketSize(-1));
-        assertEquals("maxPacketSize must not be negative", e.getMessage());
-    }
-
-    @Test
-    public void testSetNegativeMaxFrameSize() {
-        RocContextConfig config = new RocContextConfig.Builder().maxPacketSize(1).maxFrameSize(1).build();
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setMaxFrameSize(-1));
-        assertEquals("maxFrameSize must not be negative", e.getMessage());
-    }
-
-    @Test
     public void testWithNullConfig() {
         //noinspection resource
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> new RocContext(null));
@@ -56,10 +32,11 @@ public class RocContextTest {
         assertThrows(Exception.class, () -> {
             RocSender sender = null;
             try (RocContext context = new RocContext()) {
-                RocSenderConfig config = new RocSenderConfig.Builder(44100,
-                                                            ChannelSet.STEREO,
-                                                            FrameEncoding.PCM_FLOAT)
-                                                        .build();
+                RocSenderConfig config = RocSenderConfig.builder()
+                        .frameSampleRate(44100)
+                        .frameChannels(ChannelSet.STEREO)
+                        .frameEncoding(FrameEncoding.PCM_FLOAT)
+                        .build();
                 sender = new RocSender(context, config);
             } finally {
                 if (sender != null) sender.close();
@@ -72,10 +49,11 @@ public class RocContextTest {
         assertThrows(Exception.class, () -> {
             RocReceiver receiver = null;
             try (RocContext context = new RocContext()) {
-                RocReceiverConfig config = new RocReceiverConfig.Builder(44100,
-                                                                    ChannelSet.STEREO,
-                                                                    FrameEncoding.PCM_FLOAT)
-                                                            .build();
+                RocReceiverConfig config = RocReceiverConfig.builder()
+                        .frameSampleRate(44100)
+                        .frameChannels(ChannelSet.STEREO)
+                        .frameEncoding(FrameEncoding.PCM_FLOAT)
+                        .build();
                 receiver = new RocReceiver(context, config);
             } finally {
                 if (receiver != null) receiver.close();

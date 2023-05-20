@@ -39,14 +39,16 @@ Documentation for the C API can be found [here](https://roc-streaming.org/toolki
 ```java
 import org.rocstreaming.roctoolkit;
 
-try (Context context = new Context()) {
-    SenderConfig config = new SenderConfig.Builder(44100,
-        ChannelSet.STEREO,
-        FrameEncoding.PCM_FLOAT)
+try (RocContext context = new RocContext()) {
+    RocSenderConfig config = RocSenderConfig.builder()
+        .frameSampleRate(SAMPLE_RATE)
+        .frameChannels(ChannelSet.STEREO)
+        .frameEncoding(FrameEncoding.PCM_FLOAT)
+        .resamplerProfile(ResamplerProfile.DISABLE)
         .fecEncoding(FecEncoding.RS8M)
         .build();
 
-    try (Sender sender = new Sender(context, config)) {
+    try (RocSender sender = new RocSender(context, config)) {
         Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://192.168.0.1:10001");
         Endpoint repairEndpoint = new Endpoint("rs8m://192.168.0.1:10002");
 
@@ -67,13 +69,14 @@ try (Context context = new Context()) {
 ```java
 import org.rocstreaming.roctoolkit;
 
-try (Context context = new Context()) {
-    ReceiverConfig config = new ReceiverConfig.Builder(44100,
-        ChannelSet.STEREO,
-        FrameEncoding.PCM_FLOAT)
+try (RocContext context = new RocContext()) {
+    RocReceiverConfig config = RocReceiverConfig.builder()
+        .frameSampleRate(SAMPLE_RATE)
+        .frameChannels(ChannelSet.STEREO)
+        .frameEncoding(FrameEncoding.PCM_FLOAT)
         .build();
 
-    try (Receiver receiver = new Receiver(context, config)) {
+    try (RocReceiver receiver = new RocReceiver(context, config)) {
         Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://0.0.0.0:10001");
         Endpoint repairEndpoint = new Endpoint("rs8m://0.0.0.0:10001");
 

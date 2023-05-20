@@ -46,7 +46,7 @@ public class RocContext extends NativeObject {
      * @throws Exception if there are not enough resources.
      */
     public RocContext() throws Exception {
-        this(new RocContextConfig.Builder().build());
+        this(RocContextConfig.builder().build());
     }
 
     /**

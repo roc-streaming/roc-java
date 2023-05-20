@@ -123,12 +123,13 @@ import java.io.IOException;
  * <h3>Example</h3>
  * <pre>
  * {@code
- * RocSenderConfig config = new RocSenderConfig.Builder(SAMPLE_RATE,
- *                 ChannelSet.STEREO,
- *                 FrameEncoding.PCM_FLOAT)
- *                 .resamplerProfile(ResamplerProfile.DISABLE)
- *                 .fecCode(FecEncoding.RS8M)
- *                 .build();
+ * RocSenderConfig config = RocSenderConfig.builder()
+ *             .frameSampleRate(SAMPLE_RATE)
+ *             .frameChannels(ChannelSet.STEREO)
+ *             .frameEncoding(FrameEncoding.PCM_FLOAT)
+ *             .resamplerProfile(ResamplerProfile.DISABLE)
+ *             .fecEncoding(FecEncoding.RS8M)
+ *             .build();
  * try (
  *     RocContext context = new RocContext();
  *     RocSender sender = new RocSender(context, config);

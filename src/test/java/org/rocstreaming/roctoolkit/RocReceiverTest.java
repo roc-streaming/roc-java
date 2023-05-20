@@ -15,15 +15,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RocReceiverTest {
 
     private static final int SAMPLE_RATE = 44100;
-    private final RocReceiverConfig config;
+    private static final RocReceiverConfig config = RocReceiverConfig.builder()
+            .frameSampleRate(SAMPLE_RATE)
+            .frameChannels(ChannelSet.STEREO)
+            .frameEncoding(FrameEncoding.PCM_FLOAT)
+            .build();
     private RocContext context;
-
-    RocReceiverTest() {
-        this.config = new RocReceiverConfig.Builder(SAMPLE_RATE,
-                ChannelSet.STEREO,
-                FrameEncoding.PCM_FLOAT)
-                .build();
-    }
 
     @BeforeAll
     public static void beforeAll() {
@@ -51,7 +48,10 @@ public class RocReceiverTest {
 
     @Test
     public void testCreationAndDeinitializationWithFullConfig() {
-        RocReceiverConfig config = new RocReceiverConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT)
+        RocReceiverConfig config = RocReceiverConfig.builder()
+                .frameSampleRate(SAMPLE_RATE)
+                .frameChannels(ChannelSet.STEREO)
+                .frameEncoding(FrameEncoding.PCM_FLOAT)
                 .clockSource(ClockSource.INTERNAL)
                 .resamplerBackend(ResamplerBackend.BUILTIN)
                 .resamplerProfile(ResamplerProfile.HIGH)
@@ -75,22 +75,12 @@ public class RocReceiverTest {
                         "context must not be null",
                         IllegalArgumentException.class,
                         null,
-                        new RocReceiverConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build()),
+                        config),
                 Arguments.of(
                         "config must not be null",
                         IllegalArgumentException.class,
                         new RocContext(),
-                        null),
-                Arguments.of(
-                        "Error opening receiver",
-                        Exception.class,
-                        new RocContext(),
-                        new RocReceiverConfig.Builder(SAMPLE_RATE, null, FrameEncoding.PCM_FLOAT).build()),
-                Arguments.of(
-                        "Error opening receiver",
-                        Exception.class,
-                        new RocContext(),
-                        new RocReceiverConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, null).build())
+                        null)
         );
     }
 
@@ -99,20 +89,6 @@ public class RocReceiverTest {
     public void testInvalidCreation(String errorMessage, Class<Exception> exceptionClass, RocContext context, RocReceiverConfig config) {
         Exception exception = assertThrows(exceptionClass, () -> new RocReceiver(context, config));
         assertEquals(errorMessage, exception.getMessage());
-    }
-
-    @Test
-    public void testInvalidConfig() {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> new RocReceiverConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build());
-        assertEquals("frameSampleRate must not be negative", exception.getMessage());
-    }
-
-    @Test
-    public void testSetNegativeFrameSampleRate() {
-        RocReceiverConfig config = new RocReceiverConfig.Builder(1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setFrameSampleRate(-1));
-        assertEquals("frameSampleRate must not be negative", e.getMessage());
     }
 
     private static Stream<Arguments> testInvalidSetMulticastGroupArguments() {

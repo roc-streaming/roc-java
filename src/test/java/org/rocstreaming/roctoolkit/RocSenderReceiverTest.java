@@ -21,14 +21,16 @@ public class RocSenderReceiverTest {
     private final RocReceiverConfig receiverConfig;
 
     public RocSenderReceiverTest() {
-        this.senderConfig = new RocSenderConfig.Builder(SAMPLE_RATE,
-                ChannelSet.STEREO,
-                FrameEncoding.PCM_FLOAT)
+        this.senderConfig = RocSenderConfig.builder()
+                .frameSampleRate(SAMPLE_RATE)
+                .frameChannels(ChannelSet.STEREO)
+                .frameEncoding(FrameEncoding.PCM_FLOAT)
                 .build();
 
-        this.receiverConfig = new RocReceiverConfig.Builder(SAMPLE_RATE,
-                ChannelSet.STEREO,
-                FrameEncoding.PCM_FLOAT)
+        this.receiverConfig = RocReceiverConfig.builder()
+                .frameSampleRate(SAMPLE_RATE)
+                .frameChannels(ChannelSet.STEREO)
+                .frameEncoding(FrameEncoding.PCM_FLOAT)
                 .build();
     }
 

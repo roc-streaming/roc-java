@@ -89,7 +89,7 @@ dependencies {
     testImplementation 'org.awaitility:awaitility:3.1.6'
 }
 
-task delombok(type: io.franzbecker.gradle.lombok.task.DelombokTask) {
+task delombok(type: io.franzbecker.gradle.lombok.task.DelombokTask, dependsOn: compileJava) {
     ext.outputDir = file("$buildDir/delombok")
     outputs.dir(outputDir)
     android.sourceSets.main.java.srcDirs.each {

@@ -90,7 +90,12 @@ dependencies {
 }
 
 task delombok(type: io.franzbecker.gradle.lombok.task.DelombokTask) {
-    main = android.sourceSets.main.java.srcDirs
+    ext.outputDir = file("$buildDir/delombok")
+    outputs.dir(outputDir)
+    android.sourceSets.main.java.srcDirs.each {
+        inputs.dir(it)
+        args(it, "-d", outputDir)
+    }
 }
 
 task sourcesJar(type: Jar) {

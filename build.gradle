@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id 'jacoco'
     id 'com.adarshr.test-logger' version '2.0.0'
-    id 'io.freefair.lombok' version '5.1.1'
+    id 'io.franzbecker.gradle-lombok' version '5.0.0'
 }
 
 apply from: 'common.gradle'
@@ -29,6 +29,10 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
     testImplementation 'org.awaitility:awaitility:3.1.6'
+}
+
+lombok {
+    version = '1.18.26'
 }
 
 ext {
@@ -84,7 +88,12 @@ testlogger {
     slowThreshold 5000
 }
 
+task delombok(type: io.franzbecker.gradle.lombok.task.DelombokTask) {
+}
+
 javadoc {
+    dependsOn delombok
+    source = delombok.outputs
     options.overview = "${project.rootDir}/docs/javadoc/overview.html"
     options.memberLevel = System.getProperty("visibility") == "private" ? JavadocMemberLevel.PRIVATE : JavadocMemberLevel.PUBLIC
 }

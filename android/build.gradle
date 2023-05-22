@@ -5,14 +5,19 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
+        maven {
+            url = uri('https://plugins.gradle.org/m2/')
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.3'
         classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.5.2.0'
+        classpath 'io.freefair.gradle:lombok-plugin:5.1.1'
         classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0'
     }
 }
 
+apply plugin: 'io.freefair.lombok'
 apply plugin: 'io.codearte.nexus-staging'
 
 allprojects {

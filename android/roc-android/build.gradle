@@ -3,6 +3,7 @@ plugins {
     id 'signing'
     id 'com.android.library'
     id 'de.mannodermaus.android-junit5'
+    id 'io.freefair.lombok'
 }
 
 ext {
@@ -72,8 +73,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compileOnly 'org.projectlombok:lombok:1.18.26'
-    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+//    compileOnly 'org.projectlombok:lombok:1.18.26'
+//    annotationProcessor 'org.projectlombok:lombok:1.18.26'
 
     androidTestImplementation "androidx.test:runner:1.2.0"
     androidTestImplementation "org.junit.jupiter:junit-jupiter-api:5.6.2"

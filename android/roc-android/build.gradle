@@ -94,8 +94,8 @@ task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
-task javadoc(type: Javadoc, dependsOn: delombok) {
-    source = android.sourceSets.main.java.srcDirs
+task javadoc(type: Javadoc) {
+    source = delombok
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
 

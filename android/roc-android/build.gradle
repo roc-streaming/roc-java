@@ -68,6 +68,15 @@ android {
             path "../../roc_jni/CMakeLists.txt"
         }
     }
+
+    task delombok(type: io.franzbecker.gradle.lombok.task.DelombokTask) {
+        ext.outputDir = file("$buildDir/delombok")
+        outputs.dir(outputDir)
+        sourceSets.main.java.srcDirs.each {
+            inputs.dir(it)
+            args(it, "-d", outputDir)
+        }
+    }
 }
 
 dependencies {
@@ -89,14 +98,7 @@ dependencies {
     testImplementation 'org.awaitility:awaitility:3.1.6'
 }
 
-task delombok(type: io.franzbecker.gradle.lombok.task.DelombokTask) {
-    ext.outputDir = file("$buildDir/delombok")
-    outputs.dir(outputDir)
-    sourceSets.main.java.srcDirs.each {
-        inputs.dir(it)
-        args(it, "-d", outputDir)
-    }
-}
+
 
 task sourcesJar(type: Jar) {
     archiveClassifier.set('sources')

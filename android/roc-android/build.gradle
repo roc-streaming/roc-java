@@ -3,7 +3,7 @@ plugins {
     id 'signing'
     id 'com.android.library'
     id 'de.mannodermaus.android-junit5'
-    id 'io.franzbecker.gradle-lombok'
+//    id 'io.franzbecker.gradle-lombok'
 }
 
 ext {
@@ -18,9 +18,9 @@ ext {
     signingKey = System.getProperty('SIGNING_KEY') ?: System.getenv('SIGNING_KEY')
 }
 
-lombok {
-    version = '1.18.26'
-}
+//lombok {
+//    version = '1.18.26'
+//}
 
 android {
     compileSdkVersion "${apiLevel}".toInteger()
@@ -73,21 +73,21 @@ android {
         }
     }
 
-    task delombok(type: io.franzbecker.gradle.lombok.task.DelombokTask) {
-        ext.outputDir = file("$buildDir/delombok")
-        outputs.dir(outputDir)
-        sourceSets.main.java.srcDirs.each {
-            inputs.dir(it)
-            args(it, "-d", outputDir)
-        }
-    }
+//    task delombok(type: io.franzbecker.gradle.lombok.task.DelombokTask) {
+//        ext.outputDir = file("$buildDir/delombok")
+//        outputs.dir(outputDir)
+//        sourceSets.main.java.srcDirs.each {
+//            inputs.dir(it)
+//            args(it, "-d", outputDir)
+//        }
+//    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-//    compileOnly 'org.projectlombok:lombok:1.18.26'
-//    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
 
     androidTestImplementation "androidx.test:runner:1.2.0"
     androidTestImplementation "org.junit.jupiter:junit-jupiter-api:5.6.2"
@@ -110,9 +110,9 @@ task sourcesJar(type: Jar) {
 }
 
 task javadoc(type: Javadoc) {
-    dependsOn delombok
-    source = delombok.outputs
-//    source = android.sourceSets.main.java.srcDirs
+//    dependsOn delombok
+//    source = delombok.outputs
+    source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
 

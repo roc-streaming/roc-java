@@ -18,6 +18,10 @@ ext {
     signingKey = System.getProperty('SIGNING_KEY') ?: System.getenv('SIGNING_KEY')
 }
 
+lombok {
+    version = '1.18.26'
+}
+
 android {
     compileSdkVersion "${apiLevel}".toInteger()
     buildToolsVersion "${buildToolsVersion}"

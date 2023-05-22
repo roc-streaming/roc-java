@@ -89,6 +89,12 @@ testlogger {
 }
 
 task delombok(type: io.franzbecker.gradle.lombok.task.DelombokTask) {
+    ext.outputDir = file("$buildDir/delombok")
+    outputs.dir(outputDir)
+    sourceSets.main.java.srcDirs.each {
+        inputs.dir(it)
+        args(it, "-d", outputDir)
+    }
 }
 
 javadoc {

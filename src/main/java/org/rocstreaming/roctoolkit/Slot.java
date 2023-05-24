@@ -19,15 +19,11 @@ package org.rocstreaming.roctoolkit;
  */
 public class Slot {
 
-    public static final Slot DEFAULT = new Slot(0);
+    static final Slot DEFAULT = new Slot(0);
 
-    private final int value;
+    final int value;
 
-    public Slot(int value) {
+    Slot(int value) {
         this.value = value;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

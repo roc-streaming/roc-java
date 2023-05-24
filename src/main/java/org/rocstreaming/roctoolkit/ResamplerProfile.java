@@ -31,14 +31,9 @@ public enum ResamplerProfile {
      */
     LOW(3);
 
-    private final int value;
+    final int value;
 
     ResamplerProfile(int value) {
         this.value = value;
     }
-
-    public int getValue() {
-        return this.value;
-    }
-
 }

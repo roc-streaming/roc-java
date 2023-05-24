@@ -107,14 +107,10 @@ public enum Protocol {
      */
     RTCP(70);
 
-    private final int value;
+    final int value;
 
     Protocol(int value) {
         this.value = value;
-    }
-
-    public int getValue() {
-        return this.value;
     }
 
     @SuppressWarnings("unused") // used by JNI
@@ -126,5 +122,4 @@ public enum Protocol {
         }
         return null;
     }
-
 }

@@ -8,12 +8,12 @@ class NativeObject implements AutoCloseable {
     /**
      * <code>NativeObject</code> finalizer thread.
      */
-    private final static NativeObjectCleaner NATIVE_OBJECT_CLEANER = NativeObjectCleaner.getInstance();
+    final static NativeObjectCleaner NATIVE_OBJECT_CLEANER = NativeObjectCleaner.getInstance();
 
     /**
      *  Reference to {@link NativeObjectPhantomReference}.
      */
-    private final NativeObjectPhantomReference resource;
+    final NativeObjectPhantomReference resource;
 
     static {
         RocLibrary.loadLibrary();
@@ -34,7 +34,7 @@ class NativeObject implements AutoCloseable {
     /**
      * Get <code>NativeObject</code> native pointer.
      *
-     * @return                  the native roc object pointer associated to this
+     * @return                  the native roc object pointer associated with this
      *                          <code>NativeObject</code>.
      */
     long getPtr() {

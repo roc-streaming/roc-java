@@ -12,7 +12,7 @@ public enum FrameEncoding {
      */
     PCM_FLOAT(1);
 
-    private final int value;
+    final int value;
 
     FrameEncoding(int value) {
         this.value = value;

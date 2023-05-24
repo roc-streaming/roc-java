@@ -22,7 +22,7 @@ package org.rocstreaming.roctoolkit;
  * <p>
  * {@link Interface#CONSOLIDATED CONSOLIDATED} is mutually exclusive with lower-level interfaces.
  * In most cases, the user needs only {@link Interface#CONSOLIDATED CONSOLIDATED}. However, the
- * lower-level intarfaces may be useful if an external signaling mechanism is used or for
+ * lower-level interfaces may be useful if an external signaling mechanism is used or for
  * compatibility with third-party software.
  * <p>
  * {@link Interface#AUDIO_SOURCE AUDIO_SOURCE} and {@link Interface#AUDIO_REPAIR AUDIO_REPAIR} are lower-level
@@ -87,7 +87,7 @@ public enum Interface {
      */
     AUDIO_CONTROL(13);
 
-    private final int value;
+    final int value;
 
     Interface(int value) {
         this.value = value;

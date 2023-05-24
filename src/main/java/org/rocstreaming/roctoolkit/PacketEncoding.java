@@ -13,14 +13,10 @@ public enum PacketEncoding {
      */
     AVP_L16(2);
 
-    private final int value;
+    final int value;
 
     PacketEncoding(int value) {
         this.value = value;
-    }
-
-    public int getValue() {
-        return this.value;
     }
 
 }

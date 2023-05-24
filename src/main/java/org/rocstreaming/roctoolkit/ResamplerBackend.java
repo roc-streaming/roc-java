@@ -24,13 +24,9 @@ public enum ResamplerBackend {
      */
     SPEEX(2);
 
-    private final int value;
+    final int value;
 
     ResamplerBackend(int value) {
         this.value = value;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

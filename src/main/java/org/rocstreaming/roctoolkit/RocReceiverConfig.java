@@ -10,18 +10,18 @@ package org.rocstreaming.roctoolkit;
  */
 public class RocReceiverConfig {
 
-    private int frameSampleRate;
-    private ChannelSet frameChannels;
-    private FrameEncoding frameEncoding;
-    private ClockSource clockSource;
-    private ResamplerBackend resamplerBackend;
-    private ResamplerProfile resamplerProfile;
-    private long targetLatency;
-    private long maxLatencyOverrun;
-    private long maxLatencyUnderrun;
-    private long noPlaybackTimeout;
-    private long brokenPlaybackTimeout;
-    private long breakageDetectionWindow;
+    int frameSampleRate;
+    ChannelSet frameChannels;
+    FrameEncoding frameEncoding;
+    ClockSource clockSource;
+    ResamplerBackend resamplerBackend;
+    ResamplerProfile resamplerProfile;
+    long targetLatency;
+    long maxLatencyOverrun;
+    long maxLatencyUnderrun;
+    long noPlaybackTimeout;
+    long brokenPlaybackTimeout;
+    long breakageDetectionWindow;
 
     private RocReceiverConfig(
             int frameSampleRate,
@@ -215,99 +215,139 @@ public class RocReceiverConfig {
         }
     }
 
-    public int getFrameSampleRate() {
+    int frameSampleRate;
+    ChannelSet frameChannels;
+    FrameEncoding frameEncoding;
+    ClockSource clockSource;
+    ResamplerBackend resamplerBackend;
+    ResamplerProfile resamplerProfile;
+    long targetLatency;
+    long maxLatencyOverrun;
+    long maxLatencyUnderrun;
+    long noPlaybackTimeout;
+    long brokenPlaybackTimeout;
+    long breakageDetectionWindow;
+
+    RocReceiverConfig(
+            int frameSampleRate,
+            ChannelSet frameChannels,
+            FrameEncoding frameEncoding,
+            ClockSource clockSource,
+            ResamplerBackend resamplerBackend,
+            ResamplerProfile resamplerProfile,
+            long targetLatency,
+            long maxLatencyOverrun,
+            long maxLatencyUnderrun,
+            long noPlaybackTimeout,
+            long brokenPlaybackTimeout,
+            long breakageDetectionWindow) {
+        this.frameSampleRate = Check.notNegative(frameSampleRate, "frameSampleRate");
+        this.frameChannels = frameChannels;
+        this.frameEncoding = frameEncoding;
+        this.clockSource = clockSource;
+        this.resamplerBackend = resamplerBackend;
+        this.resamplerProfile = resamplerProfile;
+        this.targetLatency = targetLatency;
+        this.maxLatencyOverrun = maxLatencyOverrun;
+        this.maxLatencyUnderrun = maxLatencyUnderrun;
+        this.noPlaybackTimeout = noPlaybackTimeout;
+        this.brokenPlaybackTimeout = brokenPlaybackTimeout;
+        this.breakageDetectionWindow = breakageDetectionWindow;
+    }
+
+    int getFrameSampleRate() {
         return frameSampleRate;
     }
 
-    public void setFrameSampleRate(int frameSampleRate) {
+    void setFrameSampleRate(int frameSampleRate) {
         this.frameSampleRate = Check.notNegative(frameSampleRate, "frameSampleRate");
     }
 
-    public ChannelSet getFrameChannels() {
+    ChannelSet getFrameChannels() {
         return frameChannels;
     }
 
-    public void setFrameChannels(ChannelSet frameChannels) {
+    void setFrameChannels(ChannelSet frameChannels) {
         this.frameChannels = frameChannels;
     }
 
-    public FrameEncoding getFrameEncoding() {
+    FrameEncoding getFrameEncoding() {
         return frameEncoding;
     }
 
-    public void setFrameEncoding(FrameEncoding frameEncoding) {
+    void setFrameEncoding(FrameEncoding frameEncoding) {
         this.frameEncoding = frameEncoding;
     }
 
-    public ClockSource getClockSource() {
+    ClockSource getClockSource() {
         return clockSource;
     }
 
-    public void setClockSource(ClockSource clockSource) {
+    void setClockSource(ClockSource clockSource) {
         this.clockSource = clockSource;
     }
 
-    public ResamplerBackend getResamplerBackend() {
+    ResamplerBackend getResamplerBackend() {
         return resamplerBackend;
     }
 
-    public void setResamplerBackend(ResamplerBackend resamplerBackend) {
+    void setResamplerBackend(ResamplerBackend resamplerBackend) {
         this.resamplerBackend = resamplerBackend;
     }
 
-    public ResamplerProfile getResamplerProfile() {
+    ResamplerProfile getResamplerProfile() {
         return resamplerProfile;
     }
 
-    public void setResamplerProfile(ResamplerProfile resamplerProfile) {
+    void setResamplerProfile(ResamplerProfile resamplerProfile) {
         this.resamplerProfile = resamplerProfile;
     }
 
-    public long getTargetLatency() {
+    long getTargetLatency() {
         return targetLatency;
     }
 
-    public void setTargetLatency(long targetLatency) {
+    void setTargetLatency(long targetLatency) {
         this.targetLatency = targetLatency;
     }
 
-    public long getMaxLatencyOverrun() {
+    long getMaxLatencyOverrun() {
         return maxLatencyOverrun;
     }
 
-    public void setMaxLatencyOverrun(long maxLatencyOverrun) {
+    void setMaxLatencyOverrun(long maxLatencyOverrun) {
         this.maxLatencyOverrun = maxLatencyOverrun;
     }
 
-    public long getMaxLatencyUnderrun() {
+    long getMaxLatencyUnderrun() {
         return maxLatencyUnderrun;
     }
 
-    public void setMaxLatencyUnderrun(long maxLatencyUnderrun) {
+    void setMaxLatencyUnderrun(long maxLatencyUnderrun) {
         this.maxLatencyUnderrun = maxLatencyUnderrun;
     }
 
-    public long getNoPlaybackTimeout() {
+    long getNoPlaybackTimeout() {
         return noPlaybackTimeout;
     }
 
-    public void setNoPlaybackTimeout(long noPlaybackTimeout) {
+    void setNoPlaybackTimeout(long noPlaybackTimeout) {
         this.noPlaybackTimeout = noPlaybackTimeout;
     }
 
-    public long getBrokenPlaybackTimeout() {
+    long getBrokenPlaybackTimeout() {
         return brokenPlaybackTimeout;
     }
 
-    public void setBrokenPlaybackTimeout(long brokenPlaybackTimeout) {
+    void setBrokenPlaybackTimeout(long brokenPlaybackTimeout) {
         this.brokenPlaybackTimeout = brokenPlaybackTimeout;
     }
 
-    public long getBreakageDetectionWindow() {
+    long getBreakageDetectionWindow() {
         return breakageDetectionWindow;
     }
 
-    public void setBreakageDetectionWindow(long breakageDetectionWindow) {
+    void setBreakageDetectionWindow(long breakageDetectionWindow) {
         this.breakageDetectionWindow = breakageDetectionWindow;
     }
 }

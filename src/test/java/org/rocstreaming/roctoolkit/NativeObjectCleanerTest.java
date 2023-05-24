@@ -65,5 +65,4 @@ class NativeObjectCleanerTest {
                     assertDoesNotThrow(context::close);
                 });
     }
-
 }

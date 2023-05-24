@@ -9,10 +9,10 @@ package org.rocstreaming.roctoolkit;
  */
 public class RocContextConfig {
 
-    private int maxPacketSize;
-    private int maxFrameSize;
+    int maxPacketSize;
+    int maxFrameSize;
 
-    private RocContextConfig(int maxPacketSize, int maxFrameSize) {
+    RocContextConfig(int maxPacketSize, int maxFrameSize) {
         this.maxPacketSize = Check.notNegative(maxPacketSize, "maxPacketSize");
         this.maxFrameSize = Check.notNegative(maxFrameSize, "maxFrameSize");
     }

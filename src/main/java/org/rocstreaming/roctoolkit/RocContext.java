@@ -32,7 +32,7 @@ public class RocContext extends NativeObject {
      * @throws IllegalArgumentException     if the arguments are invalid.
      * @throws Exception                    if there are not enough resources.
      */
-    static long tryOpen(RocContextConfig config) throws IllegalArgumentException, Exception {
+    private static long tryOpen(RocContextConfig config) throws IllegalArgumentException, Exception {
         Check.notNull(config, "config");
         return open(config);
     }
@@ -63,6 +63,6 @@ public class RocContext extends NativeObject {
         super(tryOpen(config), null, RocContext::close);
     }
 
-    static native long open(RocContextConfig config) throws IllegalArgumentException, Exception;
-    static native void close(long nativePtr) throws Exception;
+    private static native long open(RocContextConfig config) throws IllegalArgumentException, Exception;
+    private static native void close(long nativePtr) throws Exception;
 }

@@ -1,8 +1,6 @@
 package org.rocstreaming.roctoolkit;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 /**
  * Receiver configuration.
@@ -13,6 +11,8 @@ import lombok.Getter;
  */
 @Getter
 @Builder(builderClassName = "ConfigBuilder", toBuilder = true, access = AccessLevel.PROTECTED)
+@ToString
+@EqualsAndHashCode
 public class RocReceiverConfig {
 
     /**

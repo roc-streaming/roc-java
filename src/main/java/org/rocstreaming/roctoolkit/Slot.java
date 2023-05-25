@@ -1,5 +1,7 @@
 package org.rocstreaming.roctoolkit;
 
+import lombok.EqualsAndHashCode;
+
 /**
  * Network slot.
  * <p>
@@ -17,6 +19,7 @@ package org.rocstreaming.roctoolkit;
  * Each slot has its own set of interfaces, dedicated to different kinds of endpoints.
  * See {@link Interface} for details.
  */
+@EqualsAndHashCode
 public class Slot {
 
     public static final Slot DEFAULT = new Slot(0);

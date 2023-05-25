@@ -13,9 +13,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 class NativeObjectPhantomReference extends PhantomReference<NativeObject> implements AutoCloseable {
 
     /**
-     * Underlying roc object native pointer.
+     *  Underlying roc object native pointer.
      */
-    final long ptr;
+    private final long ptr;
 
     /**
      * Dependency for finalization ordering. Keep strong reference to prevent it from being collected by GC
@@ -24,14 +24,14 @@ class NativeObjectPhantomReference extends PhantomReference<NativeObject> implem
     private final NativeObject dependsOn;
 
     /**
-     * Destructor method
+     *  Destructor method
      */
     private final Destructor destructor;
 
     /**
-     * {@link NativeObject} open status.
+     *  {@link NativeObject} open status.
      */
-    volatile boolean isOpen;
+    private volatile boolean isOpen;
 
     /**
      * Construct a new <code>NativeObjectPhantomReference</code>.
@@ -53,7 +53,7 @@ class NativeObjectPhantomReference extends PhantomReference<NativeObject> implem
     /**
      * Get {@link NativeObject} native pointer.
      *
-     * @return the native roc object pointer associated with this <code>NativeObjectPhantomReference</code>.
+     * @return      the native roc object pointer associated to this <code>NativeObjectPhantomReference</code>.
      */
     long getPtr() {
         return ptr;
@@ -66,10 +66,10 @@ class NativeObjectPhantomReference extends PhantomReference<NativeObject> implem
     public synchronized void close() throws Exception {
         if (isOpen) {
             destructor.close(ptr);
-            // destructor.close(ptr) could throw an exception, e.g., if someone tried to close the context while
-            // the sender/receiver is still open.
-            // In such a case, NativeObjectCleaner will try to close it one more time after NativeObject
-            // is collected by the GC.
+            // destructor.close(ptr) could throw exception e.g. if someone tried to close context while
+            // sender/receiver still opened.
+            // In such case NativeObjectCleaner try to close it one more time after NativeObject
+            // will be collected by GC
             isOpen = false;
         }
     }

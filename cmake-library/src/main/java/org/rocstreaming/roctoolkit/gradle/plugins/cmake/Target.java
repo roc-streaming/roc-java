@@ -9,9 +9,9 @@ import org.gradle.api.tasks.Internal;
 import org.rocstreaming.roctoolkit.util.os.OperatingSystem;
 
 public class Target {
-    final Property<String> host;
-    final Property<String> platform;
-    final Property<Boolean> isCrossCompiling;
+    private final Property<String> host;
+    private final Property<String> platform;
+    private final Property<Boolean> isCrossCompiling;
 
     public Target(ProjectLayout projectLayout, ObjectFactory objectFactory) {
         final OperatingSystem currentOs = OperatingSystem.current();

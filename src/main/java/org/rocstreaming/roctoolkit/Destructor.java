@@ -1,7 +1,7 @@
 package org.rocstreaming.roctoolkit;
 
 /**
- * Interface providing a method for destructing a {@link NativeObject}.
+ *  Interface providing a method for destruct a {@link NativeObject}.
  */
 @FunctionalInterface
 interface Destructor {
@@ -17,9 +17,10 @@ interface Destructor {
      * instance method for avoiding object resurrection.
      * </p>
      *
-     * @param resource {@link NativeObject#ptr NativeObject.ptr} to be closed.
-     * @throws Exception if the {@link NativeObject} cannot be closed (for example
-     *                   for still opened {@link NativeObject} dependencies).
+     * @param resource      {@link NativeObject#ptr NativeObject.ptr} to be closed.
+     *
+     * @throws Exception    if the {@link NativeObject} cannot be closed (for example
+     *                      for still opened {@link NativeObject} dependencies).
      */
     void close(long resource) throws Exception;
 }

@@ -13,19 +13,19 @@ class NativeObjectCleaner extends Thread {
     /**
      * Singleton instance.
      */
-    final static NativeObjectCleaner instance = new NativeObjectCleaner();
+    private final static NativeObjectCleaner instance = new NativeObjectCleaner();
 
     /**
      * Queue of phantom reachable {@link NativeObject}.
      */
-    final ReferenceQueue<NativeObject> referenceQueue;
+    private final ReferenceQueue<NativeObject> referenceQueue;
 
     /**
      * Set to keep phantom references to prevent being garbage collected,
      * otherwise reference will be collected by GC and won't be queued to {@link NativeObjectCleaner#referenceQueue}
      * when related {@link NativeObject} collected by GC
      */
-    final Set<NativeObjectPhantomReference> set = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<NativeObjectPhantomReference> set = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     /**
      * Create a new <code>NativeObjectCleaner</code>.
@@ -52,7 +52,7 @@ class NativeObjectCleaner extends Thread {
      * @param ptr        Underlying roc object native pointer.
      * @param dependsOn  dependency for finalization ordering
      * @param destructor Destructor method.
-     * @return the new {@link NativeObjectPhantomReference} associated with the {@link NativeObject}.
+     * @return the new {@link NativeObjectPhantomReference} associated to the {@link NativeObject}.
      */
     NativeObjectPhantomReference register(NativeObject nativeObj, long ptr, NativeObject dependsOn, Destructor destructor) {
         NativeObjectPhantomReference reference = new NativeObjectPhantomReference(nativeObj, referenceQueue, ptr, dependsOn, destructor);
@@ -63,14 +63,14 @@ class NativeObjectCleaner extends Thread {
     /**
      * Remove a reference from <code>NativeObjectCleaner</code>.
      *
-     * @param reference the {@link NativeObjectPhantomReference} to unregister.
+     * @param reference     the {@link NativeObjectPhantomReference} to unregister.
      */
     void unregister(NativeObjectPhantomReference reference) {
         set.remove(reference);
     }
 
     /**
-     * Entry point method of <code>NativeObjectCleaner</code>.
+     * Entrypoint method of <code>NativeObjectCleaner</code>.
      * <p>
      * Remove any phantom reachable {@link NativeObjectPhantomReference} from the
      * {@link NativeObjectCleaner#referenceQueue} associated with this <code>NativeObjectCleaner</code>

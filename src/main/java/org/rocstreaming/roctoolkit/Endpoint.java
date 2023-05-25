@@ -51,13 +51,13 @@ public class Endpoint {
         RocLibrary.loadLibrary();
     }
 
-    Protocol protocol;
+    private Protocol protocol;
 
-    String host;
+    private String host;
 
-    int port;
+    private int port;
 
-    String resource;
+    private String resource;
 
     /**
      * Create endpoint from uri
@@ -124,7 +124,6 @@ public class Endpoint {
 
         /**
          * Set protocol
-         *
          * @param protocol protocol
          * @return this Builder
          */
@@ -136,7 +135,6 @@ public class Endpoint {
 
         /**
          * Set host
-         *
          * @param host host
          * @return this Builder
          */
@@ -147,7 +145,6 @@ public class Endpoint {
 
         /**
          * Set port
-         *
          * @param port port
          * @return this Builder
          */
@@ -158,7 +155,6 @@ public class Endpoint {
 
         /**
          * Set resource
-         *
          * @param resource resource
          * @return this Builder
          */

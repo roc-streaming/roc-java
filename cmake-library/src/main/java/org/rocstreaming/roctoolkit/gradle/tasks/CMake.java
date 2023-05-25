@@ -32,10 +32,10 @@ public class CMake extends DefaultTask {
 
     @TaskAction
     public void generateCmakeFiles() {
-        if (target.get().isCrossCompiling().get() && System.getenv("CMAKE_TOOLCHAIN_FILE") == null) {
+        if (target.get().getIsCrossCompiling().get() && System.getenv("CMAKE_TOOLCHAIN_FILE") == null) {
             throw new IllegalArgumentException("CMAKE_TOOLCHAIN_FILE env variable is not set.");
         }
-
+        
         String cmakeExecutable = System.getenv().getOrDefault("CMAKE_EXECUTABLE", "cmake");
         Provider<Directory> targetDirectory = variantDirectory.dir(String.format("%s/%s", getTarget().get().getHost().get(), getTarget().get().getPlatform().get()));
         targetDirectory.get().getAsFile().mkdirs();
@@ -73,9 +73,9 @@ public class CMake extends DefaultTask {
     @OutputFiles
     public FileCollection getCmakeFiles() {
         return getProject().fileTree(variantDirectory, it -> it.include("**/CMakeFiles/**/*")
-                .include("**/Makefile")
-                .include("**/*.ninja")
-                .include("**/*.cmake"));
+                                                                .include("**/Makefile")
+                                                                .include("**/*.ninja")
+                                                                .include("**/*.cmake"));
     }
 
     @Input
@@ -93,12 +93,12 @@ public class CMake extends DefaultTask {
     }
 
     @Internal
-    DirectoryProperty variantDirectory() {
+    public DirectoryProperty getVariantDirectory() {
         return variantDirectory;
     }
 
     @Internal
-    DirectoryProperty projectDirectory() {
+    public DirectoryProperty getProjectDirectory() {
         return projectDirectory;
     }
 }

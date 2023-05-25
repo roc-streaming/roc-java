@@ -224,6 +224,7 @@ public class RocReceiverTest {
         }
     }
 
+
     @Test
     public void testReadZeroizedArray() throws Exception {
         try (RocReceiver receiver = new RocReceiver(context, config)) {

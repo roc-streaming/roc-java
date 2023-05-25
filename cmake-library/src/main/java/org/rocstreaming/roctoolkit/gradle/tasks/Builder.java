@@ -28,51 +28,51 @@ public abstract class Builder extends DefaultTask {
     private final Property<String> generator = getProject().getObjects().property(String.class);
 
     @Internal
-    DirectoryProperty variantDirectory() {
+    public DirectoryProperty getVariantDirectory() {
         return variantDirectory;
     }
 
     @InputFiles
-    public final ConfigurableFileCollection buildFiles() {
+    public final ConfigurableFileCollection getBuildFiles() {
         return buildFiles;
     }
 
     @InputFiles
-    public final ConfigurableFileCollection srcDirs() {
+    public final ConfigurableFileCollection getSrcDirs() {
         return srcDirs;
     }
 
     @Nested
-    public final Property<Target> target() {
+    public final Property<Target> getTarget() {
         return target;
     }
 
     @Input
-    public final Property<String> generator() {
+    public final Property<String> getGenerator() {
         return generator;
     }
 
     @Internal
-    DirectoryProperty projectDirectory() {
+    public DirectoryProperty getProjectDirectory() {
         return projectDirectory;
     }
 
     @OutputDirectory
-    DirectoryProperty outputDirectory() {
+    public DirectoryProperty getOutputDirectory() {
         return outputDirectory;
     }
 
     public void generatedBy(final TaskProvider<? extends Task> task) {
-        variantDirectory().set(task.flatMap(it -> {
+        getVariantDirectory().set(task.flatMap(it -> {
             if (it instanceof CMake) {
-                return ((CMake) it).variantDirectory();
+                return ((CMake) it).getVariantDirectory();
             } else {
                 throw new IllegalArgumentException(getClass().getName() + " task cannot extract build information from \'" + it.getClass().getName() + "\' task");
             }
         }));
-        outputDirectory().set(task.flatMap(it -> {
+        getOutputDirectory().set(task.flatMap(it -> {
             if (it instanceof CMake) {
-                return ((CMake) it).variantDirectory();
+                return ((CMake) it).getVariantDirectory();
             } else {
                 throw new IllegalArgumentException(getClass().getName() + " task cannot extract build information from \'" + it.getClass().getName() + "\' task");
             }
@@ -80,9 +80,9 @@ public abstract class Builder extends DefaultTask {
 
         dependsOn(task);
 
-        buildFiles().setFrom(task.map(it -> {
+        getBuildFiles().setFrom(task.map(it -> {
             if (it instanceof CMake) {
-                return ((CMake) it).cmakeFiles();
+                return ((CMake) it).getCmakeFiles();
             } else {
                 throw new IllegalArgumentException(getClass().getName() + " task cannot extract build information from \'" + it.getClass().getName() + "\' task");
             }
@@ -93,14 +93,14 @@ public abstract class Builder extends DefaultTask {
     public void executeBuild() {
         final String executable = getExecutable();
         getProject().exec(execSpec -> {
-            execSpec.setWorkingDir(variantDirectory().dir(String.format("%s/%s", target().get().getHost().get(), target().get().getPlatform().get())));
+            execSpec.setWorkingDir(getVariantDirectory().dir(String.format("%s/%s", getTarget().get().getHost().get(), getTarget().get().getPlatform().get())));
             execSpec.setExecutable(executable);
         });
     }
 
     @Internal
     public String getExecutable() {
-        switch (generator().get()) {
+        switch (getGenerator().get()) {
             case GENERATOR.MAKE:
                 return System.getenv().getOrDefault("MAKE_EXECUTABLE", "make");
             case GENERATOR.NINJA:

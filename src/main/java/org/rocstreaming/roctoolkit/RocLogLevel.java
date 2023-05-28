@@ -44,8 +44,4 @@ public enum RocLogLevel {
     RocLogLevel(int value) {
         this.value = value;
     }
-
-    int getValue() {
-        return value;
-    }
 }

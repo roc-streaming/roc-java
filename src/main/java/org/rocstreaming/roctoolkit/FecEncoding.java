@@ -1,6 +1,5 @@
 package org.rocstreaming.roctoolkit;
 
-
 /**
  * Forward Error Correction encoding.
  */
@@ -40,9 +39,5 @@ public enum FecEncoding {
 
     FecEncoding(int value) {
         this.value = value;
-    }
-
-    public int getValue() {
-        return this.value;
     }
 }

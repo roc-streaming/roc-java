@@ -19,13 +19,9 @@ public enum ClockSource {
     INTERNAL(1);
 
 
-    private final int value;
+    final int value;
 
     ClockSource(int value) {
         this.value = value;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

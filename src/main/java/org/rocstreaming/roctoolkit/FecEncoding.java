@@ -1,6 +1,5 @@
 package org.rocstreaming.roctoolkit;
 
-
 /**
  * Forward Error Correction encoding.
  */
@@ -36,13 +35,9 @@ public enum FecEncoding {
      */
     LDPC_STAIRCASE(2);
 
-    private final int value;
+    final int value;
 
     FecEncoding(int value) {
         this.value = value;
-    }
-
-    public int getValue() {
-        return this.value;
     }
 }

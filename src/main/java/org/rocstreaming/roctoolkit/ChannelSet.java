@@ -11,14 +11,9 @@ public enum ChannelSet {
      */
     STEREO(0x3);
 
-    private final int value;
+    final int value;
 
     ChannelSet(int value) {
         this.value = value;
     }
-
-    public int getValue() {
-        return this.value;
-    }
-
 }

@@ -39,14 +39,9 @@ public enum RocLogLevel {
      */
     TRACE(4);
 
-    private final int value;
+    final int value;
 
     RocLogLevel(int value) {
         this.value = value;
     }
-
-    public int getValue() {
-        return this.value;
-    }
-
 }

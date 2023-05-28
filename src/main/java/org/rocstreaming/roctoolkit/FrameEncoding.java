@@ -17,9 +17,4 @@ public enum FrameEncoding {
     FrameEncoding(int value) {
         this.value = value;
     }
-
-    public int getValue() {
-        return this.value;
-    }
-
 }

@@ -16,8 +16,4 @@ public enum ChannelSet {
     ChannelSet(int value) {
         this.value = value;
     }
-
-    public int getValue() {
-        return this.value;
-    }
 }

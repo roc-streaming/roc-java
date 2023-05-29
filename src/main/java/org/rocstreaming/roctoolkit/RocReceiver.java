@@ -228,7 +228,7 @@ public class RocReceiver extends NativeObject {
         Check.notNull(slot, "slot");
         Check.notNull(iface, "iface");
         Check.notEmpty(ip, "ip");
-        setMulticastGroup(getPtr(), slot.getValue(), iface.getValue(), ip);
+        setMulticastGroup(getPtr(), slot.getValue(), iface.value, ip);
     }
 
     /**
@@ -256,7 +256,7 @@ public class RocReceiver extends NativeObject {
         Check.notNull(slot, "slot");
         Check.notNull(iface, "iface");
         Check.notNull(endpoint, "endpoint");
-        bind(getPtr(), slot.getValue(), iface.getValue(), endpoint);
+        bind(getPtr(), slot.getValue(), iface.value, endpoint);
     }
 
     public void connect(Endpoint endpoint) {

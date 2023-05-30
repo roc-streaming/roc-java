@@ -207,7 +207,7 @@ public class RocSender extends NativeObject {
         Check.notNull(slot, "slot");
         Check.notNull(iface, "iface");
         Check.notEmpty(ip, "ip");
-        setOutgoingAddress(getPtr(), slot.getValue(), iface.getValue(), ip);
+        setOutgoingAddress(getPtr(), slot.getValue(), iface.value, ip);
     }
 
     public void bind(Endpoint endpoint) throws IllegalArgumentException, IOException {
@@ -236,7 +236,7 @@ public class RocSender extends NativeObject {
         Check.notNull(slot, "slot");
         Check.notNull(iface, "iface");
         Check.notNull(endpoint, "endpoint");
-        connect(getPtr(), slot.getValue(), iface.getValue(), endpoint);
+        connect(getPtr(), slot.getValue(), iface.value, endpoint);
     }
 
     /**

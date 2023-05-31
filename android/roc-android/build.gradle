@@ -3,6 +3,7 @@ plugins {
     id 'signing'
     id 'com.android.library'
     id 'de.mannodermaus.android-junit5'
+//    id 'io.franzbecker.gradle-lombok'
 }
 
 ext {
@@ -16,6 +17,10 @@ ext {
     signingPassword = System.getProperty('SIGNING_PASSWORD') ?: System.getenv('SIGNING_PASSWORD')
     signingKey = System.getProperty('SIGNING_KEY') ?: System.getenv('SIGNING_KEY')
 }
+
+//lombok {
+//    version = '1.18.26'
+//}
 
 android {
     compileSdkVersion "${apiLevel}".toInteger()
@@ -67,10 +72,22 @@ android {
             path "../../roc_jni/CMakeLists.txt"
         }
     }
+
+//    task delombok(type: io.franzbecker.gradle.lombok.task.DelombokTask) {
+//        ext.outputDir = file("$buildDir/delombok")
+//        outputs.dir(outputDir)
+//        sourceSets.main.java.srcDirs.each {
+//            inputs.dir(it)
+//            args(it, "-d", outputDir)
+//        }
+//    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
 
     androidTestImplementation "androidx.test:runner:1.2.0"
     androidTestImplementation "org.junit.jupiter:junit-jupiter-api:5.6.2"
@@ -85,14 +102,19 @@ dependencies {
     testImplementation 'org.awaitility:awaitility:3.1.6'
 }
 
+
+
 task sourcesJar(type: Jar) {
     archiveClassifier.set('sources')
     from android.sourceSets.main.java.srcDirs
 }
 
 task javadoc(type: Javadoc) {
+//    dependsOn delombok
+//    source = delombok.outputs
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    failOnError = false
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {

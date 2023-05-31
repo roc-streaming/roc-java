@@ -14,10 +14,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RocSenderTest {
 
     private static final int SAMPLE_RATE = 44100;
+    public static final RocSenderConfig CONFIG = RocSenderConfig.builder()
+            .frameSampleRate(SAMPLE_RATE)
+            .frameChannels(ChannelSet.STEREO)
+            .frameEncoding(FrameEncoding.PCM_FLOAT)
+            .build();
     private final int SINE_RATE = 440;
     private final int SINE_SAMPLES = (SAMPLE_RATE * 5);
     private final int BUFFER_SIZE = 100;
-    private RocSenderConfig config;
     private float[] samples;
     private RocContext context;
 
@@ -33,10 +37,6 @@ public class RocSenderTest {
     }
 
     RocSenderTest() {
-        this.config = new RocSenderConfig.Builder(SAMPLE_RATE,
-                                                ChannelSet.STEREO,
-                                                FrameEncoding.PCM_FLOAT)
-                                        .build();
         this.samples = new float[BUFFER_SIZE];
         gensine(this.samples);
     }
@@ -60,13 +60,16 @@ public class RocSenderTest {
     public void testCreationAndDeinitialization() {
         assertDoesNotThrow(() -> {
             //noinspection EmptyTryBlock
-            try (RocSender ignored = new RocSender(context, config)) {}
+            try (RocSender ignored = new RocSender(context, CONFIG)) {}
         });
     }
 
     @Test
     public void testCreationAndDeinitializationWithFullConfig() {
-        RocSenderConfig config = new RocSenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT)
+        RocSenderConfig config = RocSenderConfig.builder()
+                .frameSampleRate(SAMPLE_RATE)
+                .frameChannels(ChannelSet.STEREO)
+                .frameEncoding(FrameEncoding.PCM_FLOAT)
                 .packetSampleRate(44100)
                 .packetChannels(ChannelSet.STEREO)
                 .packetEncoding(PacketEncoding.AVP_L16)
@@ -92,22 +95,12 @@ public class RocSenderTest {
                         "context must not be null",
                         IllegalArgumentException.class,
                         null,
-                        new RocSenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build()),
+                        CONFIG),
                 Arguments.of(
                         "config must not be null",
                         IllegalArgumentException.class,
                         new RocContext(),
-                        null),
-                Arguments.of(
-                        "Error opening sender",
-                        Exception.class,
-                        new RocContext(),
-                        new RocSenderConfig.Builder(SAMPLE_RATE, null, FrameEncoding.PCM_FLOAT).build()),
-                Arguments.of(
-                        "Error opening sender",
-                        Exception.class,
-                        new RocContext(),
-                        new RocSenderConfig.Builder(SAMPLE_RATE, ChannelSet.STEREO, null).build())
+                        null)
         );
     }
 
@@ -116,41 +109,6 @@ public class RocSenderTest {
     public void testInvalidCreation(String errorMessage, Class<Exception> exceptionClass, RocContext context, RocSenderConfig config) {
         Exception exception = assertThrows(exceptionClass, () -> new RocSender(context, config));
         assertEquals(errorMessage, exception.getMessage());
-    }
-
-    @Test
-    public void testInvalidConfig() {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> new RocSenderConfig.Builder(-1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build());
-        assertEquals("frameSampleRate must not be negative", exception.getMessage());
-    }
-
-    @Test
-    public void testSetNegativeFrameSampleRate() {
-        RocSenderConfig config = new RocSenderConfig.Builder(1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setFrameSampleRate(-1));
-        assertEquals("frameSampleRate must not be negative", e.getMessage());
-    }
-
-    @Test
-    public void testSetNegativePacketSampleRate() {
-        RocSenderConfig config = new RocSenderConfig.Builder(1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setPacketSampleRate(-1));
-        assertEquals("packetSampleRate must not be negative", e.getMessage());
-    }
-
-    @Test
-    public void testSetNegativeFecBlockSourcePackets() {
-        RocSenderConfig config = new RocSenderConfig.Builder(1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setFecBlockSourcePackets(-1));
-        assertEquals("fecBlockSourcePackets must not be negative", e.getMessage());
-    }
-
-    @Test
-    public void testSetNegativeFecBlockRepairPackets() {
-        RocSenderConfig config = new RocSenderConfig.Builder(1, ChannelSet.STEREO, FrameEncoding.PCM_FLOAT).build();
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> config.setFecBlockRepairPackets(-1));
-        assertEquals("fecBlockRepairPackets must not be negative", e.getMessage());
     }
 
     private static Stream<Arguments> testInvalidSetOutgoingAddressArguments() {
@@ -176,7 +134,7 @@ public class RocSenderTest {
     @ParameterizedTest
     @MethodSource("testInvalidSetOutgoingAddressArguments")
     public void testInvalidSetOutgoingAddress(String errorMessage, Slot slot, Interface iface, String ip) throws Exception {
-        try (RocSender receiver = new RocSender(context, config)) {
+        try (RocSender receiver = new RocSender(context, CONFIG)) {
             IllegalArgumentException exception = assertThrows(
                     IllegalArgumentException.class,
                     () -> receiver.setOutgoingAddress(slot, iface, ip)
@@ -187,7 +145,7 @@ public class RocSenderTest {
 
     @Test
     void testSetOutgoingAddressAfterConnect() throws Exception {
-        try (RocSender sender = new RocSender(context, config)) {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
             sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
             Exception exception = assertThrows(Exception.class, () -> sender.setOutgoingAddress(Slot.DEFAULT, Interface.AUDIO_SOURCE, "127.0.0.1"));
@@ -198,7 +156,7 @@ public class RocSenderTest {
     @Disabled("bind not implemented in roc 0.2.x yet")
     @Test
     public void testBind() throws Exception {
-        try (RocSender sender = new RocSender(context, config)) {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
             assertDoesNotThrow(() -> sender.bind(new Endpoint("rtp+rs8m://127.0.0.1:0")));
         }
     }
@@ -206,7 +164,7 @@ public class RocSenderTest {
     @Disabled("bind not implemented in roc 0.2.x yet")
     @Test
     public void testBindEphemeralPort() throws Exception {
-        try (RocSender sender = new RocSender(context, config)) {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
             Endpoint senderEndpoint = new Endpoint("rtp+rs8m://127.0.0.1:0");
             sender.bind(senderEndpoint);
             assertNotEquals(0, senderEndpoint.getPort());
@@ -216,7 +174,7 @@ public class RocSenderTest {
     @Disabled("bind not implemented in roc 0.2.x yet")
     @Test
     public void testInvalidBind() throws Exception {
-        try (RocSender sender = new RocSender(context, config)) {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
             assertThrows(IllegalArgumentException.class, () -> sender.bind(null));
             sender.bind(new Endpoint("rtp+rs8m://127.0.0.1:0"));
             assertThrows(IOException.class, () -> {
@@ -227,7 +185,7 @@ public class RocSenderTest {
 
     @Test
     public void testConnect() throws Exception {
-        try (RocSender sender = new RocSender(context, config)) {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
             assertDoesNotThrow(() -> {
                 sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:10001"));
                 sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://127.0.0.1:10002"));
@@ -258,7 +216,7 @@ public class RocSenderTest {
     @ParameterizedTest
     @MethodSource("testInvalidConnectArguments")
     public void testInvalidConnect(String errorMessage, Slot slot, Interface iface, Endpoint endpoint) throws Exception {
-        try (RocSender sender = new RocSender(context, config)) {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
             IllegalArgumentException exception = assertThrows(
                     IllegalArgumentException.class,
                     () -> sender.connect(slot, iface, endpoint)
@@ -269,7 +227,7 @@ public class RocSenderTest {
 
     @Test
     public void testWrite() throws Exception {
-        try (RocSender sender = new RocSender(context, config)) {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
             sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
             for (int i = 0; i < SINE_SAMPLES / BUFFER_SIZE; i++) {
@@ -280,7 +238,7 @@ public class RocSenderTest {
 
     @Test
     public void testInvalidWrite() throws Exception {
-        try (RocSender sender = new RocSender(context, config)) {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
             // bind not implemented in roc 0.2.x yet
             // assertThrows(IOException.class, () -> sender.write(samples)); // write before bind
             // sender.bind();
@@ -292,7 +250,7 @@ public class RocSenderTest {
 
     @Test
     public void testInvalidConnectAfterWrite() throws Exception {
-        try (RocSender sender = new RocSender(context, config)) {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
             sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
             sender.write(samples);

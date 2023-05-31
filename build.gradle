@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'jacoco'
     id 'com.adarshr.test-logger' version '2.0.0'
+//    id 'io.franzbecker.gradle-lombok' version '5.0.0'
 }
 
 apply from: 'common.gradle'
@@ -21,11 +22,18 @@ targetCompatibility = 1.8
 dependencies {
     implementation project(":commons")
 
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
     testImplementation 'org.awaitility:awaitility:3.1.6'
 }
+
+//lombok {
+//    version = '1.18.26'
+//}
 
 ext {
     targetLibraryPath = "${project.rootDir}/libs"
@@ -80,7 +88,18 @@ testlogger {
     slowThreshold 5000
 }
 
+//task delombok(type: io.franzbecker.gradle.lombok.task.DelombokTask) {
+//    ext.outputDir = file("$buildDir/delombok")
+//    outputs.dir(outputDir)
+//    sourceSets.main.java.srcDirs.each {
+//        inputs.dir(it)
+//        args(it, "-d", outputDir)
+//    }
+//}
+
 javadoc {
+//    dependsOn delombok
+//    source = delombok.outputs
     options.overview = "${project.rootDir}/docs/javadoc/overview.html"
     options.memberLevel = System.getProperty("visibility") == "private" ? JavadocMemberLevel.PRIVATE : JavadocMemberLevel.PUBLIC
 }

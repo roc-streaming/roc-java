@@ -145,10 +145,11 @@ import java.io.IOException;
  * <h3>Example</h3>
  * <pre>
  * {@code
- * RocReceiverConfig config = RocReceiverConfig.Builder(SAMPLE_RATE,
- *                 ChannelSet.STEREO,
- *                 FrameEncoding.PCM_FLOAT)
- *                 .build();
+ * RocReceiverConfig config = RocReceiverConfig.builder()
+ *             .frameSampleRate(SAMPLE_RATE)
+ *             .frameChannels(ChannelSet.STEREO)
+ *             .frameEncoding(FrameEncoding.PCM_FLOAT)
+ *             .build();
  * try (
  *     RocContext context = new RocContext();
  *     RocReceiver receiver = new RocReceiver(context, config);

@@ -1,313 +1,134 @@
 package org.rocstreaming.roctoolkit;
 
+import lombok.*;
+
 /**
  * Receiver configuration.
  * <p>
- * RocReceiverConfig object can be instantiated with {@link RocReceiverConfig.Builder RocReceiverConfig.Builder} objects.
+ * RocReceiverConfig object can be instantiated with {@link RocReceiverConfig#builder()}.
  *
  * @see RocReceiver
- * @see RocReceiverConfig.Builder
  */
+@Getter
+@Builder(builderClassName = "ConfigBuilder", toBuilder = true, access = AccessLevel.PROTECTED)
+@ToString
+@EqualsAndHashCode
 public class RocReceiverConfig {
 
+    /**
+     * The rate of the samples in the frames returned to the user.
+     * Number of samples per channel per second.
+     */
     private int frameSampleRate;
-    private ChannelSet frameChannels;
-    private FrameEncoding frameEncoding;
-    private ClockSource clockSource;
-    private ResamplerBackend resamplerBackend;
-    private ResamplerProfile resamplerProfile;
-    private long targetLatency;
-    private long maxLatencyOverrun;
-    private long maxLatencyUnderrun;
-    private long noPlaybackTimeout;
-    private long brokenPlaybackTimeout;
-    private long breakageDetectionWindow;
-
-    private RocReceiverConfig(
-            int frameSampleRate,
-            ChannelSet frameChannels,
-            FrameEncoding frameEncoding,
-            ClockSource clockSource,
-            ResamplerBackend resamplerBackend,
-            ResamplerProfile resamplerProfile,
-            long targetLatency,
-            long maxLatencyOverrun,
-            long maxLatencyUnderrun,
-            long noPlaybackTimeout,
-            long brokenPlaybackTimeout,
-            long breakageDetectionWindow) {
-        this.frameSampleRate = Check.notNegative(frameSampleRate, "frameSampleRate");
-        this.frameChannels = frameChannels;
-        this.frameEncoding = frameEncoding;
-        this.clockSource = clockSource;
-        this.resamplerBackend = resamplerBackend;
-        this.resamplerProfile = resamplerProfile;
-        this.targetLatency = targetLatency;
-        this.maxLatencyOverrun = maxLatencyOverrun;
-        this.maxLatencyUnderrun = maxLatencyUnderrun;
-        this.noPlaybackTimeout = noPlaybackTimeout;
-        this.brokenPlaybackTimeout = brokenPlaybackTimeout;
-        this.breakageDetectionWindow = breakageDetectionWindow;
-    }
 
     /**
-     *  Builder class for {@link RocReceiverConfig RocReceiverConfig} objects
-     * @see RocReceiverConfig
+     * The channel set in the frames returned to the user.
      */
-    public static class Builder {
-        private final int frameSampleRate;
-        private final ChannelSet frameChannels;
-        private final FrameEncoding frameEncoding;
-        private ClockSource clockSource;
-        private ResamplerBackend resamplerBackend;
-        private ResamplerProfile resamplerProfile;
-        private long targetLatency;
-        private long maxLatencyOverrun;
-        private long maxLatencyUnderrun;
-        private long noPlaybackTimeout;
-        private long brokenPlaybackTimeout;
-        private long breakageDetectionWindow;
+    private ChannelSet frameChannels;
 
-        /**
-         * Create a Builder object for building {@link RocReceiverConfig RocReceiverConfig}
-         *
-         * @param frameSampleRate   The rate of the samples in the frames returned to the user.
-         *                          Number of samples per channel per second.
-         * @param frameChannels     The channel set in the frames returned to the user.
-         * @param frameEncoding     The sample encoding in the frames returned to the user.
-         */
-        public Builder(int frameSampleRate, ChannelSet frameChannels, FrameEncoding frameEncoding) {
-            this.frameSampleRate = frameSampleRate;
-            this.frameChannels = frameChannels;
-            this.frameEncoding = frameEncoding;
-        }
+    /**
+     * The sample encoding in the frames returned to the user.
+     */
+    private FrameEncoding frameEncoding;
 
-        /**
-         * @param clockSource Clock source to use.
-         *                    Defines whether read operation will be blocking or non-blocking.
-         *                    If zero, default value is used.
-         * @return this Builder
-         */
-        public Builder clockSource(ClockSource clockSource) {
-            this.clockSource = clockSource;
-            return this;
-        }
+    /**
+     * Clock source to use.
+     * Defines whether read operation will be blocking or non-blocking.
+     * If zero, default value is used.
+     */
+    private ClockSource clockSource;
 
-        /**
-         * @param resamplerBackend Resampler backend to use.
-         * @return this Builder
-         */
-        public Builder resamplerBackend(ResamplerBackend resamplerBackend) {
-            this.resamplerBackend = resamplerBackend;
-            return this;
-        }
+    /**
+     * Resampler backend to use.
+     */
+    private ResamplerBackend resamplerBackend;
 
-        /**
-         * @param resamplerProfile  Resampler profile to use.
-         *                          If non-zero, the receiver employs resampler for two purposes:
-         *                          <ul>
-         *                              <li>
-         *                                  adjust the sender clock to the receiver clock, which
-         *                                  may differ a bit
-         *                              </li>
-         *                              <li>
-         *                                  convert the packet sample rate to the frame sample
-         *                                  rate if they are different
-         *                              </li>
-         *                          </ul>
-         * @return this Builder
-         */
-        public Builder resamplerProfile(ResamplerProfile resamplerProfile) {
-            this.resamplerProfile = resamplerProfile;
-            return this;
-        }
+    /**
+     * Resampler profile to use.
+     * If non-zero, the receiver employs resampler for two purposes:
+     * <ul>
+     *     <li>
+     *         adjust the sender clock to the receiver clock, which
+     *         may differ a bit
+     *     </li>
+     *     <li>
+     *         convert the packet sample rate to the frame sample
+     *         rate if they are different
+     *     </li>
+     * </ul>
+     */
+    private ResamplerProfile resamplerProfile;
 
-        /**
-         * @param targetLatency     Target latency, in nanoseconds.
-         *                          The session will not start playing until it accumulates the
-         *                          requested latency.
-         *                          Then, if resampler is enabled, the session will adjust its clock
-         *                          to keep actual latency as close as possible to the target latency.
-         *                          If zero, default value is used.
-         * @return this Builder
-         */
-        public Builder targetLatency(long targetLatency) {
-            this.targetLatency = targetLatency;
-            return this;
-        }
+    /**
+     * Target latency, in nanoseconds.
+     * The session will not start playing until it accumulates the
+     * requested latency.
+     * Then, if resampler is enabled, the session will adjust its clock
+     * to keep actual latency as close as possible to the target latency.
+     * If zero, default value is used.
+     */
+    private long targetLatency;
 
-        /**
-         * @param maxLatencyOverrun Maximum delta between current and target latency, in nanoseconds.
-         *                          If current latency becomes larger than the target latency plus
-         *                          this value, the session is terminated.
-         *                          If zero, default value is used.
-         * @return this Builder
-         */
-        public Builder maxLatencyOverrun(long maxLatencyOverrun) {
-            this.maxLatencyOverrun = maxLatencyOverrun;
-            return this;
-        }
+    /**
+     * Maximum delta between current and target latency, in nanoseconds.
+     * If current latency becomes larger than the target latency plus
+     * this value, the session is terminated.
+     * If zero, default value is used.
+     */
+    private long maxLatencyOverrun;
 
-        /**
-         * @param maxLatencyUnderrun Maximum delta between target and current latency, in nanoseconds.
-         *                           If current latency becomes smaller than the target latency minus
-         *                           this value, the session is terminated.
-         *                           May be larger than the target latency because current latency may
-         *                           be negative, which means that the playback run ahead of the last
-         *                           packet received from network.
-         *                           If zero, default value is used.
-         * @return this Builder
-         */
-        public Builder maxLatencyUnderrun(long maxLatencyUnderrun) {
-            this.maxLatencyUnderrun = maxLatencyUnderrun;
-            return this;
-        }
+    /**
+     * Maximum delta between target and current latency, in nanoseconds.
+     * If current latency becomes smaller than the target latency minus
+     * this value, the session is terminated.
+     * May be larger than the target latency because current latency may
+     * be negative, which means that the playback run ahead of the last
+     * packet received from network.
+     * If zero, default value is used.
+     */
+    private long maxLatencyUnderrun;
 
-        /**
-         * @param noPlaybackTimeout  Timeout for the lack of playback, in nanoseconds.
-         *                           If there is no playback during this period, the session is terminated.
-         *                           This mechanism allows to detect dead, hanging, or broken clients
-         *                           generating invalid packets.
-         *                           If zero, default value is used. If negative, the timeout is disabled.
-         * @return this Builder
-         */
-        public Builder noPlaybackTimeout(long noPlaybackTimeout) {
-            this.noPlaybackTimeout = noPlaybackTimeout;
-            return this;
-        }
+    /**
+     * Timeout for the lack of playback, in nanoseconds.
+     * If there is no playback during this period, the session is terminated.
+     * This mechanism allows to detect dead, hanging, or broken clients
+     * generating invalid packets.
+     * If zero, default value is used. If negative, the timeout is disabled.
+     */
+    private long noPlaybackTimeout;
 
-        /**
-         * @param brokenPlaybackTimeout Timeout for broken playback, in nanoseconds.
-         *                              If there the playback is considered broken during this period,
-         *                              the session is terminated. The playback is broken if there is
-         *                              a breakage detected at every <code>breakageDetectionWindow</code>
-         *                              during <code>brokenPlaybackTimeout</code>.
-         *                              This mechanism allows to detect vicious circles like when all
-         *                              client packets are a bit late and receiver constantly drops them
-         *                              producing unpleasant noise.
-         *                              If zero, default value is used. If negative, the timeout is disabled.
-         * @return this Builder
-         */
-        public Builder brokenPlaybackTimeout(long brokenPlaybackTimeout) {
-            this.brokenPlaybackTimeout = brokenPlaybackTimeout;
-            return this;
-        }
+    /**
+     * Timeout for broken playback, in nanoseconds.
+     * If there the playback is considered broken during this period,
+     * the session is terminated. The playback is broken if there is
+     * a breakage detected at every <code>breakageDetectionWindow</code>
+     * during <code>brokenPlaybackTimeout</code>.
+     * This mechanism allows to detect vicious circles like when all
+     * client packets are a bit late and receiver constantly drops them
+     * producing unpleasant noise.
+     * If zero, default value is used. If negative, the timeout is disabled.
+     */
+    private long brokenPlaybackTimeout;
 
-        /**
-         * @param breakageDetectionWindow Breakage detection window, in nanoseconds.
-         *                                If zero, default value is used.
-         *                                  @see Builder#brokenPlaybackTimeout
-         * @return this Builder
-         */
-        public Builder breakageDetectionWindow(long breakageDetectionWindow) {
-            this.breakageDetectionWindow = breakageDetectionWindow;
-            return this;
-        }
+    /**
+     * Breakage detection window, in nanoseconds.
+     * If zero, default value is used.
+     *
+     * @see ConfigBuilder#brokenPlaybackTimeout
+     */
+    private long breakageDetectionWindow;
 
-        /**
-         *  Build the {@link RocReceiverConfig RocReceiverConfig} object with <code>Builder</code> parameters.
-         * @return the new {@link RocReceiverConfig RocReceiverConfig}
-         */
+    public static ConfigBuilder builder() {
+        return new ValidationBuilder();
+    }
+
+    private static class ValidationBuilder extends ConfigBuilder {
+        @Override
         public RocReceiverConfig build() {
-            return new RocReceiverConfig(frameSampleRate, frameChannels, frameEncoding, clockSource, resamplerBackend,
-                                    resamplerProfile, targetLatency, maxLatencyOverrun, maxLatencyUnderrun,
-                                    noPlaybackTimeout, brokenPlaybackTimeout, breakageDetectionWindow);
+            Check.notNegative(super.frameSampleRate, "frameSampleRate");
+            Check.notNull(super.frameChannels, "frameChannels");
+            Check.notNull(super.frameEncoding, "frameEncoding");
+            return super.build();
         }
-    }
-
-    public int getFrameSampleRate() {
-        return frameSampleRate;
-    }
-
-    public void setFrameSampleRate(int frameSampleRate) {
-        this.frameSampleRate = Check.notNegative(frameSampleRate, "frameSampleRate");
-    }
-
-    public ChannelSet getFrameChannels() {
-        return frameChannels;
-    }
-
-    public void setFrameChannels(ChannelSet frameChannels) {
-        this.frameChannels = frameChannels;
-    }
-
-    public FrameEncoding getFrameEncoding() {
-        return frameEncoding;
-    }
-
-    public void setFrameEncoding(FrameEncoding frameEncoding) {
-        this.frameEncoding = frameEncoding;
-    }
-
-    public ClockSource getClockSource() {
-        return clockSource;
-    }
-
-    public void setClockSource(ClockSource clockSource) {
-        this.clockSource = clockSource;
-    }
-
-    public ResamplerBackend getResamplerBackend() {
-        return resamplerBackend;
-    }
-
-    public void setResamplerBackend(ResamplerBackend resamplerBackend) {
-        this.resamplerBackend = resamplerBackend;
-    }
-
-    public ResamplerProfile getResamplerProfile() {
-        return resamplerProfile;
-    }
-
-    public void setResamplerProfile(ResamplerProfile resamplerProfile) {
-        this.resamplerProfile = resamplerProfile;
-    }
-
-    public long getTargetLatency() {
-        return targetLatency;
-    }
-
-    public void setTargetLatency(long targetLatency) {
-        this.targetLatency = targetLatency;
-    }
-
-    public long getMaxLatencyOverrun() {
-        return maxLatencyOverrun;
-    }
-
-    public void setMaxLatencyOverrun(long maxLatencyOverrun) {
-        this.maxLatencyOverrun = maxLatencyOverrun;
-    }
-
-    public long getMaxLatencyUnderrun() {
-        return maxLatencyUnderrun;
-    }
-
-    public void setMaxLatencyUnderrun(long maxLatencyUnderrun) {
-        this.maxLatencyUnderrun = maxLatencyUnderrun;
-    }
-
-    public long getNoPlaybackTimeout() {
-        return noPlaybackTimeout;
-    }
-
-    public void setNoPlaybackTimeout(long noPlaybackTimeout) {
-        this.noPlaybackTimeout = noPlaybackTimeout;
-    }
-
-    public long getBrokenPlaybackTimeout() {
-        return brokenPlaybackTimeout;
-    }
-
-    public void setBrokenPlaybackTimeout(long brokenPlaybackTimeout) {
-        this.brokenPlaybackTimeout = brokenPlaybackTimeout;
-    }
-
-    public long getBreakageDetectionWindow() {
-        return breakageDetectionWindow;
-    }
-
-    public void setBreakageDetectionWindow(long breakageDetectionWindow) {
-        this.breakageDetectionWindow = breakageDetectionWindow;
     }
 }

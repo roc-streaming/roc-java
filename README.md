@@ -45,6 +45,7 @@ try (RocContext context = new RocContext()) {
         .frameChannels(ChannelSet.STEREO)
         .frameEncoding(FrameEncoding.PCM_FLOAT)
         .fecEncoding(FecEncoding.RS8M)
+        .clockSource(ClockSource.INTERNAL)
         .build();
 
     try (RocSender sender = new RocSender(context, config)) {
@@ -73,6 +74,7 @@ try (RocContext context = new RocContext()) {
         .frameSampleRate(44100)
         .frameChannels(ChannelSet.STEREO)
         .frameEncoding(FrameEncoding.PCM_FLOAT)
+        .clockSource(ClockSource.INTERNAL)
         .build();
 
     try (RocReceiver receiver = new RocReceiver(context, config)) {

@@ -18,34 +18,39 @@ public class RocReceiverConfig {
     /**
      * The rate of the samples in the frames returned to the user.
      * Number of samples per channel per second.
+     * Should be set to a positive value.
      */
     private int frameSampleRate;
 
     /**
      * The channel set in the frames returned to the user.
+     * Should be set to a non-null value.
      */
     private ChannelSet frameChannels;
 
     /**
      * The sample encoding in the frames returned to the user.
+     * Should be set to a non-null value.
      */
     private FrameEncoding frameEncoding;
 
     /**
      * Clock source to use.
      * Defines whether read operation will be blocking or non-blocking.
-     * If zero, default value is used.
+     * If null or unset, default value is used.
      */
     private ClockSource clockSource;
 
     /**
      * Resampler backend to use.
+     * If null or unset, default value is used.
      */
     private ResamplerBackend resamplerBackend;
 
     /**
      * Resampler profile to use.
-     * If non-zero, the receiver employs resampler for two purposes:
+     * If null or unset, default value is used.
+     * If resampling is enabled, the receiver employs resampler for two purposes:
      * <ul>
      *     <li>
      *         adjust the sender clock to the receiver clock, which
@@ -65,7 +70,8 @@ public class RocReceiverConfig {
      * requested latency.
      * Then, if resampler is enabled, the session will adjust its clock
      * to keep actual latency as close as possible to the target latency.
-     * If zero, default value is used.
+     * If zero or unset, default value is used.
+     * Should not be negative.
      */
     private long targetLatency;
 
@@ -73,7 +79,8 @@ public class RocReceiverConfig {
      * Maximum delta between current and target latency, in nanoseconds.
      * If current latency becomes larger than the target latency plus
      * this value, the session is terminated.
-     * If zero, default value is used.
+     * If zero or unset, default value is used.
+     * Should not be negative.
      */
     private long maxLatencyOverrun;
 
@@ -84,7 +91,8 @@ public class RocReceiverConfig {
      * May be larger than the target latency because current latency may
      * be negative, which means that the playback run ahead of the last
      * packet received from network.
-     * If zero, default value is used.
+     * If zero or unset, default value is used.
+     * Should not be negative.
      */
     private long maxLatencyUnderrun;
 
@@ -93,7 +101,8 @@ public class RocReceiverConfig {
      * If there is no playback during this period, the session is terminated.
      * This mechanism allows to detect dead, hanging, or broken clients
      * generating invalid packets.
-     * If zero, default value is used. If negative, the timeout is disabled.
+     * If zero or unset, default value is used.
+     * If negative, the timeout is disabled.
      */
     private long noPlaybackTimeout;
 
@@ -106,13 +115,15 @@ public class RocReceiverConfig {
      * This mechanism allows to detect vicious circles like when all
      * client packets are a bit late and receiver constantly drops them
      * producing unpleasant noise.
-     * If zero, default value is used. If negative, the timeout is disabled.
+     * If zero or unset, default value is used.
+     * If negative, the timeout is disabled.
      */
     private long brokenPlaybackTimeout;
 
     /**
      * Breakage detection window, in nanoseconds.
-     * If zero, default value is used.
+     * If zero or unset, default value is used.
+     * Should not be negative.
      *
      * @see ConfigBuilder#brokenPlaybackTimeout
      */
@@ -128,6 +139,10 @@ public class RocReceiverConfig {
             Check.notNegative(super.frameSampleRate, "frameSampleRate");
             Check.notNull(super.frameChannels, "frameChannels");
             Check.notNull(super.frameEncoding, "frameEncoding");
+            Check.notNegative(super.targetLatency, "targetLatency");
+            Check.notNegative(super.maxLatencyUnderrun, "maxLatencyUnderrun");
+            Check.notNegative(super.maxLatencyUnderrun, "maxLatencyUnderrun");
+            Check.notNegative(super.breakageDetectionWindow, "breakageDetectionWindow");
             return super.build();
         }
     }

@@ -22,6 +22,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class Slot {
 
+    /**
+     * Alias for the slot with index zero.
+     */
     public static final Slot DEFAULT = new Slot(0);
 
     private final int value;

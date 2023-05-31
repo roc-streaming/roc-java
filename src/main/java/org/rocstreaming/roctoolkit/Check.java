@@ -24,4 +24,11 @@ class Check {
         }
         return value;
     }
+
+    static long notNegative(long value, String name) {
+        if (value < 0) {
+            throw new IllegalArgumentException(name + " must not be negative");
+        }
+        return value;
+    }
 }

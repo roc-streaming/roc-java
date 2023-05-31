@@ -41,10 +41,9 @@ import org.rocstreaming.roctoolkit;
 
 try (RocContext context = new RocContext()) {
     RocSenderConfig config = RocSenderConfig.builder()
-        .frameSampleRate(SAMPLE_RATE)
+        .frameSampleRate(44100)
         .frameChannels(ChannelSet.STEREO)
         .frameEncoding(FrameEncoding.PCM_FLOAT)
-        .resamplerProfile(ResamplerProfile.DISABLE)
         .fecEncoding(FecEncoding.RS8M)
         .build();
 
@@ -71,7 +70,7 @@ import org.rocstreaming.roctoolkit;
 
 try (RocContext context = new RocContext()) {
     RocReceiverConfig config = RocReceiverConfig.builder()
-        .frameSampleRate(SAMPLE_RATE)
+        .frameSampleRate(44100)
         .frameChannels(ChannelSet.STEREO)
         .frameEncoding(FrameEncoding.PCM_FLOAT)
         .build();

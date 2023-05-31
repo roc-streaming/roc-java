@@ -140,7 +140,7 @@ public class RocReceiverConfig {
             Check.notNull(super.frameChannels, "frameChannels");
             Check.notNull(super.frameEncoding, "frameEncoding");
             Check.notNegative(super.targetLatency, "targetLatency");
-            Check.notNegative(super.maxLatencyUnderrun, "maxLatencyUnderrun");
+            Check.notNegative(super.maxLatencyOverrun, "maxLatencyOverrun");
             Check.notNegative(super.maxLatencyUnderrun, "maxLatencyUnderrun");
             Check.notNegative(super.breakageDetectionWindow, "breakageDetectionWindow");
             return super.build();

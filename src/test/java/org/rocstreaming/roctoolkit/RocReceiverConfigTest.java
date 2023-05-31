@@ -21,7 +21,11 @@ class RocReceiverConfigTest {
         return Stream.of(
                 Arguments.of("frameSampleRate must not be negative", validBuilder().frameSampleRate(-1)),
                 Arguments.of("frameChannels must not be null", validBuilder().frameChannels(null)),
-                Arguments.of("frameEncoding must not be null", validBuilder().frameEncoding(null))
+                Arguments.of("frameEncoding must not be null", validBuilder().frameEncoding(null)),
+                Arguments.of("targetLatency must not be negative", validBuilder().targetLatency(-1)),
+                Arguments.of("maxLatencyOverrun must not be negative", validBuilder().maxLatencyOverrun(-1)),
+                Arguments.of("maxLatencyUnderrun must not be negative", validBuilder().maxLatencyUnderrun(-1)),
+                Arguments.of("breakageDetectionWindow must not be negative", validBuilder().breakageDetectionWindow(-1))
         );
     }
 

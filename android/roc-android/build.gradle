@@ -3,7 +3,6 @@ plugins {
     id 'signing'
     id 'com.android.library'
     id 'de.mannodermaus.android-junit5'
-//    id 'io.franzbecker.gradle-lombok'
 }
 
 ext {
@@ -17,10 +16,6 @@ ext {
     signingPassword = System.getProperty('SIGNING_PASSWORD') ?: System.getenv('SIGNING_PASSWORD')
     signingKey = System.getProperty('SIGNING_KEY') ?: System.getenv('SIGNING_KEY')
 }
-
-//lombok {
-//    version = '1.18.26'
-//}
 
 android {
     compileSdkVersion "${apiLevel}".toInteger()
@@ -57,7 +52,7 @@ android {
     }
     sourceSets {
         main {
-            java.srcDirs +=  "../../src/main/java" 
+            java.srcDirs +=  "../../src/main/java"
             // pack roc shared library into aar
             jniLibs.srcDirs += "${ROC_BASE_DIR}/lib"
             manifest.srcFile 'AndroidManifest.xml'
@@ -72,15 +67,6 @@ android {
             path "../../roc_jni/CMakeLists.txt"
         }
     }
-
-//    task delombok(type: io.franzbecker.gradle.lombok.task.DelombokTask) {
-//        ext.outputDir = file("$buildDir/delombok")
-//        outputs.dir(outputDir)
-//        sourceSets.main.java.srcDirs.each {
-//            inputs.dir(it)
-//            args(it, "-d", outputDir)
-//        }
-//    }
 }
 
 dependencies {
@@ -110,8 +96,6 @@ task sourcesJar(type: Jar) {
 }
 
 task javadoc(type: Javadoc) {
-//    dependsOn delombok
-//    source = delombok.outputs
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     failOnError = false

@@ -58,9 +58,19 @@ static int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobje
         config->packet_encoding = (roc_packet_encoding) get_packet_encoding(env, jobj);
 
     // packet_length
-    config->packet_length
+    packetLengthLong
         = get_ullong_field_value(env, senderConfigClass, jconfig, "packetLength", &err);
     if (err) return err;
+
+    durationClass = (*env)->FindClass(env, "java/time/Duration");
+    assert(protocolClass != NULL);
+    getOfNanosMethodID
+            = (*env)->GetStaticMethodID(env, durationClass, "ofNanos", "(J)Ljava/time/Duration;");
+    assert(getOfNanosMethodID != NULL);
+
+    config->packet_length = (jlong) (*env)->CallStaticObjectMethod(
+        env, durationClass, getOfNanosMethodID, (jlong) packetLengthLong);
+    assert(packet_length != NULL);
 
     // packet_interleaving
     config->packet_interleaving

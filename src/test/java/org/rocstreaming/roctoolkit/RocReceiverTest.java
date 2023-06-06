@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.Duration;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,12 +50,12 @@ public class RocReceiverTest extends BaseTest {
                 .clockSource(ClockSource.INTERNAL)
                 .resamplerBackend(ResamplerBackend.BUILTIN)
                 .resamplerProfile(ResamplerProfile.HIGH)
-                .targetLatency(1000)
-                .maxLatencyOverrun(500)
-                .maxLatencyUnderrun(500)
-                .noPlaybackTimeout(2000)
-                .brokenPlaybackTimeout(2000)
-                .breakageDetectionWindow(2000)
+                .targetLatency(Duration.ofNanos(1000))
+                .maxLatencyOverrun(Duration.ofNanos(500))
+                .maxLatencyUnderrun(Duration.ofNanos(500))
+                .noPlaybackTimeout(Duration.ofNanos(2000))
+                .brokenPlaybackTimeout(Duration.ofNanos(2000))
+                .breakageDetectionWindow(Duration.ofNanos(2000))
                 .build();
         assertDoesNotThrow(() -> {
             //noinspection EmptyTryBlock

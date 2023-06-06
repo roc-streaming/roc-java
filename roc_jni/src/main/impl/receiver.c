@@ -54,35 +54,59 @@ static int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, j
     if (jobj != NULL)
         config->resampler_profile = (roc_resampler_profile) get_resampler_profile(env, jobj);
 
+    durationClass = (*env)->FindClass(env, "java/time/Duration");
+    assert(protocolClass != NULL);
+    getOfNanosMethodID
+            = (*env)->GetStaticMethodID(env, durationClass, "ofNanos", "(J)Ljava/time/Duration;");
+    assert(getOfNanosMethodID != NULL);
+
     // target_latency
-    config->target_latency
+    targetLatencyLong
         = get_ullong_field_value(env, receiverConfigClass, jconfig, "targetLatency", &err);
     if (err) return err;
+    config->target_latency = (jlong) (*env)->CallStaticObjectMethod(
+        env, durationClass, getOfNanosMethodID, (jlong) targetLatencyLong);
+    assert(target_latency != NULL);
 
     // max_latency_overrun
-    config->max_latency_overrun
+    maxLatencyOverrunLong
         = get_ullong_field_value(env, receiverConfigClass, jconfig, "maxLatencyOverrun", &err);
     if (err) return err;
+    config->max_latency_overrun = (jlong) (*env)->CallStaticObjectMethod(
+        env, durationClass, getOfNanosMethodID, (jlong) maxLatencyOverrunLong);
+    assert(max_latency_overrun != NULL);
 
     // max_latency_underrun
-    config->max_latency_underrun
+    maxLatencyUnderrunLong
         = get_ullong_field_value(env, receiverConfigClass, jconfig, "maxLatencyUnderrun", &err);
     if (err) return err;
+    config->max_latency_underrun = (jlong) (*env)->CallStaticObjectMethod(
+        env, durationClass, getOfNanosMethodID, (jlong) maxLatencyUnderrunLong);
+    assert(max_latency_underrun != NULL);
 
     // no_playback_timeout
-    config->no_playback_timeout
+    noPlaybackTimeoutLong
         = get_llong_field_value(env, receiverConfigClass, jconfig, "noPlaybackTimeout", &err);
     if (err) return err;
+    config->no_playback_timeout = (jlong) (*env)->CallStaticObjectMethod(
+        env, durationClass, getOfNanosMethodID, (jlong) noPlaybackTimeoutLong);
+    assert(no_playback_timeout != NULL);
 
     // broken_playback_timeout
-    config->broken_playback_timeout
+    brokenPlaybackTimeoutLong
         = get_llong_field_value(env, receiverConfigClass, jconfig, "brokenPlaybackTimeout", &err);
     if (err) return err;
+    config->broken_playback_timeout = (jlong) (*env)->CallStaticObjectMethod(
+        env, durationClass, getOfNanosMethodID, (jlong) brokenPlaybackTimeoutLong);
+    assert(broken_playback_timeout != NULL);
 
     // breakage_detection_window
-    config->breakage_detection_window = get_ullong_field_value(
-        env, receiverConfigClass, jconfig, "breakageDetectionWindow", &err);
+    breakageDetectionWindowLong
+        = get_ullong_field_value(env, receiverConfigClass, jconfig, "breakageDetectionWindow", &err);
     if (err) return err;
+    config->breakage_detection_window = (jlong) (*env)->CallStaticObjectMethod(
+        env, durationClass, getOfNanosMethodID, (jlong) breakageDetectionWindowLong);
+    assert(breakage_detection_window != NULL);
 
     return 0;
 }

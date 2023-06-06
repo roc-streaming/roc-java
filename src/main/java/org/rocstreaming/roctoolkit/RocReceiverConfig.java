@@ -2,6 +2,8 @@ package org.rocstreaming.roctoolkit;
 
 import lombok.*;
 
+import java.time.Duration;
+
 /**
  * Receiver configuration.
  * <p>
@@ -73,7 +75,7 @@ public class RocReceiverConfig {
      * If zero or unset, default value is used.
      * Should not be negative.
      */
-    private long targetLatency;
+    private Duration targetLatency;
 
     /**
      * Maximum delta between current and target latency, in nanoseconds.
@@ -82,7 +84,7 @@ public class RocReceiverConfig {
      * If zero or unset, default value is used.
      * Should not be negative.
      */
-    private long maxLatencyOverrun;
+    private Duration maxLatencyOverrun;
 
     /**
      * Maximum delta between target and current latency, in nanoseconds.
@@ -94,7 +96,7 @@ public class RocReceiverConfig {
      * If zero or unset, default value is used.
      * Should not be negative.
      */
-    private long maxLatencyUnderrun;
+    private Duration maxLatencyUnderrun;
 
     /**
      * Timeout for the lack of playback, in nanoseconds.
@@ -104,7 +106,7 @@ public class RocReceiverConfig {
      * If zero or unset, default value is used.
      * If negative, the timeout is disabled.
      */
-    private long noPlaybackTimeout;
+    private Duration noPlaybackTimeout;
 
     /**
      * Timeout for broken playback, in nanoseconds.
@@ -118,7 +120,7 @@ public class RocReceiverConfig {
      * If zero or unset, default value is used.
      * If negative, the timeout is disabled.
      */
-    private long brokenPlaybackTimeout;
+    private Duration brokenPlaybackTimeout;
 
     /**
      * Breakage detection window, in nanoseconds.
@@ -127,7 +129,7 @@ public class RocReceiverConfig {
      *
      * @see ConfigBuilder#brokenPlaybackTimeout
      */
-    private long breakageDetectionWindow;
+    private Duration breakageDetectionWindow;
 
     public static ConfigBuilder builder() {
         return new ValidationBuilder();

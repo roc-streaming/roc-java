@@ -4,6 +4,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.Duration;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +26,7 @@ class RocSenderConfigTest {
                 Arguments.of("frameChannels must not be null", validBuilder().frameChannels(null)),
                 Arguments.of("frameEncoding must not be null", validBuilder().frameEncoding(null)),
                 Arguments.of("packetSampleRate must not be negative", validBuilder().packetSampleRate(-1)),
-                Arguments.of("packetLength must not be negative", validBuilder().packetLength(-1)),
+                Arguments.of("packetLength must not be negative", validBuilder().packetLength(Duration.ofNanos(-1))),
                 Arguments.of("fecBlockSourcePackets must not be negative", validBuilder().fecBlockSourcePackets(-1)),
                 Arguments.of("fecBlockRepairPackets must not be negative", validBuilder().fecBlockRepairPackets(-1))
         );

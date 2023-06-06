@@ -2,6 +2,8 @@ package org.rocstreaming.roctoolkit;
 
 import lombok.*;
 
+import java.time.Duration;
+
 /**
  * Sender configuration.
  * <p>
@@ -63,7 +65,7 @@ public class RocSenderConfig {
      * If zero or unset, default value is used.
      * Should not be negative.
      */
-    private long packetLength;
+    private Duration packetLength;
 
     /**
      * Enable packet interleaving.

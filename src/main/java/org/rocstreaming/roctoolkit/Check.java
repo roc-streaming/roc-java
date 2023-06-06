@@ -1,5 +1,7 @@
 package org.rocstreaming.roctoolkit;
 
+import java.time.Duration;
+
 class Check {
     private Check() {
     }
@@ -25,8 +27,8 @@ class Check {
         return value;
     }
 
-    static long notNegative(long value, String name) {
-        if (value < 0) {
+    static Duration notNegative(Duration value, String name) {
+        if (value.isNegative()) {
             throw new IllegalArgumentException(name + " must not be negative");
         }
         return value;

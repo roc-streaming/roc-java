@@ -27,7 +27,8 @@ class Check {
         return value;
     }
 
-    static Duration notNegative(Duration value, String name) {
+    static Duration notNegativeOrNull(Duration value, String name) {
+        notNull(value, name);
         if (value.isNegative()) {
             throw new IllegalArgumentException(name + " must not be negative");
         }

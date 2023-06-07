@@ -141,10 +141,10 @@ public class RocReceiverConfig {
             Check.notNegative(super.frameSampleRate, "frameSampleRate");
             Check.notNull(super.frameChannels, "frameChannels");
             Check.notNull(super.frameEncoding, "frameEncoding");
-            Check.notNegative(super.targetLatency, "targetLatency");
-            Check.notNegative(super.maxLatencyOverrun, "maxLatencyOverrun");
-            Check.notNegative(super.maxLatencyUnderrun, "maxLatencyUnderrun");
-            Check.notNegative(super.breakageDetectionWindow, "breakageDetectionWindow");
+            Check.notNegativeOrNull(super.targetLatency, "targetLatency");
+            Check.notNegativeOrNull(super.maxLatencyOverrun, "maxLatencyOverrun");
+            Check.notNegativeOrNull(super.maxLatencyUnderrun, "maxLatencyUnderrun");
+            Check.notNegativeOrNull(super.breakageDetectionWindow, "breakageDetectionWindow");
             return super.build();
         }
     }

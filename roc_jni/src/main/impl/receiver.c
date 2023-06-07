@@ -54,59 +54,35 @@ static int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, j
     if (jobj != NULL)
         config->resampler_profile = (roc_resampler_profile) get_resampler_profile(env, jobj);
 
-    durationClass = (*env)->FindClass(env, "java/time/Duration");
-    assert(protocolClass != NULL);
-    getOfNanosMethodID
-            = (*env)->GetStaticMethodID(env, durationClass, "ofNanos", "(J)Ljava/time/Duration;");
-    assert(getOfNanosMethodID != NULL);
-
     // target_latency
-    targetLatencyLong
-        = get_ullong_field_value(env, receiverConfigClass, jconfig, "targetLatency", &err);
-    if (err) return err;
-    config->target_latency = (jlong) (*env)->CallStaticObjectMethod(
-        env, durationClass, getOfNanosMethodID, (jlong) targetLatencyLong);
-    assert(target_latency != NULL);
+    jobj = get_object_field(env, receiverConfigClass, jconfig, "targetLatency", "Ljava/time/Duration;");
+    if (jobj != NULL)
+            config->target_latency = (roc_duration) get_duration(env, jobj);
 
     // max_latency_overrun
-    maxLatencyOverrunLong
-        = get_ullong_field_value(env, receiverConfigClass, jconfig, "maxLatencyOverrun", &err);
-    if (err) return err;
-    config->max_latency_overrun = (jlong) (*env)->CallStaticObjectMethod(
-        env, durationClass, getOfNanosMethodID, (jlong) maxLatencyOverrunLong);
-    assert(max_latency_overrun != NULL);
+    jobj = get_object_field(env, receiverConfigClass, jconfig, "maxLatencyOverrun", "Ljava/time/Duration;");
+    if (jobj != NULL)
+            config->max_latency_overrun = (roc_duration) get_duration(env, jobj);
 
     // max_latency_underrun
-    maxLatencyUnderrunLong
-        = get_ullong_field_value(env, receiverConfigClass, jconfig, "maxLatencyUnderrun", &err);
-    if (err) return err;
-    config->max_latency_underrun = (jlong) (*env)->CallStaticObjectMethod(
-        env, durationClass, getOfNanosMethodID, (jlong) maxLatencyUnderrunLong);
-    assert(max_latency_underrun != NULL);
+    jobj = get_object_field(env, receiverConfigClass, jconfig, "maxLatencyUnderrun", "Ljava/time/Duration;");
+    if (jobj != NULL)
+            config->max_latency_underrun = (roc_duration) get_duration(env, jobj);
 
     // no_playback_timeout
-    noPlaybackTimeoutLong
-        = get_llong_field_value(env, receiverConfigClass, jconfig, "noPlaybackTimeout", &err);
-    if (err) return err;
-    config->no_playback_timeout = (jlong) (*env)->CallStaticObjectMethod(
-        env, durationClass, getOfNanosMethodID, (jlong) noPlaybackTimeoutLong);
-    assert(no_playback_timeout != NULL);
+    jobj = get_object_field(env, receiverConfigClass, jconfig, "noPlaybackTimeout", "Ljava/time/Duration;");
+    if (jobj != NULL)
+            config->no_playback_timeout = (roc_duration) get_duration(env, jobj);
 
     // broken_playback_timeout
-    brokenPlaybackTimeoutLong
-        = get_llong_field_value(env, receiverConfigClass, jconfig, "brokenPlaybackTimeout", &err);
-    if (err) return err;
-    config->broken_playback_timeout = (jlong) (*env)->CallStaticObjectMethod(
-        env, durationClass, getOfNanosMethodID, (jlong) brokenPlaybackTimeoutLong);
-    assert(broken_playback_timeout != NULL);
+    jobj = get_object_field(env, receiverConfigClass, jconfig, "brokenPlaybackTimeout", "Ljava/time/Duration;");
+    if (jobj != NULL)
+            config->broken_playback_timeout = (roc_duration) get_duration(env, jobj);
 
     // breakage_detection_window
-    breakageDetectionWindowLong
-        = get_ullong_field_value(env, receiverConfigClass, jconfig, "breakageDetectionWindow", &err);
-    if (err) return err;
-    config->breakage_detection_window = (jlong) (*env)->CallStaticObjectMethod(
-        env, durationClass, getOfNanosMethodID, (jlong) breakageDetectionWindowLong);
-    assert(breakage_detection_window != NULL);
+    jobj = get_object_field(env, receiverConfigClass, jconfig, "breakageDetectionWindow", "Ljava/time/Duration;");
+    if (jobj != NULL)
+            config->breakage_detection_window = (roc_duration) get_duration(env, jobj);
 
     return 0;
 }

@@ -134,7 +134,7 @@ public class RocSenderConfig {
             Check.notNull(super.frameChannels, "frameChannels");
             Check.notNull(super.frameEncoding, "frameEncoding");
             Check.notNegative(super.packetSampleRate, "packetSampleRate");
-            Check.notNegative(super.packetLength, "packetLength");
+            Check.notNegativeOrNull(super.packetLength, "packetLength");
             Check.notNegative(super.fecBlockSourcePackets, "fecBlockSourcePackets");
             Check.notNegative(super.fecBlockRepairPackets, "fecBlockRepairPackets");
             return super.build();

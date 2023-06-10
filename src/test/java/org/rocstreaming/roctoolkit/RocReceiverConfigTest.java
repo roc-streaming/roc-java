@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RocReceiverConfigTest {
 
-    private static RocReceiverConfig.ConfigBuilder validBuilder() {
+    private static RocReceiverConfig.Builder validBuilder() {
         return RocReceiverConfig.builder()
                 .frameSampleRate(44100)
                 .frameChannels(ChannelSet.STEREO)
@@ -31,7 +31,7 @@ class RocReceiverConfigTest {
 
     @ParameterizedTest()
     @MethodSource("testInvalidConfigArguments")
-    public void testInvalidConfig(String error, RocReceiverConfig.ConfigBuilder builder) {
+    public void testInvalidConfig(String error, RocReceiverConfig.Builder builder) {
         Exception e = assertThrows(IllegalArgumentException.class, builder::build);
         assertEquals(error, e.getMessage());
     }

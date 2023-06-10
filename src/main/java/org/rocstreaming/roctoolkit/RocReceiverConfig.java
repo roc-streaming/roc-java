@@ -10,7 +10,7 @@ import lombok.*;
  * @see RocReceiver
  */
 @Getter
-@Builder(builderClassName = "ConfigBuilder", toBuilder = true, access = AccessLevel.PROTECTED)
+@Builder(builderClassName = "Builder", toBuilder = true)
 @ToString
 @EqualsAndHashCode
 public class RocReceiverConfig {
@@ -124,16 +124,14 @@ public class RocReceiverConfig {
      * Breakage detection window, in nanoseconds.
      * If zero or unset, default value is used.
      * Should not be negative.
-     *
-     * @see ConfigBuilder#brokenPlaybackTimeout
      */
     private long breakageDetectionWindow;
 
-    public static ConfigBuilder builder() {
+    public static RocReceiverConfig.Builder builder() {
         return new ValidationBuilder();
     }
 
-    private static class ValidationBuilder extends ConfigBuilder {
+    private static class ValidationBuilder extends RocReceiverConfig.Builder {
         @Override
         public RocReceiverConfig build() {
             Check.notNegative(super.frameSampleRate, "frameSampleRate");

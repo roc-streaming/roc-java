@@ -1,7 +1,8 @@
-package org.rocstreaming.roctoolkit;
+package org.rocstreaming.roctoolkit.integration;
 
 import org.awaitility.Duration;
 import org.junit.jupiter.api.Test;
+import org.rocstreaming.roctoolkit.*;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -14,12 +15,33 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class RocSenderReceiverTest extends BaseTest {
 
+    private static final int SAMPLE_RATE = 44100;
+
+    private static final RocContextConfig CONTEXT_CONFIG = RocContextConfig.builder()
+            .maxPacketSize(0)
+            .maxFrameSize(0)
+            .build();
+
+    private static final RocSenderConfig SENDER_CONFIG = RocSenderConfig.builder()
+            .frameSampleRate(SAMPLE_RATE)
+            .frameChannels(ChannelSet.STEREO)
+            .frameEncoding(FrameEncoding.PCM_FLOAT)
+            .clockSource(ClockSource.INTERNAL)
+            .build();
+
+    private static final RocReceiverConfig RECEIVER_CONFIG = RocReceiverConfig.builder()
+            .frameSampleRate(SAMPLE_RATE)
+            .frameChannels(ChannelSet.STEREO)
+            .frameEncoding(FrameEncoding.PCM_FLOAT)
+            .clockSource(ClockSource.INTERNAL)
+            .build();
+
     @Test
     void testWriteRead() throws Exception {
         try (
-                RocContext context = new RocContext();
-                RocSender sender = new RocSender(context, RocSenderTest.CONFIG);
-                RocReceiver receiver = new RocReceiver(context, RocReceiverTest.CONFIG)
+                RocContext context = new RocContext(CONTEXT_CONFIG);
+                RocSender sender = new RocSender(context, SENDER_CONFIG);
+                RocReceiver receiver = new RocReceiver(context, RECEIVER_CONFIG)
         ) {
 
             Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://127.0.0.1:10001");

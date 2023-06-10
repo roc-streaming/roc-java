@@ -289,18 +289,18 @@ class EndpointTest extends BaseTest {
     public void testEndpointBuilder(Params params) {
         if (params.componentsException != null) {
             assertThrows(params.componentsException, () -> new Endpoint.Builder()
-                    .setProtocol(params.protocol)
-                    .setHost(params.host)
-                    .setPort(params.port)
-                    .setResource(params.resource)
+                    .protocol(params.protocol)
+                    .host(params.host)
+                    .port(params.port)
+                    .resource(params.resource)
                     .build());
             return;
         }
         Endpoint endpoint = new Endpoint.Builder()
-                .setProtocol(params.protocol)
-                .setHost(params.host)
-                .setPort(params.port)
-                .setResource(params.resource)
+                .protocol(params.protocol)
+                .host(params.host)
+                .port(params.port)
+                .resource(params.resource)
                 .build();
         assertEquals(params.protocol, endpoint.getProtocol());
         assertEquals(params.host, endpoint.getHost());
@@ -312,9 +312,9 @@ class EndpointTest extends BaseTest {
     @Test
     public void testInvalidEndpointBuilder() {
         assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().build());
-        assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().setHost("host").build());
-        assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().setHost("host").setPort(1).build());
-        assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().setHost("host").setResource("/resource").build());
+        assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().host("host").build());
+        assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().host("host").port(1).build());
+        assertThrows(IllegalArgumentException.class, () -> new Endpoint.Builder().host("host").resource("/resource").build());
     }
 
     @Test

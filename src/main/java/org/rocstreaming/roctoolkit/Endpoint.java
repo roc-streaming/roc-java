@@ -1,5 +1,9 @@
 package org.rocstreaming.roctoolkit;
 
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
 /**
  * Network endpoint.
  * <p>
@@ -45,18 +49,40 @@ package org.rocstreaming.roctoolkit;
  * <p>
  * Can't be used concurrently
  */
+@Getter
+@Builder(builderClassName = "Builder", toBuilder = true)
+@EqualsAndHashCode
 public class Endpoint {
 
     static {
         RocLibrary.loadLibrary();
     }
 
+    /**
+     * Protocol
+     */
     private Protocol protocol;
 
+    /**
+     * Host specifies FQDN, IPv4 address, or IPv6 address
+     */
     private String host;
 
+    /**
+     * Port specifies UDP or TCP port in range [0; 65535]
+     * <p>
+     * When binding an endpoint, the port may be set to zero to select a random port.
+     * The selected port will be then written back to the endpoint. When connecting
+     * an endpoint, the port should be positive.
+     * <p>
+     * If port is set to -1, the standard port for endpoint protocol is used. This is
+     * allowed only if the protocol defines its standard port.
+     */
     private int port;
 
+    /**
+     * Resource nullable. Specifies percent-encoded path and query
+     */
     private String resource;
 
     /**
@@ -107,81 +133,6 @@ public class Endpoint {
      */
     public Endpoint(Protocol protocol, String host, int port) {
         this(protocol, host, port, null);
-    }
-
-    /**
-     * Builder class for {@link Endpoint}
-     */
-    public static class Builder {
-
-        private Protocol protocol;
-
-        private String host;
-
-        private int port;
-
-        private String resource;
-
-        /**
-         * Set protocol
-         * @param protocol protocol
-         * @return this Builder
-         */
-        public Builder setProtocol(Protocol protocol) {
-            this.protocol = protocol;
-            return this;
-        }
-
-
-        /**
-         * Set host
-         * @param host host
-         * @return this Builder
-         */
-        public Builder setHost(String host) {
-            this.host = host;
-            return this;
-        }
-
-        /**
-         * Set port
-         * @param port port
-         * @return this Builder
-         */
-        public Builder setPort(int port) {
-            this.port = port;
-            return this;
-        }
-
-        /**
-         * Set resource
-         * @param resource resource
-         * @return this Builder
-         */
-        public Builder setResource(String resource) {
-            this.resource = resource;
-            return this;
-        }
-
-        public Endpoint build() {
-            return new Endpoint(this.protocol, this.host, this.port, this.resource);
-        }
-    }
-
-    public Protocol getProtocol() {
-        return protocol;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public String getResource() {
-        return resource;
     }
 
     @Override

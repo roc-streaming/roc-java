@@ -10,7 +10,7 @@ import lombok.*;
  * @see RocSender
  */
 @Getter
-@Builder(builderClassName = "ConfigBuilder", toBuilder = true, access = AccessLevel.PROTECTED)
+@Builder(builderClassName = "Builder", toBuilder = true)
 @ToString
 @EqualsAndHashCode
 public class RocSenderConfig {
@@ -121,11 +121,11 @@ public class RocSenderConfig {
      */
     private int fecBlockRepairPackets;
 
-    public static ConfigBuilder builder() {
+    public static RocSenderConfig.Builder builder() {
         return new ValidationBuilder();
     }
 
-    private static class ValidationBuilder extends ConfigBuilder {
+    private static class ValidationBuilder extends RocSenderConfig.Builder {
         @Override
         public RocSenderConfig build() {
             Check.notNegative(super.frameSampleRate, "frameSampleRate");

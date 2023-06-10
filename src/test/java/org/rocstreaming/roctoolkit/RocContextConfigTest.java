@@ -20,7 +20,7 @@ class RocContextConfigTest {
 
     @ParameterizedTest
     @MethodSource("testInvalidConfigArguments")
-    public void testInvalidConfig(String error, RocContextConfig.ConfigBuilder builder) {
+    public void testInvalidConfig(String error, RocContextConfig.Builder builder) {
         Exception e = assertThrows(IllegalArgumentException.class, builder::build);
         assertEquals(error, e.getMessage());
     }

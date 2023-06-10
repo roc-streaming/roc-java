@@ -10,7 +10,7 @@ import lombok.*;
  * @see RocContext
  */
 @Getter
-@Builder(builderClassName = "ConfigBuilder", toBuilder = true, access = AccessLevel.PROTECTED)
+@Builder(builderClassName = "Builder", toBuilder = true)
 @ToString
 @EqualsAndHashCode
 public class RocContextConfig {
@@ -34,11 +34,11 @@ public class RocContextConfig {
      */
     private int maxFrameSize;
 
-    public static ConfigBuilder builder() {
+    public static RocContextConfig.Builder builder() {
         return new ValidationBuilder();
     }
 
-    private static class ValidationBuilder extends ConfigBuilder {
+    private static class ValidationBuilder extends RocContextConfig.Builder {
         @Override
         public RocContextConfig build() {
             Check.notNegative(super.maxPacketSize, "maxPacketSize");

@@ -11,19 +11,19 @@ roc_protocol get_protocol(JNIEnv* env, jobject jprotocol) {
 }
 
 jobject get_protocol_enum(JNIEnv* env, roc_protocol protocol) {
-    jclass protocolClass = NULL;
+    jclass protocolUtilsClass = NULL;
     jobject jprotocol = NULL;
     jmethodID getProtocolMethodID = NULL;
 
-    protocolClass = (*env)->FindClass(env, PROTOCOL_CLASS);
-    assert(protocolClass != NULL);
+    protocolUtilsClass = (*env)->FindClass(env, PROTOCOL_UTILS_CLASS);
+    assert(protocolUtilsClass != NULL);
 
     getProtocolMethodID
-        = (*env)->GetStaticMethodID(env, protocolClass, "getByValue", "(I)L" PROTOCOL_CLASS ";");
+        = (*env)->GetStaticMethodID(env, protocolUtilsClass, "getByValue", "(I)L" PROTOCOL_CLASS ";");
     assert(getProtocolMethodID != NULL);
 
     jprotocol = (jobject) (*env)->CallStaticObjectMethod(
-        env, protocolClass, getProtocolMethodID, (jint) protocol);
+        env, protocolUtilsClass, getProtocolMethodID, (jint) protocol);
     assert(jprotocol != NULL);
     return jprotocol;
 }

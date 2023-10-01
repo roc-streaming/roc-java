@@ -7,6 +7,7 @@
 #include <roc/config.h>
 
 #define PROTOCOL_CLASS PACKAGE_BASE_NAME "/Protocol"
+#define PROTOCOL_UTILS_CLASS PACKAGE_BASE_NAME "/ProtocolUtils"
 
 roc_protocol get_protocol(JNIEnv* env, jobject jprotocol);
 

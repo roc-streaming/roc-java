@@ -113,13 +113,4 @@ public enum Protocol {
         this.value = value;
     }
 
-    @SuppressWarnings("unused") // used by JNI
-    private static Protocol getByValue(int value) {
-        for (Protocol protocol : values()) {
-            if (value == protocol.value) {
-                return protocol;
-            }
-        }
-        return null;
-    }
 }

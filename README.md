@@ -107,7 +107,7 @@ Patch versions of bindings and C library are independent.
 
 For example, version 1.2.3 of the bindings would be compatible with 1.2.x and 1.3.x, but not with 1.1.x (minor version is lower) or 2.x.x (major version is different).
 
-Note that prebuilt AAR package for Android already ships the right version of libroc, so you don't need to bother with compatibility bewteen bindings and libroc if you're using AAR.
+Note that prebuilt AAR package for Android already ships the right version of libroc, so you don't need to bother with compatibility between bindings and libroc if you're using AAR.
 
 ## Using prebuilt AAR for Android
 

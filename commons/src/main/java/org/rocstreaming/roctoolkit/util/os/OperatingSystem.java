@@ -2,6 +2,9 @@ package org.rocstreaming.roctoolkit.util.os;
 
 import java.util.Locale;
 
+/**
+ * @hidden
+ */
 public abstract class OperatingSystem {
     public static final Windows WINDOWS = new Windows();
     public static final MacOs MAC_OS = new MacOs();
@@ -12,7 +15,7 @@ public abstract class OperatingSystem {
     private static OperatingSystem currentOs = forName(System.getProperty("os.name"));
     private final String osName;
     protected String osArch;
-    
+
     public OperatingSystem() {
         osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         osArch = System.getProperty("os.arch");

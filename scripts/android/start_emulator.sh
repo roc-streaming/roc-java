@@ -9,7 +9,7 @@ export PATH="${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${PATH}"
 if ! avdmanager list avd -c | grep -qF roc_device
 then
     device --name roc_device \
-           --image "${AVD_IMAGE}" --arch "${AVD_ARCH}" --api "${API}" \
+           --image "${AVD_IMAGE}" --arch "${AVD_ARCH}" --api "${API_LEVEL}" \
            create
 fi
 

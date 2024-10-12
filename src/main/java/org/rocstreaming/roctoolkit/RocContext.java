@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  * to the context. It is allowed both to create a separate context for every object, or
  * to create a single context shared between multiple objects.
  * <p>
- * <h3>Lifecycle</h3>
+ * <h2>Lifecycle</h2>
  * A context is created using {@link #RocContext() RocContext()} or
  * {@link #RocContext(RocContextConfig) RocContext(RocContextConfig)} and destroyed using
  * {@link #close() close()}. <code>RocContext</code> class implements

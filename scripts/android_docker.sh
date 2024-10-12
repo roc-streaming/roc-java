@@ -7,12 +7,14 @@ function run_cmd() {
     "$@" || exit 1
 }
 
-# setup default values
-: "${JAVA_VERSION:=8}"
-: "${API:=26}"
-: "${NDK_VERSION:=21.1.6352462}"
-: "${BUILD_TOOLS_VERSION:=28.0.3}"
-: "${CMAKE_VERSION:=3.10.2.4988404}"
+# default values must be in-sync with android/roc-android/build.gradle
+: "${ROC_REVISION:=master}"
+: "${JAVA_VERSION:=17}"
+: "${SDK_LEVEL:=31}"
+: "${API_LEVEL:=29}"
+: "${NDK_VERSION:=26.3.11579264}"
+: "${BUILD_TOOLS_VERSION:=35.0.0}"
+: "${CMAKE_VERSION:=3.18.1}"
 : "${AVD_IMAGE:=default}"
 : "${AVD_ARCH:=x86_64}"
 : "${OSSRH_USERNAME:=}"
@@ -88,7 +90,7 @@ fi
 # if container exists, but was started with different parameters, remove it
 if docker ps -a --format '{{.Names}}' | grep -q roc_android
 then
-    for var in API BUILD_TOOLS_VERSION NDK_VERSION CMAKE_VERSION AVD_IMAGE AVD_ARCH
+    for var in SDK_LEVEL API_LEVEL BUILD_TOOLS_VERSION NDK_VERSION CMAKE_VERSION AVD_IMAGE AVD_ARCH
     do
         expected="${!var}"
         actual="$(docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' roc_android \
@@ -111,7 +113,9 @@ then
 
     docker_args=(
         --env CI="${CI:-false}"
-        --env API="${API}"
+        --env ROC_REVISION="${ROC_REVISION}"
+        --env SDK_LEVEL="${SDK_LEVEL}"
+        --env API_LEVEL="${API_LEVEL}"
         --env NDK_VERSION="${NDK_VERSION}"
         --env BUILD_TOOLS_VERSION="${BUILD_TOOLS_VERSION}"
         --env CMAKE_VERSION="${CMAKE_VERSION}"

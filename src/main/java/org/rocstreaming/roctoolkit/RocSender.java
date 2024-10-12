@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  * Sender gets an audio stream from the user, encodes it into network packets, and
  * transmits them to a remote receiver.
  *
- * <h3>Context</h3>
+ * <h2>Context</h2>
  * <p>
  * Sender is automatically attached to a context when opened and detached from it when
  * closed. The user should not close the context until the sender is closed.
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  * encoding part is performed in the sender itself, and the transmission part is
  * performed in the context network worker threads.
  *
- * <h3>Lifecycle</h3>
+ * <h2>Lifecycle</h2>
  * <p>
  *     <ul>
  *         <li>A sender is created using {@link RocSender#RocSender RocSender()}.</li>
@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  * <code>RocSender</code> class implements {@link AutoCloseable AutoCloseable} so if it is used in a
  * try-with-resources statement the object is closed automatically at the end of the statement.
  *
- * <h3>Slots, interfaces, and endpoints</h3>
+ * <h2>Slots, interfaces, and endpoints</h2>
  * <p>
  * Sender has one or multiple <b>slots</b>, which may be independently bound or connected.
  * Slots may be used to connect sender to multiple receivers. Slots are numbered from
@@ -65,7 +65,7 @@ import java.util.logging.Logger;
  *     (e.g. be an RTP/FECFRAME/RTCP sender).</li>
  * </ul>
  *
- * <h3>FEC scheme</h3>
+ * <h2>FEC scheme</h2>
  * <p>
  * If {@link Interface#CONSOLIDATED} is used, it automatically creates all necessary
  * transport interfaces and the user should not bother about them.
@@ -83,7 +83,7 @@ import java.util.logging.Logger;
  * scheme. For example, if {@link FecEncoding#RS8M} is used, the protocols should be
  * {@link Protocol#RTP_RS8M_SOURCE} and {@link Protocol#RS8M_REPAIR}.
  *
- * <h3>Sample rate</h3>
+ * <h2>Sample rate</h2>
  * <p>
  * If the sample rate of the user frames and the sample rate of the network packets are
  * different, the sender employs resampler to convert one rate to another.
@@ -92,7 +92,7 @@ import java.util.logging.Logger;
  * disabling resampling (and so use the same rate for frames and packets) or several
  * resampler profiles providing different compromises between CPU consumption and quality.
  *
- * <h3>Clock source</h3>
+ * <h2>Clock source</h2>
  * <p>
  * Sender should encode samples at a constant rate that is configured when the sender
  * is created. There are two ways to accomplish this:
@@ -118,11 +118,11 @@ import java.util.logging.Logger;
  *         </li>
  *     </ul>
  *
- * <h3>Thread-safety</h3>
+ * <h2>Thread-safety</h2>
  * <p>
  * Can be used concurrently
  *
- * <h3>Example</h3>
+ * <h2>Example</h2>
  * <pre>
  * {@code
  * RocSenderConfig config = RocSenderConfig.builder()

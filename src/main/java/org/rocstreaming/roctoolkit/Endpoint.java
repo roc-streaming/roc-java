@@ -12,7 +12,7 @@ import lombok.Getter;
  * resource. All these parts together are unambiguously represented
  * by a URI. The user may set or get the entire URI or its individual parts.
  * </p>
- * <h3>Endpoint URI</h3>
+ * <h2>Endpoint URI</h2>
  * <p>
  * Endpoint URI syntax is a subset of the syntax defined in RFC 3986:
  * <p>
@@ -45,7 +45,7 @@ import lombok.Getter;
  * The path and query fields are allowed only for protocols that support them.
  * For example, they're supported by RTSP, but not by RTP.
  * <p>
- * <h3>Thread-safety</h3>
+ * <h2>Thread-safety</h2>
  * <p>
  * Can't be used concurrently
  */

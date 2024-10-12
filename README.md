@@ -94,7 +94,7 @@ try (RocContext context = new RocContext()) {
 }
 ```
 
-## Versioning
+## Bindings version
 
 Java bindings and the C library both use [semantic versioning](https://semver.org/).
 
@@ -109,7 +109,23 @@ For example, version 1.2.3 of the bindings would be compatible with 1.2.x and 1.
 
 Note that prebuilt AAR package for Android already ships the right version of libroc, so you don't need to bother with compatibility between bindings and libroc if you're using AAR.
 
-## Using prebuilt AAR for Android
+## Java and Android versions
+
+Minimum Java version:
+
+* on build machine: JDK 17
+* on target machine: JRE 8 (== Java 1.8)
+
+Minimum Android SDK version:
+
+* on build machine: API level 31 (Android 12 SDK)
+* on target machine: API level 29 (Android 10 runtime)
+
+Minimum Android NDK version:
+
+* on build machine: NDK r21e
+
+## Use prebuilt AAR for Android
 
 Add mavenCentral repository in `build.gradle` file:
 ```
@@ -123,51 +139,74 @@ Add dependency to project ([versions](https://search.maven.org/artifact/org.roc-
 implementation 'org.roc-streaming.roctoolkit:roc-android:<VERSION>'
 ```
 
-## Building JAR from sources
+## Build JAR for desktop
 
-First, follow [official instructions](https://roc-streaming.org/toolkit/docs/building.html) to install libroc system-wide. Take care to pick the right version as described above.
+Install JDK 17 or higher.
+
+Follow [official instructions](https://roc-streaming.org/toolkit/docs/building.html) to install libroc system-wide. Take care to pick the right version as described above.
 
 Then run:
 ```
 ./gradlew build
 ```
 
-## Building AAR from sources (docker way)
+If libroc is not in default path you can specify `ROC_INCLUDE_PATH` (path to roc headers) and `ROC_LIBRARY_PATH` (path to roc library) variables with:
+- environment variables
+- gradle system variables
 
-This will install dependencies inside docker and run build:
+Additional compilation and linking flags can be specified respectively with `CFLAGS` and `LDFLAGS` gradle system variables.
+
+JAR is located at `build/libs`. It expected that `libroc` shared library is present on system.
+
+## Build AAR for Android (docker way)
+
+Install Docker.
+
+Optionally, export environment variables:
+```
+export ROC_REVISION=master
+export SDK_LEVEL=31
+export API_LEVEL=29
+export NDK_VERSION=26.3.11579264
+export BUILD_TOOLS_VERSION=35.0.0
+export CMAKE_VERSION=3.18.1
+```
+
+This will pull docker image, install dependencies inside container, and run build:
 ```
 ./scripts/android_docker.sh build
 ```
 
-This will start emulator inside docker and run tests on it:
+AAR is located at `android/roc-android/build/outputs/aar`. It contains `libroc` built for all Android architectures.
+
+## Build AAR for Android (manual way)
+
+Install JDK 17 or higher and Android SDK 31 or higher.
+
+Optionally, export environment variables:
 ```
-./scripts/android_docker.sh test
+export ROC_REVISION=master
+export SDK_LEVEL=31
+export API_LEVEL=29
+export NDK_VERSION=26.3.11579264
+export BUILD_TOOLS_VERSION=35.0.0
+export CMAKE_VERSION=3.18.1
 ```
 
-## Building AAR from sources (manual way)
-
-First, export required environment variables:
+Install Android components:
 ```
-export API=26
-export NDK_VERSION=21.1.6352462
-export BUILD_TOOLS_VERSION=28.0.3
-export CMAKE_VERSION=3.10.2.4988404
-```
-
-Then install Android components:
-```
-sdkmanager "platforms;android-${API}"
+sdkmanager "platforms;android-${SDK_LEVEL}"
 sdkmanager "build-tools;${BUILD_TOOLS_VERSION}"
 sdkmanager "ndk;${NDK_VERSION}"
 sdkmanager "cmake;${CMAKE_VERSION}"
 ```
 
-Also install build-time dependencies of Roc Toolkit, e.g. on macOS run:
+Install build-time dependencies of Roc Toolkit, e.g. on macOS run:
 ```
 brew install scons ragel gengetopt
 ```
 
-Now we can download and build Roc Toolkit:
+Download and build Roc Toolkit:
 ```
 ./scripts/android/build_roc.sh
 ```
@@ -178,38 +217,56 @@ cd android
 ./gradlew build
 ```
 
-Optionally, run tests on device or emulator (you'll have to create one):
+AAR is located at `android/roc-android/build/outputs/aar`. It contains `libroc` built for all Android architectures.
+
+## Android variables
+
+These variables are used when building for Android, with or without Docker. Each variable has default value and is optional.
+
+When docker is used, corresponding components (SDK, NDK, etc) will be installed automatically according to the specified variables. When docker is not used, you should install them manually before build.
+
+| Variable              | Description                                        |
+|-----------------------|----------------------------------------------------|
+| `JAVA_VERSION`        | Which JDK to pull (when using docker)              |
+| `ROC_REVISION`        | Which Roc Toolkit to build (when using docker)     |
+| `ROC_DIR`             | Which Roc Toolkit to use (when not using docker)   |
+| `SDK_LEVEL`           | `android-platform` version and `compileSdkVersion` |
+| `API_LEVEL`           | `minSdkVersion` and `targetSdkVersion`             |
+| `NDK_VERSION`         | Which `ndk` to install/use                         |
+| `BUILD_TOOLS_VERSION` | Which `build-tools` to install/use                 |
+| `CMAKE_VERSION`       | Which `cmake` to install/use                       |
+
+## Developer instructions
+
+#### Additional gradle targets
+
+Build only native code (on desktop):
+```
+./gradlew roc_jni:build
+```
+
+Run tests on desktop:
+```
+./gradlew test
+```
+
+Run tests on device or emulator (you'll have to create one):
 ```
 cd android
 ./gradlew cAT --info --stacktrace
 ```
 
-## Developer instructions
-
-#### Local build
-
-Build (native code and Java code):
+Generate documentation:
 ```
-./gradlew build
+./gradlew javadoc
 ```
 
-Build only native code:
+Format C code:
 ```
-./gradlew roc_jni:build
-```
-
-Run tests:
-```
-./gradlew test
+./gradlew clangFormat
 ```
 
-If libroc is not in default path you can specify `ROC_INCLUDE_PATH` (path to roc headers) and `ROC_LIBRARY_PATH` (path to roc library) variables with:
-- environment variables
-- gradle system variables
-
-Additional compilation and linking flags can be specified respectively with `CFLAGS` and `LDFLAGS` gradle system variables
-
-#### Android build via docker
+#### Android docker commands
 
 This command will pull docker image, install Android SDK and NDK inside it, download and build Roc Toolkit, build JNI bindings, and package everything into AAR:
 ```
@@ -231,27 +288,49 @@ To remove build results and docker container, run:
 ./scripts/android_docker.sh purge
 ```
 
+(Normally, docker container remains running in the background with a Gradle daemon).
+
 If desired, you can export some variables for Android environment configuration; each variable has default value and is optional:
 ```
-export JAVA_VERSION=8
-export API=26
-export NDK_VERSION=21.1.6352462
-export BUILD_TOOLS_VERSION=28.0.3
-export CMAKE_VERSION=3.10.2.4988404
+export ROC_REVISION=master
+export JAVA_VERSION=17
+export SDK_LEVEL=31
+export API_LEVEL=29
+export NDK_VERSION=26.3.11579264
+export BUILD_TOOLS_VERSION=35.0.0
+export CMAKE_VERSION=3.18.1
 export AVD_IMAGE=default
 export AVD_ARCH=x86_64
 
 ./scripts/android_docker.sh [build|test]
 ```
 
-Additional information on the `env-android` docker image, which is used by this script, is available [here](https://roc-streaming.org/toolkit/docs/development/continuous_integration.html#android-environment).
+Additional information on the `env-android` docker image, which is used by this script, is available [here](https://roc-streaming.org/toolkit/docs/portability/android_environment.html).
 
-#### Documentation build
+#### Compatibility settings in gradle
 
-Generate docs:
-```
-./gradlew javadoc
-```
+These settings define requirements for build and target machines:
+
+* `gradle/wrapper/gradle-wrapper.properties`
+
+    * `distributionUrl` - Gradle version (places limits on both build and target)
+
+* `build.gradle`, `commons/build.gradle`, `cmake-library/build.gradle`
+
+    * `sourceCompatibility` - Minimum build-time Java version (Desktop)
+    * `targetCompatibility` - Minimum run-time Java version (Desktop)
+
+* `android/build.gradle`
+
+    * `com.android.tools.build:gradle` - Android Gradle Plugin version (must be compatible with gradle)
+
+* `android/roc-android/build.gradle`
+
+    * `sourceCompatibility` - Minimum build-time Java version (Android)
+    * `targetCompatibility` - Minimum run-time Java version (Android)
+    * `compileSdkVersion` - Build-time Android version
+    * `minSdkVersion` - Minimum run-time Android version
+    * `targetSdkVersion` - Tested run-time Android version
 
 #### Publishing Android release
 

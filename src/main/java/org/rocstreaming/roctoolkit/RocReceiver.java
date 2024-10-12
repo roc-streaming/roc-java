@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  * Receiver gets the network packets from multiple senders, decodes audio streams
  * from them, mixes multiple streams into a single stream, and returns it to the user.
  *
- * <h3>Context</h3>
+ * <h2>Context</h2>
  * <p>
  * Receiver is automatically attached to a context when opened and detached from it when
  * closed. The user should not close the context until the receiver is closed.
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  * decoding part is performed in the receiver itself, and the reception part is
  * performed in the context network worker threads.
  *
- * <h3>Lifecycle</h3>
+ * <h2>Lifecycle</h2>
  * <ul>
  *     <li>A receiver is created using {@link RocReceiver#RocReceiver RocReceiver()}.</li>
  *     <li>Optionally, the receiver parameters may be fine-tuned using
@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  *     statement the object is closed automatically at the end of the statement.</li>
  * </ul>
  *
- * <h3>Slots, interfaces, and endpoints</h3>
+ * <h2>Slots, interfaces, and endpoints</h2>
  * <p>
  * Receiver has one or multiple <b>slots</b>, which may be independently bound or connected.
  * Slots may be used to bind receiver to multiple addresses. Slots are numbered from
@@ -62,7 +62,7 @@ import java.util.logging.Logger;
  *     (e.g. be an RTP/FECFRAME/RTCP sender).</li>
  * </ul>
  *
- * <h3>FEC scheme</h3>
+ * <h2>FEC scheme</h2>
  * <p>
  * If {@link Interface#CONSOLIDATED} is used, it automatically creates all necessary
  * transport interfaces and the user should not bother about them.
@@ -80,7 +80,7 @@ import java.util.logging.Logger;
  * scheme. For example, if {@link FecEncoding#RS8M} is used, the protocols should be
  * {@link Protocol#RTP_RS8M_SOURCE} and {@link Protocol#RS8M_REPAIR}.
  *
- * <h3>Sessions</h3>
+ * <h2>Sessions</h2>
  * Receiver creates a session object for every sender connected to it. Sessions can appear
  * and disappear at any time. Multiple sessions can be active at the same time.
  * <p>
@@ -94,7 +94,7 @@ import java.util.logging.Logger;
  * destroyed on other events like a large latency underrun or overrun or broken playback,
  * but if the sender continues to send packets, it will be created again shortly.
  *
- * <h3>Mixing</h3>
+ * <h2>Mixing</h2>
  * Receiver mixes audio streams from all currently active sessions into a single output
  * stream.
  * <p>
@@ -104,7 +104,7 @@ import java.util.logging.Logger;
  * Sessions can be added and removed from the output stream at any time, probably in the
  * middle of a frame.
  *
- * <h3>Sample rate</h3>
+ * <h2>Sample rate</h2>
  * Every session may have a different sample rate. And even if nominally all of them are
  * of the same rate, device frequencies usually differ by a few tens of Hertz.
  * <p>
@@ -117,7 +117,7 @@ import java.util.logging.Logger;
  * disabling resampling (at the cost of occasional underruns or overruns) or several
  * resampler profiles providing different compromises between CPU consumption and quality.
  *
- * <h3>Clock source</h3>
+ * <h2>Clock source</h2>
  * Receiver should decode samples at a constant rate that is configured when the receiver
  * is created. There are two ways to accomplish this:
  * <ul>
@@ -140,11 +140,11 @@ import java.util.logging.Logger;
  *     </li>
  * </ul>
  *
- * <h3>Thread-safety</h3>
+ * <h2>Thread-safety</h2>
  * <p>
  * Can be used concurrently
  *
- * <h3>Example</h3>
+ * <h2>Example</h2>
  * <pre>
  * {@code
  * RocReceiverConfig config = RocReceiverConfig.builder()

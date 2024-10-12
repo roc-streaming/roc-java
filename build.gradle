@@ -1,13 +1,15 @@
 plugins {
-    id 'java-library'
-    id 'jacoco'
-    id 'com.adarshr.test-logger' version '2.0.0'
+    id "java-library"
+    // code coverage
+    id "jacoco"
+    id "com.adarshr.test-logger" version "2.0.0"
+    id "io.franzbecker.gradle-lombok" version "5.0.0"
 }
 
-apply from: 'common.gradle'
+apply from: "common.gradle"
 
 allprojects {
-    group 'org.roc-streaming.roctoolkit'
+    group "org.roc-streaming.roctoolkit"
     version tagVersion
 }
 
@@ -15,19 +17,23 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 dependencies {
     implementation project(":commons")
 
-    compileOnly 'org.projectlombok:lombok:1.18.26'
-    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.6.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.2"
+    testImplementation "org.awaitility:awaitility:3.1.6"
+}
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
-    testImplementation 'org.awaitility:awaitility:3.1.6'
+// from io.franzbecker.gradle-lombok
+lombok {
+    version = "1.18.30"
 }
 
 ext {
@@ -38,17 +44,14 @@ compileJava {
     options.headerOutputDirectory = file(project(":roc_jni").projectDir.absolutePath + "/src/main/export")
 }
 
-tasks.register('copyNativeDebugDeps') {
-    dependsOn ":roc_jni:assembleDebug"
-    doLast {
-        copyNativeLibs(project(":roc_jni").buildDir.absolutePath + "/debug", targetLibraryPath)
-    }
-}
-
-tasks.register('copyNativeReleaseDeps') {
-    dependsOn ":roc_jni:assembleRelease"
-    doLast {
-        copyNativeLibs(project(":roc_jni").buildDir.absolutePath + "/release", targetLibraryPath)
+["Debug", "Release"].each { variant ->
+    tasks.register("copyNative${variant}Deps") {
+        dependsOn ":roc_jni:assemble${variant}"
+        doLast {
+            copyNativeLibs(
+                project(":roc_jni").buildDir.absolutePath + "/${variant.toLowerCase()}",
+                targetLibraryPath)
+        }
     }
 }
 
@@ -65,7 +68,7 @@ test {
     systemProperty "java.library.path", targetLibraryPath
 
     useJUnitPlatform {
-        includeEngines 'junit-jupiter'
+        includeEngines "junit-jupiter"
     }
     finalizedBy jacocoTestReport
 }
@@ -78,37 +81,46 @@ jacocoTestReport {
 }
 
 testlogger {
-    theme 'mocha'
+    theme "mocha"
     showStandardStreams = false
     slowThreshold 5000
 }
 
-javadoc {
-    options.overview = "${project.rootDir}/docs/javadoc/overview.html"
-    options.memberLevel = System.getProperty("visibility") == "private" ? JavadocMemberLevel.PRIVATE : JavadocMemberLevel.PUBLIC
+// for javadoc
+import io.franzbecker.gradle.lombok.task.DelombokTask
+task delombok(type: DelombokTask, dependsOn: compileJava) {
+    ext.outputDir = file("$buildDir/delombok")
+    outputs.dir(outputDir)
+    sourceSets.main.java.srcDirs.each {
+        inputs.dir(it)
+        args(it, "-d", outputDir)
+    }
 }
 
-task clangFormat {
-    description = 'Formats all .h and .cpp files using clang-format'
+javadoc {
+    // run javadoc on delombok-ed sources
+    dependsOn delombok
+    source = delombok.outputDir
+    // disable javadoc warnings (missing comment, etc.)
+    options.addStringOption("Xdoclint:none", "-quiet")
+}
 
+
+// format C code
+task clangFormat {
     doLast {
-        def hFiles = fileTree(dir: 'roc_jni', include: '**/*.h')
-        def cppFiles = fileTree(dir: 'roc_jni', include: '**/*.cpp')
-        def excludedFiles = fileTree(dir: 'roc_jni', include: '**/org_rocstreaming_roctoolkit_*')
+        def hFiles = fileTree(dir: "roc_jni", include: "**/*.h")
+        def cppFiles = fileTree(dir: "roc_jni", include: "**/*.cpp")
+        def excludedFiles = fileTree(dir: "roc_jni", include: "**/org_rocstreaming_roctoolkit_*")
 
         hFiles = hFiles.minus(excludedFiles)
         cppFiles = cppFiles.minus(excludedFiles)
 
         hFiles.each { file ->
-            exec {
-                commandLine 'clang-format', '-i', file
-            }
+            exec { commandLine "clang-format", "-i", file }
         }
-
         cppFiles.each { file ->
-            exec {
-                commandLine 'clang-format', '-i', file
-            }
+            exec { commandLine "clang-format", "-i", file }
         }
     }
 }

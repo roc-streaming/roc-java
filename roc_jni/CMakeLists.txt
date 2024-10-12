@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4.1)
+cmake_minimum_required(VERSION 3.5)
 
 project(RocJni C)
 
@@ -32,6 +32,7 @@ target_compile_options(roc_jni PRIVATE
     -Wall
     -Wextra
     -Wno-system-headers
+    -Wno-unused-but-set-variable
     -Wno-unused-parameter
     )
 
@@ -51,12 +52,12 @@ target_include_directories(roc_jni
 if(ANDROID)
     # include libroc headers
     target_include_directories(roc_jni SYSTEM PRIVATE
-                            ${ROC_BASE_DIR}/include/${ANDROID_ABI})
+                            ${ROC_DIR}/include/${ANDROID_ABI})
 
     # link libroc shared library
     add_library(lib_roc SHARED IMPORTED)
     set_target_properties(lib_roc PROPERTIES IMPORTED_LOCATION
-                            ${ROC_BASE_DIR}/lib/${ANDROID_ABI}/libroc.so)
+                            ${ROC_DIR}/lib/${ANDROID_ABI}/libroc.so)
     target_link_libraries(roc_jni lib_roc)
 else()
     # include libroc headers

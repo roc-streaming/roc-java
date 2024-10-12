@@ -1,27 +1,33 @@
-apply from: '../common.gradle'
+apply from: "../common.gradle"
 
 buildscript {
     repositories {
         google()
-        jcenter()
         mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
-        classpath 'de.mannodermaus.gradle.plugins:android-junit5:1.5.2.0'
-        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0'
+        // must be compatible with gradle gradle/wrapper/gradle-wrapper.properties:
+        // https://developer.android.com/build/releases/gradle-plugin
+        // must be compatible with jdk:
+        // https://docs.gradle.org/current/userguide/compatibility.html
+        classpath "com.android.tools.build:gradle:8.3.0"
+        classpath "io.freefair.gradle:android-gradle-plugins:8.3.0"
+        // must be compatible with gradle:
+        // https://github.com/mannodermaus/android-junit5?tab=readme-ov-file#plugin-compatibility-map
+        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.11.2.0"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
     }
 }
 
-apply plugin: 'io.codearte.nexus-staging'
+apply plugin: "io.codearte.nexus-staging"
 
 allprojects {
-    group 'org.roc-streaming.roctoolkit'
+    group "org.roc-streaming.roctoolkit"
     version tagVersion
 
     repositories {
         google()
-        jcenter()
         mavenCentral()
     }
 }

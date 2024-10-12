@@ -6,8 +6,10 @@ dependencies {
     implementation project(":commons")
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 gradlePlugin {
     plugins {
@@ -16,8 +18,4 @@ gradlePlugin {
             implementationClass = "org.rocstreaming.roctoolkit.gradle.plugins.cmake.CMakeLibraryPlugin"
         }
     }
-}
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs.addAll("-Werror", "-Xlint:deprecation")
 }

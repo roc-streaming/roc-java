@@ -48,6 +48,7 @@ if [ ! -d "android/build/roc-toolkit" ]
 then
     mkdir -p "android/build/roc-toolkit"
     git clone -q --recurse-submodules https://github.com/roc-streaming/roc-toolkit.git \
+        -b "${ROC_REVISION:-master}" \
         "android/build/roc-toolkit"
 fi
 
@@ -57,7 +58,7 @@ then
 fi
 
 for i in "${!target_host[@]}"; do
-    host="${target_host[i]}${API}"
+    host="${target_host[i]}${API_LEVEL}"
     abi="${target_abi[i]}"
 
     scons -Q -C android/build/roc-toolkit \

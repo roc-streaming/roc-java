@@ -2,6 +2,7 @@ plugins {
     id "org.rocstreaming.roctoolkit.cmake-library"
 }
 
+assemble.dependsOn rootProject.tasks.named("compileJava")
 assemble.dependsOn rootProject.classes
 
 cmake {
@@ -15,4 +16,13 @@ cmake {
     arguments "-DROC_INCLUDE_PATH=" + System.getProperty("ROC_INCLUDE_PATH"),
               "-DROC_LIBRARY_PATH=" + System.getProperty("ROC_LIBRARY_PATH"),
               "-DJAVA_HOME="        + System.getProperty("TARGET_JAVA_HOME")
+}
+
+tasks.matching { it.name.startsWith("cmake") }.configureEach {
+    dependsOn rootProject.tasks.named("compileJava")
+}
+
+// I don't know why, but gradle wants it
+tasks.named("cmakeRelease") {
+    dependsOn tasks.named("assembleDebug")
 }

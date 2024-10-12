@@ -26,43 +26,50 @@ concurrency:
 
 jobs:
 
+  # build natively on desktop
   desktop:
     strategy:
       fail-fast: false
       matrix:
         include:
+          # latest tested JDK
           - os: linux
             image: ubuntu-latest
-            java: 11
+            jdk: 21
             jacoco: yes
 
+          - os: osx
+            image: macos-latest
+            jdk: 21
+            jacoco: no
+
+          # oldest supported JDK
           - os: linux
             image: ubuntu-latest
-            java: 8
+            jdk: 17
             jacoco: no
 
           - os: osx
             image: macos-latest
-            java: 11
+            jdk: 17
             jacoco: no
 
-          - os: osx
-            image: macos-latest
-            java: 8
-            jacoco: no
-
-    name: ${{ matrix.os }}/java${{ matrix.java }}
-
+    name: desktop/${{ matrix.os }}-jdk${{ matrix.jdk }}
     runs-on: ${{ matrix.image }}
+
+    env:
+      # TODO: set to master
+      ROC_REVISION: v0.2.6
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
-          java-version: ${{ matrix.java }}.x.x
+          java-version: ${{ matrix.jdk }}
+          distribution: temurin
 
       - name: Install system dependencies
         run: scripts/${{ matrix.os }}/install_dependencies.sh
@@ -74,66 +81,88 @@ jobs:
         run: scripts/${{ matrix.os }}/build_bindings.sh
 
       - name: Upload test coverage
-        if: ${{ matrix.jacoco == 'yes' }}
+        if: ${{ github.repository_owner == 'roc-streaming' && matrix.jacoco == 'yes' }}
         id: jacoco
         uses: codecov/codecov-action@v3
         with:
           files: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
 
+  # build for Android on Linux (with Docker)
   android-linux:
     strategy:
       fail-fast: false
       matrix:
         include:
-          - java: 11
+          # latest tested JDK, SDK, and NDK
+          - jdk: 21
+            sdk: 34
             api: 29
-            ndk: 21.1.6352462
+            ndk_r: 26d
+            ndk: 26.3.11579264
 
-          - java: 8
+          # oldest supported JDK, SDK, and NDK
+          - jdk: 17
+            sdk: 31
             api: 29
-            ndk: 21.1.6352462
+            ndk_r: 21e
+            ndk: 21.4.7075529
 
-    name: android/linux-java${{ matrix.java }}-api${{ matrix.api }}-ndk${{ matrix.ndk }}
-
-    runs-on: ubuntu-latest
+    name: android/linux-jdk${{ matrix.jdk }}-sdk${{ matrix.sdk }}-ndk${{ matrix.ndk_r }}
+    runs-on: ubuntu-24.04
 
     env:
-      JAVA_VERSION: ${{ matrix.java }}
-      API: ${{ matrix.api }}
+      # TODO: set to master
+      ROC_REVISION: v0.2.6
+      JAVA_VERSION: ${{ matrix.jdk }}
+      SDK_LEVEL: ${{ matrix.sdk }}
+      API_LEVEL: ${{ matrix.api }}
       NDK_VERSION: ${{ matrix.ndk }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build
         run: scripts/android_docker.sh build
 
+  # build for Android on macOS
   android-osx:
     strategy:
       fail-fast: false
       matrix:
         include:
-          - api: 29
-            ndk: 21.1.6352462
+          # latest tested JDK, SDK, and NDK
+          - jdk: 21
+            sdk: 34
+            api: 29
+            ndk_r: 26d
+            ndk: 26.3.11579264
+            cmdline_tools: 10406996
+            build_tools: 35.0.0
+            cmake: 3.18.1
+            avd_image: default
+            avd_arch: x86_64
+
+          # oldest tested JDK, SDK, and NDK
+          - jdk: 17
+            sdk: 31
+            api: 29
+            ndk_r: 21e
+            ndk: 21.4.7075529
+            cmdline_tools: 10406996
             build_tools: 28.0.3
             cmake: 3.10.2.4988404
             avd_image: default
             avd_arch: x86_64
 
-          - api: 26
-            ndk: 21.1.6352462
-            build_tools: 28.0.3
-            cmake: 3.10.2.4988404
-            avd_image: default
-            avd_arch: x86_64
-
-    name: android/osx-api${{ matrix.api }}-ndk${{ matrix.ndk }}
-
-    runs-on: macos-latest
+    name: android/osx-jdk${{ matrix.jdk }}-sdk${{ matrix.sdk }}-ndk${{ matrix.ndk_r }}
+    runs-on: macos-13
 
     env:
-      API: ${{ matrix.api }}
+      # TODO: set to master
+      ROC_REVISION: v0.2.6
+      SDK_LEVEL: ${{ matrix.sdk }}
+      API_LEVEL: ${{ matrix.api }}
       NDK_VERSION: ${{ matrix.ndk }}
       BUILD_TOOLS_VERSION: ${{ matrix.build_tools }}
       CMAKE_VERSION: ${{ matrix.cmake }}
@@ -142,19 +171,28 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install Android SDK components
-        uses: maxim-lobanov/setup-android-tools@v1
+      - name: Install JDK
+        uses: actions/setup-java@v4
         with:
-          cache: true
-          packages: |
-            platforms;android-${{ matrix.api }}
-            build-tools;${{ matrix.build_tools }}
-            ndk;${{ matrix.ndk }}
-            cmake;${{ matrix.cmake }}
-            system-images;android-${{ matrix.api }};${{ matrix.avd_image }};${{ matrix.avd_arch }}
-            emulator
+          java-version: ${{ matrix.jdk }}
+          distribution: temurin
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: ${{ matrix.cmdline_tools }}
+
+      - name: Install Android packages
+        run: |
+          sdkmanager \
+            "platforms;android-${{ matrix.sdk }}" \
+            "build-tools;${{ matrix.build_tools }}" \
+            "ndk;${{ matrix.ndk }}" \
+            "cmake;${{ matrix.cmake }}" \
+            "system-images;android-${{ matrix.sdk }};${{ matrix.avd_image }};${{ matrix.avd_arch }}" \
+            "emulator"
 
       - name: Install system dependencies
         run: scripts/android/install_dependencies.sh
@@ -181,13 +219,9 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
 
     name: publish
-
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     env:
-      JAVA_VERSION: 8
-      API: 29
-      NDK_VERSION: 21.1.6352462
       OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
       OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
       SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
@@ -196,7 +230,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Choose roc-toolkit revision
+        run: echo ROC_REVISION=$(scripts/roc_revision.py) >> $GITHUB_ENV
 
       - name: Publish
         run: scripts/android_docker.sh publish

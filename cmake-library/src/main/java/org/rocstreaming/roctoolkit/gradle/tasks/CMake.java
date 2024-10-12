@@ -17,6 +17,7 @@ import org.gradle.api.tasks.TaskAction;
 import org.rocstreaming.roctoolkit.gradle.plugins.cmake.Target;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -35,19 +36,28 @@ public class CMake extends DefaultTask {
         if (target.get().getIsCrossCompiling().get() && System.getenv("CMAKE_TOOLCHAIN_FILE") == null) {
             throw new IllegalArgumentException("CMAKE_TOOLCHAIN_FILE env variable is not set.");
         }
-        
+
         String cmakeExecutable = System.getenv().getOrDefault("CMAKE_EXECUTABLE", "cmake");
-        Provider<Directory> targetDirectory = variantDirectory.dir(String.format("%s/%s", getTarget().get().getHost().get(), getTarget().get().getPlatform().get()));
+        Provider<Directory> targetDirectory = variantDirectory.dir(
+            String.format("%s/%s", getTarget().get().getHost().get(),
+                          getTarget().get().getPlatform().get()));
         targetDirectory.get().getAsFile().mkdirs();
+
+        ArrayList<String> cliArgs = new ArrayList<>();
+        cliArgs.add(cmakeExecutable);
+        cliArgs.add("-DCMAKE_BUILD_TYPE=" + capitalize(getBuildType()));
+        if (!getArguments().get().isEmpty()) {
+            cliArgs.add(String.join(" ", getArguments().get()));
+        }
+        cliArgs.add("-G" + generator.get());
+        cliArgs.add("-DCMAKE_TOOLCHAIN_FILE=" +
+                    System.getenv().getOrDefault("CMAKE_TOOLCHAIN_FILE", ""));
+        cliArgs.add("--no-warn-unused-cli");
+        cliArgs.add(getProjectDirectory().get().getAsFile().getAbsolutePath());
+
         getProject().exec(execSpec -> {
             execSpec.setWorkingDir(targetDirectory);
-            execSpec.commandLine(
-                    cmakeExecutable,
-                    "-DCMAKE_BUILD_TYPE=" + capitalize(getBuildType()),
-                    String.join(" ", getArguments().get()),
-                    "-G" + generator.get(),
-                    "-DCMAKE_TOOLCHAIN_FILE=" + System.getenv().getOrDefault("CMAKE_TOOLCHAIN_FILE", ""),
-                    "--no-warn-unused-cli", getProjectDirectory().get().getAsFile().getAbsolutePath());
+            execSpec.commandLine(cliArgs);
         });
     }
 

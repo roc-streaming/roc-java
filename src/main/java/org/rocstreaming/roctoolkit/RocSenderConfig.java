@@ -122,21 +122,6 @@ public class RocSenderConfig {
     private int fecBlockRepairPackets;
 
     public static RocSenderConfig.Builder builder() {
-        return new ValidationBuilder();
+        return new RocSenderConfigValidator();
     }
-
-    private static class ValidationBuilder extends RocSenderConfig.Builder {
-        @Override
-        public RocSenderConfig build() {
-            Check.notNegative(super.frameSampleRate, "frameSampleRate");
-            Check.notNull(super.frameChannels, "frameChannels");
-            Check.notNull(super.frameEncoding, "frameEncoding");
-            Check.notNegative(super.packetSampleRate, "packetSampleRate");
-            Check.notNegative(super.packetLength, "packetLength");
-            Check.notNegative(super.fecBlockSourcePackets, "fecBlockSourcePackets");
-            Check.notNegative(super.fecBlockRepairPackets, "fecBlockRepairPackets");
-            return super.build();
-        }
-    }
-
 }

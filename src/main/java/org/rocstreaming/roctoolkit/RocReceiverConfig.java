@@ -128,20 +128,6 @@ public class RocReceiverConfig {
     private long breakageDetectionWindow;
 
     public static RocReceiverConfig.Builder builder() {
-        return new ValidationBuilder();
-    }
-
-    private static class ValidationBuilder extends RocReceiverConfig.Builder {
-        @Override
-        public RocReceiverConfig build() {
-            Check.notNegative(super.frameSampleRate, "frameSampleRate");
-            Check.notNull(super.frameChannels, "frameChannels");
-            Check.notNull(super.frameEncoding, "frameEncoding");
-            Check.notNegative(super.targetLatency, "targetLatency");
-            Check.notNegative(super.maxLatencyOverrun, "maxLatencyOverrun");
-            Check.notNegative(super.maxLatencyUnderrun, "maxLatencyUnderrun");
-            Check.notNegative(super.breakageDetectionWindow, "breakageDetectionWindow");
-            return super.build();
-        }
+        return new RocReceiverConfigValidator();
     }
 }

@@ -56,31 +56,31 @@ static int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, j
 
     // target_latency
     config->target_latency
-        = get_ullong_field_value(env, receiverConfigClass, jconfig, "targetLatency", &err);
+        = get_duration_field_value(env, receiverConfigClass, jconfig, "targetLatency", &err);
     if (err) return err;
 
     // max_latency_overrun
     config->max_latency_overrun
-        = get_ullong_field_value(env, receiverConfigClass, jconfig, "maxLatencyOverrun", &err);
+        = get_duration_field_value(env, receiverConfigClass, jconfig, "maxLatencyOverrun", &err);
     if (err) return err;
 
     // max_latency_underrun
     config->max_latency_underrun
-        = get_ullong_field_value(env, receiverConfigClass, jconfig, "maxLatencyUnderrun", &err);
+        = get_duration_field_value(env, receiverConfigClass, jconfig, "maxLatencyUnderrun", &err);
     if (err) return err;
 
     // no_playback_timeout
     config->no_playback_timeout
-        = get_llong_field_value(env, receiverConfigClass, jconfig, "noPlaybackTimeout", &err);
+        = get_duration_field_value(env, receiverConfigClass, jconfig, "noPlaybackTimeout", &err);
     if (err) return err;
 
     // broken_playback_timeout
-    config->broken_playback_timeout
-        = get_llong_field_value(env, receiverConfigClass, jconfig, "brokenPlaybackTimeout", &err);
+    config->broken_playback_timeout = get_duration_field_value(
+        env, receiverConfigClass, jconfig, "brokenPlaybackTimeout", &err);
     if (err) return err;
 
     // breakage_detection_window
-    config->breakage_detection_window = get_ullong_field_value(
+    config->breakage_detection_window = get_duration_field_value(
         env, receiverConfigClass, jconfig, "breakageDetectionWindow", &err);
     if (err) return err;
 

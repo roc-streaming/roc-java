@@ -35,15 +35,6 @@ public class RocContextConfig {
     private int maxFrameSize;
 
     public static RocContextConfig.Builder builder() {
-        return new ValidationBuilder();
-    }
-
-    private static class ValidationBuilder extends RocContextConfig.Builder {
-        @Override
-        public RocContextConfig build() {
-            Check.notNegative(super.maxPacketSize, "maxPacketSize");
-            Check.notNegative(super.maxFrameSize, "maxFrameSize");
-            return super.build();
-        }
+        return new RocContextConfigValidator();
     }
 }

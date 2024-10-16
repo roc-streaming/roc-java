@@ -85,6 +85,31 @@ unsigned long long get_ullong_field_value(
     return (unsigned long long) ret;
 }
 
+long long get_duration_field_value(
+    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error) {
+    assert(env != NULL);
+    assert(clazz != NULL);
+    assert(attr_name != NULL);
+    assert(error != NULL);
+
+    jfieldID attrId = (*env)->GetFieldID(env, clazz, attr_name, "Ljava/time/Duration;");
+    assert(attrId != NULL);
+
+    jobject durationObj = (*env)->GetObjectField(env, obj, attrId);
+    if (durationObj == NULL) {
+        return 0;
+    }
+
+    jclass durationClass = (*env)->FindClass(env, "java/time/Duration");
+    assert(durationClass != NULL);
+
+    jmethodID toNanosMethodId = (*env)->GetMethodID(env, durationClass, "toNanos", "()J");
+    assert(toNanosMethodId != NULL);
+
+    jlong ret = (*env)->CallLongMethod(env, durationObj, toNanosMethodId);
+    return (long long) ret;
+}
+
 int get_enum_value(JNIEnv* env, jclass clazz, jobject enumObj) {
     assert(env != NULL);
     assert(clazz != NULL);

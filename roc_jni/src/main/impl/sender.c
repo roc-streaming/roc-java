@@ -59,7 +59,7 @@ static int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobje
 
     // packet_length
     config->packet_length
-        = get_ullong_field_value(env, senderConfigClass, jconfig, "packetLength", &err);
+        = get_duration_field_value(env, senderConfigClass, jconfig, "packetLength", &err);
     if (err) return err;
 
     // packet_interleaving

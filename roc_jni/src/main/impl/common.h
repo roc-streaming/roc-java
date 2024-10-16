@@ -24,7 +24,8 @@ long long get_llong_field_value(
 unsigned long long get_ullong_field_value(
     JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error);
 
-void set_int_field_value(JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int value);
+long long get_duration_field_value(
+    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error);
 
 int get_enum_value(JNIEnv* env, jclass clazz, jobject enumObj);
 jobject get_object_field(

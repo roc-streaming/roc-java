@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.stream.Stream;
 
 import static java.lang.Math.sin;
@@ -71,7 +72,7 @@ public class RocSenderTest extends BaseTest {
                 .packetSampleRate(44100)
                 .packetChannels(ChannelSet.STEREO)
                 .packetEncoding(PacketEncoding.AVP_L16)
-                .packetLength(2000)
+                .packetLength(Duration.ofNanos(2000))
                 .packetInterleaving(1)
                 .clockSource(ClockSource.INTERNAL)
                 .resamplerBackend(ResamplerBackend.BUILTIN)

@@ -7,47 +7,55 @@ import lombok.Getter;
 /**
  * Network endpoint.
  * <p>
- * Endpoint is a network entry point of a peer. The definition includes the
- * protocol being used, network host and port, and, for some protocols, a
- * resource. All these parts together are unambiguously represented
- * by a URI. The user may set or get the entire URI or its individual parts.
- * </p>
+ * Endpoint is a network entry point of a node. The definition includes the protocol being used,
+ * network host and port, and, for some protocols, a resource. All these parts together are
+ * unambiguously represented by a URI. The user may set or get the entire URI or its individual
+ * parts.
+ *
+ *
  * <h2>Endpoint URI</h2>
  * <p>
- * Endpoint URI syntax is a subset of the syntax defined in RFC 3986:
- * <p>
- * protocol://host[:port][/path][?query]
- * <p>
- * Examples:
+ * Endpoint URI syntax is a subset of the syntax defined in RFC 3986: Examples:
  * <ul>
- *     <li>"rtsp://localhost:123/path?query"</li>
- *     <li>"rtp+rs8m://localhost:123"</li>
- *     <li>"rtp://127.0.0.1:123"</li>
- *     <li>"rtp://[::1]:123"</li>
+ *   <li>{@code rtsp://localhost:123/path?query}</li>
+ *   <li>{@code rtp+rs8m://localhost:123}</li>
+ *   <li>{@code rtp://127.0.0.1:123}</li>
+ *   <li>{@code rtp://[::1]:123}</li>
  * </ul>
  * <p>
  * The following protocols (schemes) are supported:
  * <ul>
- *     <li> "rtp://"       ({@link Protocol#RTP RTP})</li>
- *     <li> "rtp+rs8m://"  ({@link Protocol#RTP_RS8M_SOURCE RTP_RS8M_SOURCE})</li>
- *     <li> "rs8m://"      ({@link Protocol#RS8M_REPAIR RS8M_REPAIR})</li>
- *     <li> "rtp+ldpc://"  ({@link Protocol#RTP_LDPC_SOURCE RTP_LDPC_SOURCE})</li>
- *     <li> "ldpc://"      ({@link Protocol#LDPC_REPAIR LDPC_REPAIR})</li>
+ *   <li>{@code rtp://} ( {@link Protocol#RTP} )</li>
+ *   <li>{@code rtp+rs8m://} ( {@link Protocol#RTP_RS8M_SOURCE} )</li>
+ *   <li>{@code rs8m://} ( {@link Protocol#RS8M_REPAIR} )</li>
+ *   <li>{@code rtp+ldpc://} ( {@link Protocol#RTP_LDPC_SOURCE} )</li>
+ *   <li>{@code ldpc://} ( {@link Protocol#LDPC_REPAIR} )</li>
  * </ul>
  * <p>
- * The host field should be either FQDN (domain name), or IPv4 address, or
- * IPv6 address in square brackets.
+ * The host field should be either FQDN (domain name), or IPv4 address, or IPv6 address in square
+ * brackets.
  * <p>
- * The port field can be omitted if the protocol defines standard port. Otherwise,
- * the port can not be omitted. For example, RTSP defines standard port,
- * but RTP doesn't.
+ * The port field can be omitted if the protocol defines standard port. Otherwise, the port can
+ * not be omitted. For example, RTSP defines standard port, but RTP doesn't.
  * <p>
- * The path and query fields are allowed only for protocols that support them.
- * For example, they're supported by RTSP, but not by RTP.
+ * The path and query fields are allowed only for protocols that support them. For example,
+ * they're supported by RTSP, but not by RTP.
+ *
+ *
+ * <h2>Field invalidation</h2>
  * <p>
- * <h2>Thread-safety</h2>
+ * If some field is attempted to be set to an invalid value (for example, an invalid port
+ * number), this specific field is marked as invalid until it is successfully set to some valid
+ * value.
  * <p>
- * Can't be used concurrently
+ * Sender and receiver refuse to bind or connect an endpoint which has invalid fields or doesn't
+ * have some mandatory fields. Hence, it is safe to ignore errors returned by endpoint setters
+ * and check only for errors returned by bind and connect operations.
+ *
+ *
+ * <h2>Thread safety</h2>
+ * <p>
+ * Should not be used concurrently.
  */
 @Getter
 @Builder(builderClassName = "Builder", toBuilder = true)

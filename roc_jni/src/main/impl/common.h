@@ -13,20 +13,20 @@
 #define IO_EXCEPTION "java/io/IOException"
 
 int get_boolean_field_value(
-    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error);
+    JNIEnv* env, jclass clazz, jobject obj, const char* attrName, int* error);
 
-int get_int_field_value(JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error);
+int get_int_field_value(JNIEnv* env, jclass clazz, jobject obj, const char* attrName, int* error);
 unsigned int get_uint_field_value(
-    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error);
+    JNIEnv* env, jclass clazz, jobject obj, const char* attrName, int* error);
 
 long long get_llong_field_value(
-    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error);
+    JNIEnv* env, jclass clazz, jobject obj, const char* attrName, int* error);
 unsigned long long get_ullong_field_value(
-    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error);
+    JNIEnv* env, jclass clazz, jobject obj, const char* attrName, int* error);
 
 long long get_duration_field_value(
-    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error);
+    JNIEnv* env, jclass clazz, jobject obj, const char* attrName, int* error);
 
 int get_enum_value(JNIEnv* env, jclass clazz, jobject enumObj);
 jobject get_object_field(
-    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, const char* attr_class_name);
+    JNIEnv* env, jclass clazz, jobject obj, const char* attrName, const char* attrClassName);

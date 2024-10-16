@@ -1,12 +1,12 @@
 package org.rocstreaming.roctoolkit;
 
 /**
- * A <code>NativeObject</code> represents an underlying native roc object.
+ * A {@code NativeObject} represents an underlying native roc object.
  */
 class NativeObject implements AutoCloseable {
 
     /**
-     * <code>NativeObject</code> finalizer thread.
+     * {@code NativeObject} finalizer thread.
      */
     private final static NativeObjectCleaner NATIVE_OBJECT_CLEANER = NativeObjectCleaner.getInstance();
 
@@ -21,21 +21,21 @@ class NativeObject implements AutoCloseable {
     }
 
     /**
-     * Construct a <code>NativeObject</code>.
+     * Construct a {@code NativeObject}.
      *
      * @param ptr        native pointer to a roc native object
      * @param dependsOn  dependency for finalization ordering
-     * @param destructor destructor method for closing <code>NativeObject</code>.
+     * @param destructor destructor method for closing {@code NativeObject}.
      */
     protected NativeObject(long ptr, NativeObject dependsOn, Destructor destructor) {
         this.resource = NATIVE_OBJECT_CLEANER.register(this, ptr, dependsOn, destructor);
     }
 
     /**
-     * Get <code>NativeObject</code> native pointer.
+     * Get {@code NativeObject} native pointer.
      *
      * @return                  the native roc object pointer associated to this
-     *                          <code>NativeObject</code>.
+     *                          {@code NativeObject}.
      */
     long getPtr() {
         return this.resource.getPtr();

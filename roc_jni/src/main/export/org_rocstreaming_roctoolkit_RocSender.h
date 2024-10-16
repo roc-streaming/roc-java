@@ -9,43 +9,51 @@ extern "C" {
 #endif
 /*
  * Class:     org_rocstreaming_roctoolkit_RocSender
- * Method:    open
+ * Method:    nativeOpen
  * Signature: (JLorg/rocstreaming/roctoolkit/RocSenderConfig;)J
  */
-JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_RocSender_open
+JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_RocSender_nativeOpen
   (JNIEnv *, jclass, jlong, jobject);
 
 /*
  * Class:     org_rocstreaming_roctoolkit_RocSender
- * Method:    setOutgoingAddress
- * Signature: (JIILjava/lang/String;)V
+ * Method:    nativeClose
+ * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocSender_setOutgoingAddress
-  (JNIEnv *, jobject, jlong, jint, jint, jstring);
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocSender_nativeClose
+  (JNIEnv *, jclass, jlong);
 
 /*
  * Class:     org_rocstreaming_roctoolkit_RocSender
- * Method:    connect
- * Signature: (JIILorg/rocstreaming/roctoolkit/Endpoint;)V
+ * Method:    nativeConfigure
+ * Signature: (JIILorg/rocstreaming/roctoolkit/InterfaceConfig;)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocSender_connect
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocSender_nativeConfigure
   (JNIEnv *, jobject, jlong, jint, jint, jobject);
 
 /*
  * Class:     org_rocstreaming_roctoolkit_RocSender
- * Method:    writeFloats
- * Signature: (J[F)V
+ * Method:    nativeConnect
+ * Signature: (JIILorg/rocstreaming/roctoolkit/Endpoint;)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocSender_writeFloats
-  (JNIEnv *, jobject, jlong, jfloatArray);
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocSender_nativeConnect
+  (JNIEnv *, jobject, jlong, jint, jint, jobject);
 
 /*
  * Class:     org_rocstreaming_roctoolkit_RocSender
- * Method:    close
- * Signature: (J)V
+ * Method:    nativeUnlink
+ * Signature: (JI)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocSender_close
-  (JNIEnv *, jclass, jlong);
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocSender_nativeUnlink
+  (JNIEnv *, jobject, jlong, jint);
+
+/*
+ * Class:     org_rocstreaming_roctoolkit_RocSender
+ * Method:    nativeWriteFloats
+ * Signature: (J[F)V
+ */
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocSender_nativeWriteFloats
+  (JNIEnv *, jobject, jlong, jfloatArray);
 
 #ifdef __cplusplus
 }

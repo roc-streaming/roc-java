@@ -9,43 +9,51 @@ extern "C" {
 #endif
 /*
  * Class:     org_rocstreaming_roctoolkit_RocReceiver
- * Method:    open
+ * Method:    nativeOpen
  * Signature: (JLorg/rocstreaming/roctoolkit/RocReceiverConfig;)J
  */
-JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_open
+JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_nativeOpen
   (JNIEnv *, jclass, jlong, jobject);
 
 /*
  * Class:     org_rocstreaming_roctoolkit_RocReceiver
- * Method:    setMulticastGroup
- * Signature: (JIILjava/lang/String;)V
+ * Method:    nativeClose
+ * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_setMulticastGroup
-  (JNIEnv *, jobject, jlong, jint, jint, jstring);
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_nativeClose
+  (JNIEnv *, jclass, jlong);
 
 /*
  * Class:     org_rocstreaming_roctoolkit_RocReceiver
- * Method:    bind
- * Signature: (JIILorg/rocstreaming/roctoolkit/Endpoint;)V
+ * Method:    nativeConfigure
+ * Signature: (JIILorg/rocstreaming/roctoolkit/InterfaceConfig;)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_bind
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_nativeConfigure
   (JNIEnv *, jobject, jlong, jint, jint, jobject);
 
 /*
  * Class:     org_rocstreaming_roctoolkit_RocReceiver
- * Method:    readFloats
- * Signature: (J[F)V
+ * Method:    nativeBind
+ * Signature: (JIILorg/rocstreaming/roctoolkit/Endpoint;)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_readFloats
-  (JNIEnv *, jobject, jlong, jfloatArray);
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_nativeBind
+  (JNIEnv *, jobject, jlong, jint, jint, jobject);
 
 /*
  * Class:     org_rocstreaming_roctoolkit_RocReceiver
- * Method:    close
- * Signature: (J)V
+ * Method:    nativeUnlink
+ * Signature: (JI)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_close
-  (JNIEnv *, jclass, jlong);
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_nativeUnlink
+  (JNIEnv *, jobject, jlong, jint);
+
+/*
+ * Class:     org_rocstreaming_roctoolkit_RocReceiver
+ * Method:    nativeReadFloats
+ * Signature: (J[F)V
+ */
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocReceiver_nativeReadFloats
+  (JNIEnv *, jobject, jlong, jfloatArray);
 
 #ifdef __cplusplus
 }

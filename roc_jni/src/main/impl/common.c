@@ -3,23 +3,23 @@
 #include <limits.h>
 
 int get_boolean_field_value(
-    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error) {
+    JNIEnv* env, jclass clazz, jobject obj, const char* attrName, int* error) {
     assert(env != NULL);
     assert(clazz != NULL);
 
-    jfieldID attrId = (*env)->GetFieldID(env, clazz, attr_name, "Z");
+    jfieldID attrId = (*env)->GetFieldID(env, clazz, attrName, "Z");
     assert(attrId != NULL);
 
     return (*env)->GetBooleanField(env, obj, attrId) == JNI_TRUE;
 }
 
-int get_int_field_value(JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error) {
+int get_int_field_value(JNIEnv* env, jclass clazz, jobject obj, const char* attrName, int* error) {
     assert(env != NULL);
     assert(clazz != NULL);
-    assert(attr_name != NULL);
+    assert(attrName != NULL);
     assert(error != NULL);
 
-    jfieldID attrId = (*env)->GetFieldID(env, clazz, attr_name, "I");
+    jfieldID attrId = (*env)->GetFieldID(env, clazz, attrName, "I");
     assert(attrId != NULL);
 
     jint ret = (*env)->GetIntField(env, obj, attrId);
@@ -32,13 +32,13 @@ int get_int_field_value(JNIEnv* env, jclass clazz, jobject obj, const char* attr
 }
 
 unsigned int get_uint_field_value(
-    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error) {
+    JNIEnv* env, jclass clazz, jobject obj, const char* attrName, int* error) {
     assert(env != NULL);
     assert(clazz != NULL);
-    assert(attr_name != NULL);
+    assert(attrName != NULL);
     assert(error != NULL);
 
-    jfieldID attrId = (*env)->GetFieldID(env, clazz, attr_name, "I");
+    jfieldID attrId = (*env)->GetFieldID(env, clazz, attrName, "I");
     assert(attrId != NULL);
 
     jint ret = (*env)->GetIntField(env, obj, attrId);
@@ -51,13 +51,13 @@ unsigned int get_uint_field_value(
 }
 
 long long get_llong_field_value(
-    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error) {
+    JNIEnv* env, jclass clazz, jobject obj, const char* attrName, int* error) {
     assert(env != NULL);
     assert(clazz != NULL);
-    assert(attr_name != NULL);
+    assert(attrName != NULL);
     assert(error != NULL);
 
-    jfieldID attrId = (*env)->GetFieldID(env, clazz, attr_name, "J");
+    jfieldID attrId = (*env)->GetFieldID(env, clazz, attrName, "J");
     assert(attrId != NULL);
 
     jlong ret = (*env)->GetLongField(env, obj, attrId);
@@ -67,13 +67,13 @@ long long get_llong_field_value(
 }
 
 unsigned long long get_ullong_field_value(
-    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error) {
+    JNIEnv* env, jclass clazz, jobject obj, const char* attrName, int* error) {
     assert(env != NULL);
     assert(clazz != NULL);
-    assert(attr_name != NULL);
+    assert(attrName != NULL);
     assert(error != NULL);
 
-    jfieldID attrId = (*env)->GetFieldID(env, clazz, attr_name, "J");
+    jfieldID attrId = (*env)->GetFieldID(env, clazz, attrName, "J");
     assert(attrId != NULL);
 
     jlong ret = (*env)->GetLongField(env, obj, attrId);
@@ -86,13 +86,13 @@ unsigned long long get_ullong_field_value(
 }
 
 long long get_duration_field_value(
-    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, int* error) {
+    JNIEnv* env, jclass clazz, jobject obj, const char* attrName, int* error) {
     assert(env != NULL);
     assert(clazz != NULL);
-    assert(attr_name != NULL);
+    assert(attrName != NULL);
     assert(error != NULL);
 
-    jfieldID attrId = (*env)->GetFieldID(env, clazz, attr_name, "Ljava/time/Duration;");
+    jfieldID attrId = (*env)->GetFieldID(env, clazz, attrName, "Ljava/time/Duration;");
     assert(attrId != NULL);
 
     jobject durationObj = (*env)->GetObjectField(env, obj, attrId);
@@ -123,11 +123,11 @@ int get_enum_value(JNIEnv* env, jclass clazz, jobject enumObj) {
 }
 
 jobject get_object_field(
-    JNIEnv* env, jclass clazz, jobject obj, const char* attr_name, const char* attr_class_name) {
+    JNIEnv* env, jclass clazz, jobject obj, const char* attrName, const char* attrClassName) {
     assert(env != NULL);
     assert(clazz != NULL);
 
-    jfieldID attrId = (*env)->GetFieldID(env, clazz, attr_name, attr_class_name);
+    jfieldID attrId = (*env)->GetFieldID(env, clazz, attrName, attrClassName);
     assert(attrId != NULL);
 
     return (*env)->GetObjectField(env, obj, attrId);

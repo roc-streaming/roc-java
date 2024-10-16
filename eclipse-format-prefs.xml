@@ -8,6 +8,7 @@
     <setting id="org.eclipse.jdt.core.formatter.join_wrapped_lines" value="false"/>
     <setting id="org.eclipse.jdt.core.formatter.comment.format_javadoc_comments" value="false"/>
     <setting id="org.eclipse.jdt.core.formatter.comment.format_line_comments" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.comment.format_block_comments" value="false"/>
 
     <setting id="org.eclipse.jdt.core.formatter.wrap_before_additive_operator" value="false"/>
     <setting id="org.eclipse.jdt.core.formatter.wrap_before_assertion_message_operator" value="false"/>

@@ -1,3 +1,4 @@
+# -*- cmake-tab-width: 4 -*-
 cmake_minimum_required(VERSION 3.10)
 
 project(RocJni C)
@@ -12,21 +13,28 @@ if(APPLE)
 endif()
 
 add_library(roc_jni SHARED
-        src/main/impl/channel_set.c
-        src/main/impl/clock_source.c
-        src/main/impl/common.c
-        src/main/impl/context.c
-        src/main/impl/endpoint.c
-        src/main/impl/fec_encoding.c
-        src/main/impl/frame_encoding.c
-        src/main/impl/logger.c
-        src/main/impl/packet_encoding.c
-        src/main/impl/protocol.c
-        src/main/impl/receiver.c
-        src/main/impl/resampler_backend.c
-        src/main/impl/resampler_profile.c
-        src/main/impl/sender.c
-        )
+    src/main/impl/channel_layout.c
+    src/main/impl/clock_source.c
+    src/main/impl/clock_sync_backend.c
+    src/main/impl/clock_sync_profile.c
+    src/main/impl/common.c
+    src/main/impl/context.c
+    src/main/impl/context_config.c
+    src/main/impl/endpoint.c
+    src/main/impl/fec_encoding.c
+    src/main/impl/format.c
+    src/main/impl/interface_config.c
+    src/main/impl/logger.c
+    src/main/impl/media_encoding.c
+    src/main/impl/packet_encoding.c
+    src/main/impl/protocol.c
+    src/main/impl/receiver.c
+    src/main/impl/receiver_config.c
+    src/main/impl/resampler_backend.c
+    src/main/impl/resampler_profile.c
+    src/main/impl/sender.c
+    src/main/impl/sender_config.c
+)
 
 target_compile_options(roc_jni PRIVATE
     -Wall
@@ -34,7 +42,7 @@ target_compile_options(roc_jni PRIVATE
     -Wno-system-headers
     -Wno-unused-but-set-variable
     -Wno-unused-parameter
-    )
+)
 
 if(NOT ANDROID)
     if (NOT CMAKE_CROSSCOMPILING)
@@ -45,19 +53,19 @@ if(NOT ANDROID)
 endif()
 
 target_include_directories(roc_jni
-                    PRIVATE src/main/impl/
-                    PUBLIC src/main/export/
-                    )
+    PRIVATE src/main/impl/
+    PUBLIC src/main/export/
+)
 
 if(ANDROID)
     # include libroc headers
     target_include_directories(roc_jni SYSTEM PRIVATE
-                            ${ROC_DIR}/include/${ANDROID_ABI})
+        ${ROC_DIR}/include/${ANDROID_ABI})
 
     # link libroc shared library
     add_library(lib_roc SHARED IMPORTED)
     set_target_properties(lib_roc PROPERTIES IMPORTED_LOCATION
-                            ${ROC_DIR}/lib/${ANDROID_ABI}/libroc.so)
+        ${ROC_DIR}/lib/${ANDROID_ABI}/libroc.so)
     target_link_libraries(roc_jni lib_roc)
 else()
     # include libroc headers
@@ -75,22 +83,27 @@ else()
         AND NOT ROC_LIBRARY_PATH STREQUAL "")
         add_library(lib_roc SHARED IMPORTED)
         set_target_properties(lib_roc PROPERTIES IMPORTED_LOCATION
-                ${ROC_LIBRARY_PATH}/libroc${CMAKE_SHARED_LIBRARY_SUFFIX})
+            ${ROC_LIBRARY_PATH}/libroc${CMAKE_SHARED_LIBRARY_SUFFIX})
         target_link_libraries(roc_jni lib_roc)
     elseif(DEFINED ENV{ROC_LIBRARY_PATH}
         AND NOT ENV{ROC_LIBRARY_PATH} STREQUAL "")
         add_library(lib_roc SHARED IMPORTED)
         set_target_properties(lib_roc PROPERTIES IMPORTED_LOCATION
-                $ENV{ROC_LIBRARY_PATH}/libroc${CMAKE_SHARED_LIBRARY_SUFFIX})
+            $ENV{ROC_LIBRARY_PATH}/libroc${CMAKE_SHARED_LIBRARY_SUFFIX})
         target_link_libraries(roc_jni lib_roc)
     else()
         target_link_libraries(roc_jni -lroc)
     endif()
 endif()
 
-add_custom_command(TARGET roc_jni POST_BUILD
+add_custom_command(
     COMMENT "Copying compile_commands.json to project root"
-    COMMAND "${CMAKE_COMMAND}" -E copy
-        "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json"
-        "${PROJECT_SOURCE_DIR}/compile_commands.json"
-    )
+    DEPENDS roc_jni
+    OUTPUT ${PROJECT_SOURCE_DIR}/compile_commands.json
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json
+        ${PROJECT_SOURCE_DIR}/compile_commands.json
+)
+add_custom_target(compile_commands ALL
+    DEPENDS ${PROJECT_SOURCE_DIR}/compile_commands.json
+)

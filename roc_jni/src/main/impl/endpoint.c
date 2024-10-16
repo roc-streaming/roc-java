@@ -8,8 +8,6 @@
 
 #include <stdlib.h>
 
-#define ENDPOINT_CLASS PACKAGE_BASE_NAME "/Endpoint"
-
 int endpoint_unmarshal(JNIEnv* env, roc_endpoint** endpoint, jobject jendpoint) {
     jclass endpointClass = NULL;
     jobject jprotocol = NULL;
@@ -39,16 +37,21 @@ int endpoint_unmarshal(JNIEnv* env, roc_endpoint** endpoint, jobject jendpoint) 
 
     // protocol
     jprotocol = get_object_field(env, endpointClass, jendpoint, "protocol", "L" PROTOCOL_CLASS ";");
-    assert(jprotocol != NULL);
-    protocol = get_protocol(env, jprotocol);
-    if ((err = roc_endpoint_set_protocol(*endpoint, protocol)) != 0) goto out;
+    if (jprotocol != NULL) {
+        protocol = get_protocol(env, jprotocol);
+        if ((err = roc_endpoint_set_protocol(*endpoint, protocol)) != 0) goto out;
+    }
 
     // host
     jhost = (jstring) get_object_field(env, endpointClass, jendpoint, "host", "Ljava/lang/String;");
-    assert(jhost != NULL);
-    host = (*env)->GetStringUTFChars(env, jhost, 0);
-    assert(host != NULL);
-    if ((err = roc_endpoint_set_host(*endpoint, host)) != 0) goto out;
+    if (jhost != NULL) {
+        host = (*env)->GetStringUTFChars(env, jhost, 0);
+        if (host == NULL) {
+            err = -1;
+            goto out;
+        }
+        if ((err = roc_endpoint_set_host(*endpoint, host)) != 0) goto out;
+    }
 
     // port
     port = get_int_field_value(env, endpointClass, jendpoint, "port", &err);
@@ -60,7 +63,10 @@ int endpoint_unmarshal(JNIEnv* env, roc_endpoint** endpoint, jobject jendpoint) 
         env, endpointClass, jendpoint, "resource", "Ljava/lang/String;");
     if (jresource != NULL) {
         resource = (*env)->GetStringUTFChars(env, jresource, 0);
-        assert(resource != NULL);
+        if (resource == NULL) {
+            err = -1;
+            goto out;
+        }
         if ((err = roc_endpoint_set_resource(*endpoint, resource)) != 0) goto out;
     }
 
@@ -158,7 +164,11 @@ JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_init(
         goto out;
     }
     uri = (*env)->GetStringUTFChars(env, juri, 0);
-    assert(uri != NULL);
+    if (uri == NULL) {
+        jclass exceptionClass = (*env)->FindClass(env, ILLEGAL_ARGUMENTS_EXCEPTION);
+        (*env)->ThrowNew(env, exceptionClass, "Bad uri argument");
+        goto out;
+    }
     if (roc_endpoint_set_uri(endpoint, uri) != 0) {
         jclass exceptionClass = (*env)->FindClass(env, ILLEGAL_ARGUMENTS_EXCEPTION);
         (*env)->ThrowNew(env, exceptionClass, "Bad uri argument");

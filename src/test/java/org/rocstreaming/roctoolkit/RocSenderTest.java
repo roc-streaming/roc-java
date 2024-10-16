@@ -19,9 +19,13 @@ public class RocSenderTest extends BaseTest {
 
     private static final int SAMPLE_RATE = 44100;
     public static final RocSenderConfig CONFIG = RocSenderConfig.builder()
-            .frameSampleRate(SAMPLE_RATE)
-            .frameChannels(ChannelSet.STEREO)
-            .frameEncoding(FrameEncoding.PCM_FLOAT)
+            .frameEncoding(
+                    MediaEncoding.builder()
+                            .rate(SAMPLE_RATE)
+                            .format(Format.PCM_FLOAT32)
+                            .channels(ChannelLayout.STEREO)
+                            .build()
+            )
             .build();
     private final int SINE_RATE = 440;
     private final int SINE_SAMPLES = (SAMPLE_RATE * 5);
@@ -67,20 +71,22 @@ public class RocSenderTest extends BaseTest {
     @Test
     public void testCreationAndDeinitializationWithFullConfig() {
         RocSenderConfig config = RocSenderConfig.builder()
-                .frameSampleRate(SAMPLE_RATE)
-                .frameChannels(ChannelSet.STEREO)
-                .frameEncoding(FrameEncoding.PCM_FLOAT)
-                .packetSampleRate(44100)
-                .packetChannels(ChannelSet.STEREO)
-                .packetEncoding(PacketEncoding.AVP_L16)
+                .frameEncoding(
+                        MediaEncoding.builder()
+                                .rate(SAMPLE_RATE)
+                                .format(Format.PCM_FLOAT32)
+                                .channels(ChannelLayout.STEREO)
+                                .build()
+                )
+                .packetEncoding(PacketEncoding.AVP_L16_STEREO)
                 .packetLength(Duration.ofNanos(2000))
                 .packetInterleaving(1)
-                .clockSource(ClockSource.INTERNAL)
-                .resamplerBackend(ResamplerBackend.BUILTIN)
-                .resamplerProfile(ResamplerProfile.HIGH)
                 .fecEncoding(FecEncoding.RS8M)
                 .fecBlockSourcePackets(10)
                 .fecBlockRepairPackets(10)
+                .clockSource(ClockSource.INTERNAL)
+                .resamplerBackend(ResamplerBackend.BUILTIN)
+                .resamplerProfile(ResamplerProfile.HIGH)
                 .build();
         assertDoesNotThrow(() -> {
             //noinspection EmptyTryBlock
@@ -89,7 +95,7 @@ public class RocSenderTest extends BaseTest {
         });
     }
 
-    private static Stream<Arguments> testInvalidCreationArguments() throws Exception {
+    private static Stream<Arguments> invalidCreationArguments() throws Exception {
         return Stream.of(
                 Arguments.of(
                         "context must not be null",
@@ -105,13 +111,38 @@ public class RocSenderTest extends BaseTest {
     }
 
     @ParameterizedTest
-    @MethodSource("testInvalidCreationArguments")
+    @MethodSource("invalidCreationArguments")
     public void testInvalidCreation(String errorMessage, Class<Exception> exceptionClass, RocContext context, RocSenderConfig config) {
         Exception exception = assertThrows(exceptionClass, () -> new RocSender(context, config));
         assertEquals(errorMessage, exception.getMessage());
     }
 
-    private static Stream<Arguments> testInvalidSetOutgoingAddressArguments() {
+    @Test
+    void testConfigureBeforeConnect() throws Exception {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
+            InterfaceConfig ifaceConfig = InterfaceConfig.builder()
+                    .outgoingAddress("127.0.0.1")
+                    .build();
+            assertDoesNotThrow(() -> sender.configure(Slot.DEFAULT, Interface.AUDIO_SOURCE, ifaceConfig));
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
+        }
+    }
+
+    @Test
+    void testConfigureAfterConnect() throws Exception {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
+            InterfaceConfig ifaceConfig = InterfaceConfig.builder()
+                    .outgoingAddress("127.0.0.1")
+                    .build();
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
+            sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
+            Exception exception = assertThrows(Exception.class, () -> sender.configure(Slot.DEFAULT, Interface.AUDIO_SOURCE, ifaceConfig));
+            assertEquals("Error configuring sender", exception.getMessage());
+        }
+    }
+
+    private static Stream<Arguments> invalidConfigureArguments() {
         return Stream.of(
                 Arguments.of(
                         "slot must not be null",
@@ -122,73 +153,22 @@ public class RocSenderTest extends BaseTest {
                         "iface must not be null",
                         Slot.DEFAULT,
                         null,
-                        "0.0.0.0"),
-                Arguments.of(
-                        "ip must not be empty",
-                        Slot.DEFAULT,
-                        Interface.AUDIO_SOURCE,
-                        null)
+                        "0.0.0.0")
         );
     }
 
     @ParameterizedTest
-    @MethodSource("testInvalidSetOutgoingAddressArguments")
-    public void testInvalidSetOutgoingAddress(String errorMessage, Slot slot, Interface iface, String ip) throws Exception {
+    @MethodSource("invalidConfigureArguments")
+    public void testInvalidConfigure(String errorMessage, Slot slot, Interface iface, String ip) throws Exception {
         try (RocSender receiver = new RocSender(context, CONFIG)) {
+            InterfaceConfig ifaceConfig = InterfaceConfig.builder()
+                    .outgoingAddress(ip)
+                    .build();
             IllegalArgumentException exception = assertThrows(
                     IllegalArgumentException.class,
-                    () -> receiver.setOutgoingAddress(slot, iface, ip)
+                    () -> receiver.configure(slot, iface, ifaceConfig)
             );
             assertEquals(errorMessage, exception.getMessage());
-        }
-    }
-
-    @Test
-    void testSetOutgoingAddress() throws Exception {
-        try (RocSender sender = new RocSender(context, CONFIG)) {
-            assertDoesNotThrow(() -> sender.setOutgoingAddress(Slot.DEFAULT, Interface.AUDIO_SOURCE, "127.0.0.1"));
-            sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
-            sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
-        }
-    }
-
-    @Test
-    void testSetOutgoingAddressAfterConnect() throws Exception {
-        try (RocSender sender = new RocSender(context, CONFIG)) {
-            sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
-            sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
-            Exception exception = assertThrows(Exception.class, () -> sender.setOutgoingAddress(Slot.DEFAULT, Interface.AUDIO_SOURCE, "127.0.0.1"));
-            assertEquals("Can't set outgoing address", exception.getMessage());
-        }
-    }
-
-    @Disabled("bind not implemented in roc 0.2.x yet")
-    @Test
-    public void testBind() throws Exception {
-        try (RocSender sender = new RocSender(context, CONFIG)) {
-            assertDoesNotThrow(() -> sender.bind(new Endpoint("rtp+rs8m://127.0.0.1:0")));
-        }
-    }
-
-    @Disabled("bind not implemented in roc 0.2.x yet")
-    @Test
-    public void testBindEphemeralPort() throws Exception {
-        try (RocSender sender = new RocSender(context, CONFIG)) {
-            Endpoint senderEndpoint = new Endpoint("rtp+rs8m://127.0.0.1:0");
-            sender.bind(senderEndpoint);
-            assertNotEquals(0, senderEndpoint.getPort());
-        }
-    }
-
-    @Disabled("bind not implemented in roc 0.2.x yet")
-    @Test
-    public void testInvalidBind() throws Exception {
-        try (RocSender sender = new RocSender(context, CONFIG)) {
-            assertThrows(IllegalArgumentException.class, () -> sender.bind(null));
-            sender.bind(new Endpoint("rtp+rs8m://127.0.0.1:0"));
-            assertThrows(IOException.class, () -> {
-                sender.bind(new Endpoint("rtp+rs8m://127.0.0.1:0"));
-            });
         }
     }
 
@@ -202,7 +182,7 @@ public class RocSenderTest extends BaseTest {
         }
     }
 
-    private static Stream<Arguments> testInvalidConnectArguments() {
+    private static Stream<Arguments> invalidConnectArguments() {
         return Stream.of(
                 Arguments.of(
                         "slot must not be null",
@@ -223,7 +203,7 @@ public class RocSenderTest extends BaseTest {
     }
 
     @ParameterizedTest
-    @MethodSource("testInvalidConnectArguments")
+    @MethodSource("invalidConnectArguments")
     public void testInvalidConnect(String errorMessage, Slot slot, Interface iface, Endpoint endpoint) throws Exception {
         try (RocSender sender = new RocSender(context, CONFIG)) {
             IllegalArgumentException exception = assertThrows(
@@ -231,6 +211,36 @@ public class RocSenderTest extends BaseTest {
                     () -> sender.connect(slot, iface, endpoint)
             );
             assertEquals(errorMessage, exception.getMessage());
+        }
+    }
+
+    @Test
+    public void testUnlink() throws Exception {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
+            assertDoesNotThrow(() -> {
+                Slot slot1 = new Slot(1);
+                Slot slot2 = new Slot(2);
+                sender.connect(slot1, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:10001"));
+                sender.connect(slot2, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:10002"));
+                sender.unlink(slot1);
+                sender.unlink(slot2);
+            });
+        }
+    }
+
+    @Test
+    public void testInvalidUnlink() throws Exception {
+        try (RocSender sender = new RocSender(context, CONFIG)) {
+            assertDoesNotThrow(() -> {
+                Slot slot1 = new Slot(1);
+                Slot slot2 = new Slot(2);
+                sender.connect(slot1, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:10001"));
+                sender.connect(slot2, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:10002"));
+                sender.unlink(slot1);
+                assertThrows(IllegalArgumentException.class, () -> sender.unlink(slot1));
+                sender.unlink(slot2);
+                assertThrows(IllegalArgumentException.class, () -> sender.unlink(slot2));
+            });
         }
     }
 
@@ -248,9 +258,6 @@ public class RocSenderTest extends BaseTest {
     @Test
     public void testInvalidWrite() throws Exception {
         try (RocSender sender = new RocSender(context, CONFIG)) {
-            // bind not implemented in roc 0.2.x yet
-            // assertThrows(IOException.class, () -> sender.write(samples)); // write before bind
-            // sender.bind();
             sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://0.0.0.0:10001"));
             sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://0.0.0.0:10002"));
             assertThrows(IllegalArgumentException.class, () -> sender.write(null));

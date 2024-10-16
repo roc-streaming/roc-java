@@ -22,16 +22,24 @@ public class RocSenderReceiverTest extends BaseTest {
             .build();
 
     private static final RocSenderConfig SENDER_CONFIG = RocSenderConfig.builder()
-            .frameSampleRate(SAMPLE_RATE)
-            .frameChannels(ChannelSet.STEREO)
-            .frameEncoding(FrameEncoding.PCM_FLOAT)
+            .frameEncoding(
+                    MediaEncoding.builder()
+                            .rate(SAMPLE_RATE)
+                            .format(Format.PCM_FLOAT32)
+                            .channels(ChannelLayout.STEREO)
+                            .build()
+            )
             .clockSource(ClockSource.INTERNAL)
             .build();
 
     private static final RocReceiverConfig RECEIVER_CONFIG = RocReceiverConfig.builder()
-            .frameSampleRate(SAMPLE_RATE)
-            .frameChannels(ChannelSet.STEREO)
-            .frameEncoding(FrameEncoding.PCM_FLOAT)
+            .frameEncoding(
+                    MediaEncoding.builder()
+                            .rate(SAMPLE_RATE)
+                            .format(Format.PCM_FLOAT32)
+                            .channels(ChannelLayout.STEREO)
+                            .build()
+            )
             .clockSource(ClockSource.INTERNAL)
             .build();
 

@@ -41,4 +41,18 @@ class Check {
         }
         return value;
     }
+
+    static int inRange(int value, int min_value, int max_value, String name) {
+        if (value < min_value || value > max_value) {
+            throw new IllegalArgumentException(name + " must be in range [" + min_value + "; " + max_value + "]");
+        }
+        return value;
+    }
+
+    static long inRange(long value, long min_value, long max_value, String name) {
+        if (value < min_value || value > max_value) {
+            throw new IllegalArgumentException(name + " must be in range [" + min_value + "; " + max_value + "]");
+        }
+        return value;
+    }
 }

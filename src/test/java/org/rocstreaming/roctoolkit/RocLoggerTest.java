@@ -18,7 +18,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RocLoggerTest extends BaseTest {
 
-    private static Stream<Arguments> testLogLevelProvider() {
+    private Handler wrapHandler(Consumer<LogRecord> consumer) {
+        return new MemoryHandler(new ConsoleHandler(), 1000, Level.ALL) {
+            @Override
+            public synchronized void publish(LogRecord record) {
+                consumer.accept(record);
+            }
+        };
+    }
+
+    private static Stream<Arguments> allLogLevels() {
         return Stream.of(
                 Arguments.of(Level.OFF, false, false),
                 Arguments.of(Level.SEVERE, true, false),
@@ -29,68 +38,68 @@ public class RocLoggerTest extends BaseTest {
     }
 
     @ParameterizedTest
-    @MethodSource("testLogLevelProvider")
+    @MethodSource("allLogLevels")
     public void testLogLevel(Level level, boolean expectError, boolean expectInfo) {
         Level originalLevel = RocLogger.LOGGER.getLevel();
-
         Map<Level, Integer> msgCount = new ConcurrentHashMap<>();
-        Handler handler = wrapHandler(record -> msgCount.compute(record.getLevel(), (k, v) -> v == null ? 1 : v + 1));
+        Handler handler = wrapHandler(
+                record -> msgCount.compute(record.getLevel(), (k, v) -> v == null ? 1 : v + 1));
         RocLogger.LOGGER.addHandler(handler);
+        RocLogger.LOGGER.setLevel(Level.FINE);
 
-        assertDoesNotThrow(() -> {
-            RocLogger.LOGGER.setLevel(level);
-            try {
-                // trigger error logs
-                new Endpoint("invalid");
-            } catch (Exception ignored) {
-            }
-            // trigger info logs
-            //noinspection EmptyTryBlock
-            try (RocContext ignored = new RocContext()) {
-            }
-        });
-        await().atMost(Duration.FIVE_MINUTES)
-                .untilAsserted(() -> {
-                    assertEquals(expectError, msgCount.containsKey(Level.SEVERE));
-                    assertEquals(expectInfo, msgCount.containsKey(Level.INFO));
-                });
-        RocLogger.LOGGER.removeHandler(handler);
-        RocLogger.LOGGER.setLevel(originalLevel);
+        try {
+            assertDoesNotThrow(() -> {
+                RocLogger.LOGGER.setLevel(level);
+                try {
+                    // trigger error logs
+                    new Endpoint("invalid");
+                } catch (Exception ignored) {
+                }
+                // trigger info logs
+                //noinspection EmptyTryBlock
+                try (RocContext ignored = new RocContext()) {
+                }
+            });
+            await().atMost(Duration.FIVE_MINUTES)
+                    .untilAsserted(() -> {
+                        assertEquals(expectError, msgCount.containsKey(Level.SEVERE));
+                        assertEquals(expectInfo, msgCount.containsKey(Level.INFO));
+                    });
+        } finally {
+            RocLogger.LOGGER.removeHandler(handler);
+            RocLogger.LOGGER.setLevel(originalLevel);
+        }
     }
 
     @Test
     public void testSetHandler() throws Exception {
+        Level originalLevel = RocLogger.LOGGER.getLevel();
         AtomicBoolean hasLogOpen = new AtomicBoolean();
         AtomicBoolean hasLogClose = new AtomicBoolean();
         Handler handler = wrapHandler(record -> {
-            if (!record.getSourceClassName().equals("libroc")) {
+            if (!record.getSourceClassName().startsWith("roc_")) {
                 return;
             }
-            if (record.getMessage().startsWith("roc_context_open")) {
+            if (record.getMessage().contains("roc_context_open")) {
                 hasLogOpen.set(true);
             }
-            if (record.getMessage().startsWith("roc_context_close")) {
+            if (record.getMessage().contains("roc_context_close")) {
                 hasLogClose.set(true);
             }
         });
         RocLogger.LOGGER.addHandler(handler);
+        RocLogger.LOGGER.setLevel(Level.FINE);
 
-        //noinspection EmptyTryBlock
-        try (RocContext ignored = new RocContext()) {
-        }
-
-        await().atMost(Duration.FIVE_MINUTES)
-                .until(() -> hasLogOpen.get() && hasLogClose.get());
-
-        RocLogger.LOGGER.removeHandler(handler);
-    }
-
-    private Handler wrapHandler(Consumer<LogRecord> consumer) {
-        return new MemoryHandler(new ConsoleHandler(), 1000, Level.ALL) {
-            @Override
-            public synchronized void publish(LogRecord record) {
-                consumer.accept(record);
+        try {
+            //noinspection EmptyTryBlock
+            try (RocContext ignored = new RocContext()) {
             }
-        };
+
+            await().atMost(Duration.FIVE_MINUTES)
+                    .until(() -> hasLogOpen.get() && hasLogClose.get());
+        } finally {
+            RocLogger.LOGGER.removeHandler(handler);
+            RocLogger.LOGGER.setLevel(originalLevel);
+        }
     }
 }

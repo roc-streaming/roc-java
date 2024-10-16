@@ -39,6 +39,6 @@ public class Slot {
 
     @Override
     public String toString() {
-        return "Slot(" + value + ')';
+        return "Slot(" + value + ")";
     }
 }

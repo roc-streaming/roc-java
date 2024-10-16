@@ -9,19 +9,27 @@ extern "C" {
 #endif
 /*
  * Class:     org_rocstreaming_roctoolkit_RocContext
- * Method:    open
+ * Method:    nativeOpen
  * Signature: (Lorg/rocstreaming/roctoolkit/RocContextConfig;)J
  */
-JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_RocContext_open
+JNIEXPORT jlong JNICALL Java_org_rocstreaming_roctoolkit_RocContext_nativeOpen
   (JNIEnv *, jclass, jobject);
 
 /*
  * Class:     org_rocstreaming_roctoolkit_RocContext
- * Method:    close
+ * Method:    nativeClose
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocContext_close
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocContext_nativeClose
   (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_rocstreaming_roctoolkit_RocContext
+ * Method:    nativeRegisterEncoding
+ * Signature: (JILorg/rocstreaming/roctoolkit/MediaEncoding;)V
+ */
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocContext_nativeRegisterEncoding
+  (JNIEnv *, jclass, jlong, jint, jobject);
 
 #ifdef __cplusplus
 }

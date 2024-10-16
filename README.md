@@ -37,13 +37,17 @@ Documentation for the C API can be found [here](https://roc-streaming.org/toolki
 #### Sender
 
 ```java
-import org.rocstreaming.roctoolkit;
+import org.rocstreaming.roctoolkit.*;
 
 try (RocContext context = new RocContext()) {
     RocSenderConfig config = RocSenderConfig.builder()
-        .frameSampleRate(44100)
-        .frameChannels(ChannelSet.STEREO)
-        .frameEncoding(FrameEncoding.PCM_FLOAT)
+        .frameEncoding(
+                MediaEncoding.builder()
+                        .rate(44100)
+                        .format(Format.PCM_FLOAT32)
+                        .channels(ChannelLayout.STEREO)
+                        .build()
+        )
         .fecEncoding(FecEncoding.RS8M)
         .clockSource(ClockSource.INTERNAL)
         .build();
@@ -67,13 +71,17 @@ try (RocContext context = new RocContext()) {
 #### Receiver
 
 ```java
-import org.rocstreaming.roctoolkit;
+import org.rocstreaming.roctoolkit.*;
 
 try (RocContext context = new RocContext()) {
     RocReceiverConfig config = RocReceiverConfig.builder()
-        .frameSampleRate(44100)
-        .frameChannels(ChannelSet.STEREO)
-        .frameEncoding(FrameEncoding.PCM_FLOAT)
+        .frameEncoding(
+                MediaEncoding.builder()
+                        .rate(44100)
+                        .format(Format.PCM_FLOAT32)
+                        .channels(ChannelLayout.STEREO)
+                        .build()
+        )
         .clockSource(ClockSource.INTERNAL)
         .build();
 

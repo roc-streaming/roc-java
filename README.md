@@ -219,135 +219,38 @@ cd android
 
 AAR is located at `android/roc-android/build/outputs/aar`. It contains `libroc` built for all Android architectures.
 
-## Android variables
+## Android build variables
 
-These variables are used when building for Android, with or without Docker. Each variable has default value and is optional.
+These environment variables are used when building for Android, with or without Docker. Each variable has default value and is optional.
 
 When docker is used, corresponding components (SDK, NDK, etc) will be installed automatically according to the specified variables. When docker is not used, you should install them manually before build.
 
-| Variable              | Description                                        |
-|-----------------------|----------------------------------------------------|
-| `JAVA_VERSION`        | Which JDK to pull (when using docker)              |
-| `ROC_REVISION`        | Which Roc Toolkit to build (when using docker)     |
-| `ROC_DIR`             | Which Roc Toolkit to use (when not using docker)   |
-| `SDK_LEVEL`           | `android-platform` version and `compileSdkVersion` |
-| `API_LEVEL`           | `minSdkVersion` and `targetSdkVersion`             |
-| `NDK_VERSION`         | Which `ndk` to install/use                         |
-| `BUILD_TOOLS_VERSION` | Which `build-tools` to install/use                 |
-| `CMAKE_VERSION`       | Which `cmake` to install/use                       |
+In both cases, export this variables before invoking `android_docker.sh` or `gradlew`.
 
-## Developer instructions
+| Variable              | Description                                         |
+|-----------------------|-----------------------------------------------------|
+| `JAVA_VERSION`        | Which JDK to pull (when using docker)               |
+| `ROC_REVISION`        | Which Roc Toolkit to build (when using docker)      |
+| `ROC_DIR`             | Which Roc Toolkit to use (when not using docker)    |
+| `SDK_LEVEL`           | `android-platform` version and `compileSdkVersion`  |
+| `API_LEVEL`           | `minSdkVersion` and `targetSdkVersion`              |
+| `NDK_VERSION`         | Which `ndk` to install/use                          |
+| `BUILD_TOOLS_VERSION` | Which `build-tools` to install/use                  |
+| `CMAKE_VERSION`       | Which `cmake` to install/use                        |
+| `AVD_IMAGE`           | Which image to use for emulator (when using docker) |
+| `AVD_ARCH`            | Which arch to use for emulator (when using docker)  |
 
-#### Additional gradle targets
+## Hacking
 
-Build only native code (on desktop):
-```
-./gradlew roc_jni:build
-```
+Contributions are always welcome! You can find issues needing help using [help wanted](https://github.com/roc-streaming/roc-vad/labels/help%20wanted) and [good first issue](https://github.com/roc-streaming/roc-vad/labels/good%20first%20issue) labels.
 
-Run tests on desktop:
-```
-./gradlew test
-```
-
-Run tests on device or emulator (you'll have to create one):
-```
-cd android
-./gradlew cAT --info --stacktrace
-```
-
-Generate documentation:
-```
-./gradlew javadoc
-```
-
-Format C code:
-```
-./gradlew clangFormat
-```
-
-#### Android docker commands
-
-This command will pull docker image, install Android SDK and NDK inside it, download and build Roc Toolkit, build JNI bindings, and package everything into AAR:
-```
-./scripts/android_docker.sh build
-```
-
-To run instrumented tests in Android emulator inside docker image, use this:
-```
-./scripts/android_docker.sh test
-```
-
-To remove build results, run:
-```
-./scripts/android_docker.sh clean
-```
-
-To remove build results and docker container, run:
-```
-./scripts/android_docker.sh purge
-```
-
-(Normally, docker container remains running in the background with a Gradle daemon).
-
-If desired, you can export some variables for Android environment configuration; each variable has default value and is optional:
-```
-export ROC_REVISION=master
-export JAVA_VERSION=17
-export SDK_LEVEL=31
-export API_LEVEL=29
-export NDK_VERSION=26.3.11579264
-export BUILD_TOOLS_VERSION=35.0.0
-export CMAKE_VERSION=3.18.1
-export AVD_IMAGE=default
-export AVD_ARCH=x86_64
-
-./scripts/android_docker.sh [build|test]
-```
-
-Additional information on the `env-android` docker image, which is used by this script, is available [here](https://roc-streaming.org/toolkit/docs/portability/android_environment.html).
-
-#### Compatibility settings in gradle
-
-These settings define requirements for build and target machines:
-
-* `gradle/wrapper/gradle-wrapper.properties`
-
-    * `distributionUrl` - Gradle version (places limits on both build and target)
-
-* `build.gradle`, `commons/build.gradle`, `cmake-library/build.gradle`
-
-    * `sourceCompatibility` - Minimum build-time Java version (Desktop)
-    * `targetCompatibility` - Minimum run-time Java version (Desktop)
-
-* `android/build.gradle`
-
-    * `com.android.tools.build:gradle` - Android Gradle Plugin version (must be compatible with gradle)
-
-* `android/roc-android/build.gradle`
-
-    * `sourceCompatibility` - Minimum build-time Java version (Android)
-    * `targetCompatibility` - Minimum run-time Java version (Android)
-    * `compileSdkVersion` - Build-time Android version
-    * `minSdkVersion` - Minimum run-time Android version
-    * `targetSdkVersion` - Tested run-time Android version
-
-#### Publishing Android release
-
-Release workflow:
- * make github release with tag version, e.g. `v0.1.0`
- * GitHub Actions will run release step and publish artifacts to artifactory
-
-Followed env variables should be set in GitHub Actions:
- * `OSSRH_USERNAME` - Sonatype OSSRH user
- * `OSSRH_PASSWORD` - Sonatype OSSRH password
- * `SIGNING_KEY_ID` - gpg key id
- * `SIGNING_PASSWORD` - gpg passphrase
- * `SIGNING_KEY` - gpg private key
+See [HACKING.md](HACKING.md) for details about the project internals.
 
 ## Authors
 
-See [here](https://github.com/roc-streaming/roc-java/graphs/contributors).
+You can find list of authors and contributors [here](AUTHORS.md). Feel free to send a pull request if you're missing from the list or want to change your appearance.
+
+For Roc Toolkit authors, see [here](https://roc-streaming.org/toolkit/docs/about_project/authors.html).
 
 ## License
 

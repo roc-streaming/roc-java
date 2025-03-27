@@ -124,3 +124,10 @@ task clangFormat {
         }
     }
 }
+
+// update AUTHORS.md
+task mdAuthors {
+    doLast {
+        exec { commandLine "md-authors", "--format", "modern", "--append", "AUTHORS.md" }
+    }
+}

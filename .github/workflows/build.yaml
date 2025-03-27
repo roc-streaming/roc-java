@@ -1,27 +1,26 @@
-name: build
+name: "build"
 
 on:
-  # build on manual trigger from web interface
-  workflow_dispatch:
-
-  # build on automatic trigger from roc-toolkit
-  repository_dispatch:
-
   push:
     branches:
       - main
+      - v*
     tags:
       - v*
 
   pull_request:
-    branches:
-      - main
+
+  repository_dispatch:
+    types:
+      - trigger_build
+
+  workflow_dispatch:
 
   schedule:
     - cron: '0 0 * * 1'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: build-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -216,7 +215,10 @@ jobs:
 
   release:
     needs: [desktop, android-linux, android-osx]
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: |
+      github.repository_owner == 'roc-streaming' &&
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v')
 
     name: publish
     runs-on: ubuntu-24.04

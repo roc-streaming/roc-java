@@ -1,0 +1,41 @@
+name: "release"
+
+on:
+  push:
+    tags:
+      - v*
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}{{ github.event.pull_request.number || github.ref }}
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  release:
+    needs: [build]
+
+    runs-on: ubuntu-24.04
+    env:
+      OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+      OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+      SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+      SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+      SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Choose roc-toolkit revision
+        run: echo ROC_REVISION=$(scripts/roc_revision.py) >> $GITHUB_ENV
+
+      - name: Publish
+        run: scripts/android_docker.sh publish

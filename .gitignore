@@ -62,6 +62,7 @@ atlassian-ide-plugin.xml
 .project
 .settings
 .metadata
+.factorypath
 
 # NetBeans specific files/directories
 .nbattrs

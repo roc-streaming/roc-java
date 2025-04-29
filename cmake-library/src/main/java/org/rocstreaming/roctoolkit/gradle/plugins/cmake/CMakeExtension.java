@@ -79,7 +79,7 @@ public class CMakeExtension {
                 this.generator.set(GENERATOR.MAKE);
             else if (generator.equals("ninja"))
                 this.generator.set(GENERATOR.NINJA);
-            else 
+            else
                 throw new IllegalArgumentException("generator '" + generator + "' is not supported. Choose one from 'make' or 'ninja'.");
         }
     }

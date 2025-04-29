@@ -59,7 +59,8 @@ public class RocSenderTest extends BaseTest {
     public void testCreationAndDeinitialization() {
         assertDoesNotThrow(() -> {
             //noinspection EmptyTryBlock
-            try (RocSender ignored = new RocSender(context, CONFIG)) {}
+            try (RocSender ignored = new RocSender(context, CONFIG)) {
+            }
         });
     }
 

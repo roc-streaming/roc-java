@@ -28,7 +28,8 @@ public class RocContextTest extends BaseTest {
             try (RocContext context = new RocContext()) {
                 sender = new RocSender(context, RocSenderTest.CONFIG);
             } finally {
-                if (sender != null) sender.close();
+                if (sender != null)
+                    sender.close();
             }
         });
     }
@@ -40,7 +41,8 @@ public class RocContextTest extends BaseTest {
             try (RocContext context = new RocContext()) {
                 receiver = new RocReceiver(context, RocReceiverTest.CONFIG);
             } finally {
-                if (receiver != null) receiver.close();
+                if (receiver != null)
+                    receiver.close();
             }
         });
     }

@@ -17,5 +17,6 @@ class RocLibrary {
         }
     }
 
-    private RocLibrary() {}
+    private RocLibrary() {
+    }
 }

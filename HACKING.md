@@ -22,6 +22,11 @@ Generate documentation:
 ./gradlew javadoc
 ```
 
+Format Java code:
+```
+./gradlew spotlessApply
+```
+
 Format C code:
 ```
 ./gradlew clangFormat

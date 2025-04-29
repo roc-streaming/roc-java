@@ -4,6 +4,8 @@ plugins {
     id "jacoco"
     id "com.adarshr.test-logger" version "2.0.0"
     id "io.franzbecker.gradle-lombok" version "5.0.0"
+    // formatting
+    id "com.diffplug.spotless" version "7.0.3"
 }
 
 apply from: "common.gradle"
@@ -105,6 +107,23 @@ javadoc {
     options.addStringOption("Xdoclint:none", "-quiet")
 }
 
+// format Java code
+spotless {
+    java {
+        target fileTree(dir: projectDir, include: "**/*.java").filter { file ->
+            !file.text.contains("// Code generated")
+        }.collect {
+            it.path.replace(projectDir.path + File.separator, "")
+        }
+        eclipse().configFile("eclipse-format-prefs.xml")
+        leadingTabsToSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+tasks.named("spotlessJava").configure {
+    dependsOn("compileJava")
+}
 
 // format C code
 task clangFormat {

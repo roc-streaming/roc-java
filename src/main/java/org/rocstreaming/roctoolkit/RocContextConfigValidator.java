@@ -1,6 +1,5 @@
 package org.rocstreaming.roctoolkit;
 
-
 /**
  * A <code>RocContextConfigValidator</code> adds validation to RocContextConfig builder.
  */

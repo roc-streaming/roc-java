@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-
 public class RocSenderReceiverTest extends BaseTest {
 
     private static final int SAMPLE_RATE = 44100;

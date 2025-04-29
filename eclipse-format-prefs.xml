@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<profiles version="21">
+  <profile kind="CodeFormatterProfile" name="roc" version="21">
+
+    <setting id="org.eclipse.jdt.core.formatter.comment.line_length" value="240"/>
+    <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="240"/>
+
+    <setting id="org.eclipse.jdt.core.formatter.join_wrapped_lines" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.comment.format_javadoc_comments" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.comment.format_line_comments" value="false"/>
+
+    <setting id="org.eclipse.jdt.core.formatter.wrap_before_additive_operator" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.wrap_before_assertion_message_operator" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.wrap_before_assignment_operator" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.wrap_before_bitwise_operator" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.wrap_before_conditional_operator" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.wrap_before_logical_operator" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.wrap_before_multiplicative_operator" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.wrap_before_relational_operator" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.wrap_before_shift_operator" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.wrap_before_string_concatenation" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.wrap_before_switch_case_arrow_operator" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.wrap_outer_expressions_when_nested" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.wrap_before_or_operator_multicatch" value="false"/>
+
+    <setting id="org.eclipse.jdt.core.formatter.parentheses_positions_in_method_declaration" value="preserve_positions"/>
+    <setting id="org.eclipse.jdt.core.formatter.parentheses_positions_in_method_invocation" value="preserve_positions"/>
+    <setting id="org.eclipse.jdt.core.formatter.parentheses_positions_in_try_clause" value="preserve_positions"/>
+
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_colon_in_case" value="do not insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_after_colon_in_case" value="do not insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_colon_in_default" value="do not insert"/>
+  </profile>
+</profiles>

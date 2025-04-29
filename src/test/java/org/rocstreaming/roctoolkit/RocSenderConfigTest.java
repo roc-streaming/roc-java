@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RocSenderConfigTest {
 
-
     private static RocSenderConfig.Builder validBuilder() {
         return RocSenderConfig.builder()
                 .frameSampleRate(44100)

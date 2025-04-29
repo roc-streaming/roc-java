@@ -145,5 +145,4 @@ public class Endpoint {
     private native void init(String uri) throws IllegalArgumentException;
 
     private native void validate() throws IllegalArgumentException;
-
 }

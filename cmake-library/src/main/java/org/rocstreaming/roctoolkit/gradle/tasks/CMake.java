@@ -39,8 +39,8 @@ public class CMake extends DefaultTask {
 
         String cmakeExecutable = System.getenv().getOrDefault("CMAKE_EXECUTABLE", "cmake");
         Provider<Directory> targetDirectory = variantDirectory.dir(
-            String.format("%s/%s", getTarget().get().getHost().get(),
-                          getTarget().get().getPlatform().get()));
+                String.format("%s/%s", getTarget().get().getHost().get(),
+                        getTarget().get().getPlatform().get()));
         targetDirectory.get().getAsFile().mkdirs();
 
         ArrayList<String> cliArgs = new ArrayList<>();
@@ -51,7 +51,7 @@ public class CMake extends DefaultTask {
         }
         cliArgs.add("-G" + generator.get());
         cliArgs.add("-DCMAKE_TOOLCHAIN_FILE=" +
-                    System.getenv().getOrDefault("CMAKE_TOOLCHAIN_FILE", ""));
+                System.getenv().getOrDefault("CMAKE_TOOLCHAIN_FILE", ""));
         cliArgs.add("--no-warn-unused-cli");
         cliArgs.add(getProjectDirectory().get().getAsFile().getAbsolutePath());
 
@@ -83,9 +83,9 @@ public class CMake extends DefaultTask {
     @OutputFiles
     public FileCollection getCmakeFiles() {
         return getProject().fileTree(variantDirectory, it -> it.include("**/CMakeFiles/**/*")
-                                                                .include("**/Makefile")
-                                                                .include("**/*.ninja")
-                                                                .include("**/*.cmake"));
+                .include("**/Makefile")
+                .include("**/*.ninja")
+                .include("**/*.cmake"));
     }
 
     @Input

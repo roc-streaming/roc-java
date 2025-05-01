@@ -170,20 +170,32 @@ public class RocSender extends NativeObject {
         Check.notNull(context, "context");
         Check.notNull(config, "config");
 
-        LOGGER.log(Level.FINE, "starting RocSender.open(), context ptr={0}, config={1}",
-                new Object[]{toHex(context.getPtr()), config});
-        long ptr = nativeOpen(context.getPtr(), config);
-        LOGGER.log(Level.FINE, "finished RocSender.open(), context ptr={0}, ptr={1}",
-                new Object[]{toHex(context.getPtr()), toHex(ptr)});
-        return ptr;
+        try {
+            LOGGER.log(Level.FINE, "entering RocSender(), contextPtr={0}, config={1}",
+                    new Object[]{toHex(context.getPtr()), config});
+
+            long ptr = nativeOpen(context.getPtr(), config);
+
+            LOGGER.log(Level.FINE, "leaving RocSender(), ptr={0}", toHex(ptr));
+            return ptr;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, "exception in RocSender(), exception={0}", exc);
+            throw exc;
+        }
     }
 
     private static void destroy(long ptr, RocContext context) throws Exception {
-        LOGGER.log(Level.FINE, "starting RocSender.close(), context ptr={0}, ptr={1}",
-                new Object[]{toHex(context.getPtr()), toHex(ptr)});
-        nativeClose(ptr);
-        LOGGER.log(Level.FINE, "finished RocSender.close(), context ptr={0}, ptr={1}",
-                new Object[]{toHex(context.getPtr()), toHex(ptr)});
+        try {
+            LOGGER.log(Level.FINE, "entering RocSender.close(), ptr={0}", toHex(ptr));
+
+            nativeClose(ptr);
+
+            LOGGER.log(Level.FINE, "leaving RocSender.close(), ptr={0}", toHex(ptr));
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, "exception in RocSender.close(), ptr={0}, exception={1}",
+                    new Object[]{toHex(context.getPtr()), toHex(ptr), exc});
+            throw exc;
+        }
     }
 
     /**
@@ -225,10 +237,18 @@ public class RocSender extends NativeObject {
         Check.notNull(iface, "iface");
         Check.notNull(config, "config");
 
-        LOGGER.log(Level.FINE, "starting RocSender.configure(), ptr={0}, slot={1}, iface={2}, config={3}",
-                new Object[]{toHex(getPtr()), slot, iface, config});
-        nativeConfigure(getPtr(), slot.getValue(), iface.value, config);
-        LOGGER.log(Level.FINE, "finished RocSender.configure(), ptr={0}", new Object[]{toHex(getPtr())});
+        try {
+            LOGGER.log(Level.FINE, "entering RocSender.configure(), ptr={0}, slot={1}, iface={2}, config={3}",
+                    new Object[]{toHex(getPtr()), slot, iface, config});
+
+            nativeConfigure(getPtr(), slot.getValue(), iface.value, config);
+
+            LOGGER.log(Level.FINE, "leaving RocSender.configure(), ptr={0}", toHex(getPtr()));
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, "exception in RocSender.configure(), ptr={0}, exception={1}",
+                    new Object[]{toHex(getPtr()), exc});
+            throw exc;
+        }
     }
 
     /**
@@ -259,10 +279,18 @@ public class RocSender extends NativeObject {
         Check.notNull(iface, "iface");
         Check.notNull(endpoint, "endpoint");
 
-        LOGGER.log(Level.FINE, "starting RocSender.connect(), ptr={0}, slot={1}, iface={2}, endpoint={3}",
-                new Object[]{toHex(getPtr()), slot, iface, endpoint});
-        nativeConnect(getPtr(), slot.getValue(), iface.value, endpoint);
-        LOGGER.log(Level.FINE, "finished RocSender.connect(), ptr={0}", new Object[]{toHex(getPtr())});
+        try {
+            LOGGER.log(Level.FINE, "entering RocSender.connect(), ptr={0}, slot={1}, iface={2}, endpoint={3}",
+                    new Object[]{toHex(getPtr()), slot, iface, endpoint});
+
+            nativeConnect(getPtr(), slot.getValue(), iface.value, endpoint);
+
+            LOGGER.log(Level.FINE, "leaving RocSender.connect(), ptr={0}", toHex(getPtr()));
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, "exception in RocSender.connect(), ptr={0}, exception={1}",
+                    new Object[]{toHex(getPtr()), exc});
+            throw exc;
+        }
     }
 
     /**
@@ -281,9 +309,18 @@ public class RocSender extends NativeObject {
     public void unlink(Slot slot) throws IllegalArgumentException {
         Check.notNull(slot, "slot");
 
-        LOGGER.log(Level.FINE, "starting RocSender.unlink(), ptr={0}, slot={1}", new Object[]{toHex(getPtr()), slot});
-        nativeUnlink(getPtr(), slot.getValue());
-        LOGGER.log(Level.FINE, "finished RocSender.connect(), ptr={0}", new Object[]{toHex(getPtr())});
+        try {
+            LOGGER.log(Level.FINE, "entering RocSender.unlink(), ptr={0}, slot={1}",
+                    new Object[]{toHex(getPtr()), slot});
+
+            nativeUnlink(getPtr(), slot.getValue());
+
+            LOGGER.log(Level.FINE, "leaving RocSender.unlink(), ptr={0}", toHex(getPtr()));
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, "exception in RocSender.unlink(), ptr={0}, exception={1}",
+                    new Object[]{toHex(getPtr()), exc});
+            throw exc;
+        }
     }
 
     /**
@@ -308,6 +345,7 @@ public class RocSender extends NativeObject {
      */
     public void write(float[] samples) throws IllegalArgumentException, IOException {
         Check.notNull(samples, "samples");
+
         nativeWriteFloats(getPtr(), samples);
     }
 

@@ -33,7 +33,7 @@ public class RocLoggerTest extends BaseTest {
                 Arguments.of(Level.SEVERE, true, false),
                 Arguments.of(Level.INFO, true, true),
                 Arguments.of(Level.FINE, true, true),
-                Arguments.of(Level.FINER, true, true)
+                Arguments.of(Level.FINEST, true, true)
         );
     }
 
@@ -45,7 +45,7 @@ public class RocLoggerTest extends BaseTest {
         Handler handler = wrapHandler(
                 record -> msgCount.compute(record.getLevel(), (k, v) -> v == null ? 1 : v + 1));
         RocLogger.LOGGER.addHandler(handler);
-        RocLogger.LOGGER.setLevel(Level.FINE);
+        RocLogger.LOGGER.setLevel(Level.FINEST);
 
         try {
             assertDoesNotThrow(() -> {

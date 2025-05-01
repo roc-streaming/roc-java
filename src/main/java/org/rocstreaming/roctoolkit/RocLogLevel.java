@@ -5,7 +5,7 @@ package org.rocstreaming.roctoolkit;
  *
  * @see RocLogger#setLevel(RocLogLevel)
  */
-public enum RocLogLevel {
+enum RocLogLevel {
 
     /**
      * No messages.

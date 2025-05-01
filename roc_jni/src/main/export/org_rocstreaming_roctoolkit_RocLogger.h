@@ -9,18 +9,18 @@ extern "C" {
 #endif
 /*
  * Class:     org_rocstreaming_roctoolkit_RocLogger
- * Method:    setLevel
+ * Method:    nativeSetLevel
  * Signature: (Lorg/rocstreaming/roctoolkit/RocLogLevel;)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocLogger_setLevel
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocLogger_nativeSetLevel
   (JNIEnv *, jclass, jobject);
 
 /*
  * Class:     org_rocstreaming_roctoolkit_RocLogger
- * Method:    setHandler
+ * Method:    nativeSetHandler
  * Signature: (Lorg/rocstreaming/roctoolkit/RocLogHandler;)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocLogger_setHandler
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocLogger_nativeSetHandler
   (JNIEnv *, jclass, jobject);
 
 #ifdef __cplusplus

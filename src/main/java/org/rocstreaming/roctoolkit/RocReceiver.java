@@ -200,20 +200,32 @@ public class RocReceiver extends NativeObject {
         Check.notNull(context, "context");
         Check.notNull(config, "config");
 
-        LOGGER.log(Level.FINE, "starting RocReceiver.open(), context ptr={0}, config={1}",
-                new Object[]{toHex(context.getPtr()), config});
-        long ptr = nativeOpen(context.getPtr(), config);
-        LOGGER.log(Level.FINE, "finished RocReceiver.open(), context ptr={0}, ptr={1}",
-                new Object[]{toHex(context.getPtr()), toHex(ptr)});
-        return ptr;
+        try {
+            LOGGER.log(Level.FINE, "entering RocReceiver(), contextPtr={0}, config={1}",
+                    new Object[]{toHex(context.getPtr()), config});
+
+            long ptr = nativeOpen(context.getPtr(), config);
+
+            LOGGER.log(Level.FINE, "leaving RocReceiver(), ptr={0}", toHex(ptr));
+            return ptr;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, "exception in RocReceiver(), exception={0}", exc);
+            throw exc;
+        }
     }
 
     private static void destroy(long ptr, RocContext context) throws Exception {
-        LOGGER.log(Level.FINE, "starting RocReceiver.close(), context ptr={0}, ptr={1}",
-                new Object[]{toHex(context.getPtr()), toHex(ptr)});
-        nativeClose(ptr);
-        LOGGER.log(Level.FINE, "finished RocReceiver.close(), context ptr={0}, ptr={1}",
-                new Object[]{toHex(context.getPtr()), toHex(ptr)});
+        try {
+            LOGGER.log(Level.FINE, "entering RocReceiver.close(), ptr={0}", toHex(ptr));
+
+            nativeClose(ptr);
+
+            LOGGER.log(Level.FINE, "leaving RocReceiver.close(), ptr={0}", toHex(ptr));
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, "exception in RocReceiver.close(), ptr={0}, exception={1}",
+                    new Object[]{toHex(context.getPtr()), toHex(ptr), exc});
+            throw exc;
+        }
     }
 
     /**
@@ -254,10 +266,18 @@ public class RocReceiver extends NativeObject {
         Check.notNull(iface, "iface");
         Check.notNull(config, "config");
 
-        LOGGER.log(Level.FINE, "starting RocReceiver.configure(), ptr={0}, slot={1}, iface={2}, config={3}",
-                new Object[]{toHex(getPtr()), slot, iface, config});
-        nativeConfigure(getPtr(), slot.getValue(), iface.value, config);
-        LOGGER.log(Level.FINE, "finished RocReceiver.configure(), ptr={0}", new Object[]{toHex(getPtr())});
+        try {
+            LOGGER.log(Level.FINE, "entering RocReceiver.configure(), ptr={0}, slot={1}, iface={2}, config={3}",
+                    new Object[]{toHex(getPtr()), slot, iface, config});
+
+            nativeConfigure(getPtr(), slot.getValue(), iface.value, config);
+
+            LOGGER.log(Level.FINE, "leaving RocReceiver.configure(), ptr={0}", toHex(getPtr()));
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, "exception in RocReceiver.configure(), ptr={0}, exception={1}",
+                    new Object[]{toHex(getPtr()), exc});
+            throw exc;
+        }
     }
 
     /**
@@ -292,10 +312,18 @@ public class RocReceiver extends NativeObject {
         Check.notNull(iface, "iface");
         Check.notNull(endpoint, "endpoint");
 
-        LOGGER.log(Level.FINE, "starting RocReceiver.bind(), ptr={0}, slot={1}, iface={2}, endpoint={3}",
-                new Object[]{toHex(getPtr()), slot, iface, endpoint});
-        nativeBind(getPtr(), slot.getValue(), iface.value, endpoint);
-        LOGGER.log(Level.FINE, "finished RocReceiver.bind(), ptr={0}, endpoint={1}", new Object[]{toHex(getPtr()), endpoint});
+        try {
+            LOGGER.log(Level.FINE, "entering RocReceiver.bind(), ptr={0}, slot={1}, iface={2}, endpoint={3}",
+                    new Object[]{toHex(getPtr()), slot, iface, endpoint});
+
+            nativeBind(getPtr(), slot.getValue(), iface.value, endpoint);
+
+            LOGGER.log(Level.FINE, "leaving RocReceiver.bind(), ptr={0}", toHex(getPtr()));
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, "exception in RocReceiver.bind(), ptr={0}, exception={1}",
+                    new Object[]{toHex(getPtr()), exc});
+            throw exc;
+        }
     }
 
     /**
@@ -314,9 +342,18 @@ public class RocReceiver extends NativeObject {
     public void unlink(Slot slot) throws IllegalArgumentException {
         Check.notNull(slot, "slot");
 
-        LOGGER.log(Level.FINE, "starting RocReceiver.unlink(), ptr={0}, slot={1}", new Object[]{toHex(getPtr()), slot});
-        nativeUnlink(getPtr(), slot.getValue());
-        LOGGER.log(Level.FINE, "finished RocReceiver.connect(), ptr={0}", new Object[]{toHex(getPtr())});
+        try {
+            LOGGER.log(Level.FINE, "entering RocReceiver.unlink(), ptr={0}, slot={1}",
+                    new Object[]{toHex(getPtr()), slot});
+
+            nativeUnlink(getPtr(), slot.getValue());
+
+            LOGGER.log(Level.FINE, "leaving RocReceiver.unlink(), ptr={0}", toHex(getPtr()));
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, "exception in RocReceiver.unlink(), ptr={0}, exception={1}",
+                    new Object[]{toHex(getPtr()), exc});
+            throw exc;
+        }
     }
 
     /**
@@ -342,6 +379,7 @@ public class RocReceiver extends NativeObject {
      */
     public void read(float[] samples) throws IllegalArgumentException, IOException {
         Check.notNull(samples, "samples");
+
         nativeReadFloats(getPtr(), samples);
     }
 

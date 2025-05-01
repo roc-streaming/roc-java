@@ -7,7 +7,7 @@ class RocLogger {
 
     static final Logger LOGGER = Logger.getLogger(RocLogger.class.getName());
 
-    private static final RocLogHandler DEFAULT_HANDLER = (level, component, message) -> {
+    private static final RocLogHandler HANDLER = (level, component, message) -> {
         Level julLevel = mapLogLevel(level);
         if (LOGGER.isLoggable(julLevel)) {
             LOGGER.logp(julLevel, component, "", message);
@@ -16,39 +16,37 @@ class RocLogger {
 
     static {
         RocLibrary.loadLibrary();
-        setLevel(RocLogLevel.DEBUG); // set debug level and rely on jul to filter messages.
-        setHandler(DEFAULT_HANDLER);
-        // Jvm could be terminated before roclib, so we need to clear callback to avoid crash
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> setHandler(null)));
+        // Set debug level and rely on jul to filter messages.
+        nativeSetLevel(RocLogLevel.DEBUG);
+        // Register callback for libroc log messages.
+        nativeSetHandler(HANDLER);
+        // JVM could be terminated before libroc, so we need to unregister Java callback
+        // from libroc before shutting down, to avoid crash.
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> nativeSetHandler(null)));
+    }
+
+    private RocLogger() {
     }
 
     private static Level mapLogLevel(RocLogLevel level) {
         switch (level) {
             case NONE:
                 return Level.OFF;
+            case ERROR:
+                return Level.SEVERE;
             case INFO:
                 return Level.INFO;
             case DEBUG:
                 return Level.FINE;
             case TRACE:
-                return Level.FINER;
+                return Level.FINEST;
             default:
-                return Level.SEVERE;
+                break;
         }
+        // Can't happen.
+        return Level.FINE;
     }
 
-    /**
-     * Set maximum log level.
-     * <p>
-     * Messages with log levels higher than param level will be dropped.
-     * By default the log level is set to {@link RocLogLevel#ERROR ERROR}.
-     *
-     * @param level maximum log level.
-     */
-    private native static void setLevel(RocLogLevel level);
-
-    private native static void setHandler(RocLogHandler handler);
-
-    private RocLogger() {
-    }
+    private native static void nativeSetLevel(RocLogLevel level);
+    private native static void nativeSetHandler(RocLogHandler handler);
 }

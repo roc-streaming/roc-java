@@ -39,16 +39,32 @@ public class RocContext extends NativeObject {
 
     private static long construct(RocContextConfig config) throws IllegalArgumentException, Exception {
         Check.notNull(config, "config");
-        LOGGER.log(Level.FINE, "starting RocContext.open(), config={0}", new Object[]{config});
-        long ptr = nativeOpen(config);
-        LOGGER.log(Level.FINE, "finished RocContext.open(), ptr={0}", new Object[]{toHex(ptr)});
-        return ptr;
+
+        try {
+            LOGGER.log(Level.FINE, "entering RocContext(), config={0}", config);
+
+            long ptr = nativeOpen(config);
+
+            LOGGER.log(Level.FINE, "leaving RocContext(), ptr={0}", toHex(ptr));
+            return ptr;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, "exception in RocContext(), exception={0}", exc);
+            throw exc;
+        }
     }
 
     private static void destroy(long ptr) throws Exception {
-        LOGGER.log(Level.FINE, "starting RocContext.close(), ptr={0}", new Object[]{toHex(ptr)});
-        nativeClose(ptr);
-        LOGGER.log(Level.FINE, "finished RocContext.close(), ptr={0}", new Object[]{toHex(ptr)});
+        try {
+            LOGGER.log(Level.FINE, "entering RocContext.close(), ptr={0}", toHex(ptr));
+
+            nativeClose(ptr);
+
+            LOGGER.log(Level.FINE, "leaving RocContext.close(), ptr={0}", toHex(ptr));
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, "exception in RocContext.close(), ptr={0}, exception={1}",
+                    new Object[]{toHex(ptr), exc});
+            throw exc;
+        }
     }
 
     /**
@@ -103,10 +119,18 @@ public class RocContext extends NativeObject {
         Check.inRange(encodingId, 1, 127, "encodingId");
         Check.notNull(encoding, "encoding");
 
-        LOGGER.log(Level.FINE, "starting RocContext.registerEncoding(), ptr={0}, encodingId={1}, encoding={2}",
-                new Object[]{toHex(getPtr()), encodingId, encoding});
-        nativeRegisterEncoding(getPtr(), encodingId, encoding);
-        LOGGER.log(Level.FINE, "finished RocContext.registerEncoding(), ptr={0}", new Object[]{toHex(getPtr())});
+        try {
+            LOGGER.log(Level.FINE, "entering RocContext.registerEncoding(), ptr={0}, encodingId={1}, encoding={2}",
+                    new Object[]{toHex(getPtr()), encodingId, encoding});
+
+            nativeRegisterEncoding(getPtr(), encodingId, encoding);
+
+            LOGGER.log(Level.FINE, "leaving RocContext.registerEncoding(), ptr={0}", toHex(getPtr()));
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, "exception in RocContext.registerEncoding(), ptr={0}, exception={1}",
+                    new Object[]{toHex(getPtr()), exc});
+            throw exc;
+        }
     }
 
     private static native long nativeOpen(RocContextConfig config) throws IllegalArgumentException, Exception;

@@ -148,7 +148,7 @@ out:
     pthread_mutex_unlock(&logMutex);
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocLogger_setLevel(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocLogger_nativeSetLevel(
     JNIEnv* env, jclass clazz, jobject jlevel) {
     roc_log_level level = (roc_log_level) 0;
     int success = 0;
@@ -172,7 +172,7 @@ out:
     }
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocLogger_setHandler(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_RocLogger_nativeSetHandler(
     JNIEnv* env, jclass clazz, jobject jhandler) {
     jclass handlerClass = NULL;
     jmethodID handlerMethod = NULL;

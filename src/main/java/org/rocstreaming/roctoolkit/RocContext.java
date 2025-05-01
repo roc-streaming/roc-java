@@ -37,8 +37,8 @@ public class RocContext extends NativeObject {
 
     private static final Logger LOGGER = Logger.getLogger(RocContext.class.getName());
 
-    private static long construct(RocContextConfig config) throws IllegalArgumentException, Exception {
-        Check.notNull(config, "config");
+    private static long construct(RocContextConfig config) throws RocException {
+        Check.notNull(config, "RocContextConfig");
 
         try {
             LOGGER.log(Level.FINE, "entering RocContext(), config={0}", config);
@@ -53,14 +53,14 @@ public class RocContext extends NativeObject {
         }
     }
 
-    private static void destroy(long ptr) throws Exception {
+    private static void destroy(long ptr) {
         try {
             LOGGER.log(Level.FINE, "entering RocContext.close(), ptr={0}", toHex(ptr));
 
             nativeClose(ptr);
 
             LOGGER.log(Level.FINE, "leaving RocContext.close(), ptr={0}", toHex(ptr));
-        } catch (Exception exc) {
+        } catch (RuntimeException exc) {
             LOGGER.log(Level.SEVERE, "exception in RocContext.close(), ptr={0}, exception={1}",
                     new Object[]{toHex(ptr), exc});
             throw exc;
@@ -73,9 +73,9 @@ public class RocContext extends NativeObject {
      * Allocates and initializes a new context. May start some background threads.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws Exception                  if there are not enough resources.
+     * @throws RocException               if operation failed.
      */
-    public RocContext() throws IllegalArgumentException, Exception {
+    public RocContext() throws RocException {
         this(RocContextConfig.builder().build());
     }
 
@@ -87,9 +87,9 @@ public class RocContext extends NativeObject {
      * @param config   should point to an initialized config.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws Exception                  if there are not enough resources.
+     * @throws RocException               if operation failed.
      */
-    public RocContext(RocContextConfig config) throws IllegalArgumentException, Exception {
+    public RocContext(RocContextConfig config) throws RocException {
         super(construct(config), null, RocContext::destroy);
     }
 
@@ -114,10 +114,11 @@ public class RocContext extends NativeObject {
      * @param encoding     is encoding specification to be associated with this id.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
+     * @throws RocException               if operation failed.
      */
-    public void registerEncoding(int encodingId, MediaEncoding encoding) throws IllegalArgumentException {
+    public void registerEncoding(int encodingId, MediaEncoding encoding) throws RocException {
         Check.inRange(encodingId, 1, 127, "encodingId");
-        Check.notNull(encoding, "encoding");
+        Check.notNull(encoding, "MediaEncoding");
 
         try {
             LOGGER.log(Level.FINE, "entering RocContext.registerEncoding(), ptr={0}, encodingId={1}, encoding={2}",
@@ -133,8 +134,7 @@ public class RocContext extends NativeObject {
         }
     }
 
-    private static native long nativeOpen(RocContextConfig config) throws IllegalArgumentException, Exception;
-    private static native void nativeClose(long contextPtr) throws Exception;
-
-    private static native void nativeRegisterEncoding(long contextPtr, int encodingId, MediaEncoding encoding) throws IllegalArgumentException;
+    private static native long nativeOpen(RocContextConfig config) throws RocException;
+    private static native void nativeClose(long contextPtr);
+    private static native void nativeRegisterEncoding(long contextPtr, int encodingId, MediaEncoding encoding) throws RocException;
 }

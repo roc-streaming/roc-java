@@ -1,79 +1,96 @@
 #include "sender_config.h"
-#include "clock_source.h"
-#include "common.h"
 #include "endpoint.h"
-#include "fec_encoding.h"
-#include "format.h"
+#include "exceptions.h"
+#include "helpers.h"
 #include "media_encoding.h"
-#include "packet_encoding.h"
-#include "resampler_backend.h"
-#include "resampler_profile.h"
 
-int sender_config_unmarshal(JNIEnv* env, roc_sender_config* config, jobject jconfig) {
-    jclass senderConfigClass = NULL;
-    jobject jobj = NULL;
-    int err = 0;
+#include <assert.h>
+#include <string.h>
 
-    senderConfigClass = (*env)->FindClass(env, SENDER_CONFIG_CLASS);
-    assert(senderConfigClass != NULL);
+bool sender_config_unmarshal(JNIEnv* env, jobject jconfig, roc_sender_config* result) {
+    assert(env);
+    assert(jconfig);
+    assert(result);
 
-    // set all fields to zeros
-    assert(config != NULL);
-    memset(config, 0, sizeof(*config));
+    memset(result, 0, sizeof(*result));
+
+    jclass jclass = find_class(env, SENDER_CONFIG_CLASS);
+    if (!jclass) {
+        return false;
+    }
+
+    jobject jencoding = NULL;
+    int enum_value = 0;
 
     // frame_encoding
-    jobj = get_object_field(
-        env, senderConfigClass, jconfig, "frameEncoding", "L" MEDIA_ENCODING_CLASS ";");
-    if (jobj != NULL) {
-        err = media_encoding_unmarshal(env, &config->frame_encoding, jobj);
-        if (err) return err;
+    if (!read_object_field(env, jclass, jconfig, SENDER_CONFIG_CLASS, "frameEncoding",
+            MEDIA_ENCODING_CLASS, &jencoding)) {
+        return false;
+    }
+    if (jencoding) {
+        if (!media_encoding_unmarshal(env, jencoding, &result->frame_encoding)) {
+            return false;
+        }
     }
 
     // packet_encoding
-    jobj = get_object_field(
-        env, senderConfigClass, jconfig, "packetEncoding", "L" PACKET_ENCODING_CLASS ";");
-    if (jobj != NULL) config->packet_encoding = get_packet_encoding(env, jobj);
+    if (!read_enum_field(env, jclass, jconfig, SENDER_CONFIG_CLASS, "packetEncoding",
+            PACKET_ENCODING_CLASS, &enum_value)) {
+        return false;
+    }
+    result->packet_encoding = (roc_packet_encoding) enum_value;
 
     // packet_length
-    config->packet_length
-        = get_duration_field_value(env, senderConfigClass, jconfig, "packetLength", &err);
-    if (err) return err;
+    if (!read_unsigned_duration_field(
+            env, jclass, jconfig, SENDER_CONFIG_CLASS, "packetLength", &result->packet_length)) {
+        return false;
+    }
 
     // packet_interleaving
-    config->packet_interleaving
-        = get_uint_field_value(env, senderConfigClass, jconfig, "packetInterleaving", &err);
-    if (err) return err;
+    if (!read_uint_field(env, jclass, jconfig, SENDER_CONFIG_CLASS, "packetInterleaving",
+            &result->packet_interleaving)) {
+        return false;
+    }
 
     // fec_encoding
-    jobj = get_object_field(
-        env, senderConfigClass, jconfig, "fecEncoding", "L" FEC_ENCODING_CLASS ";");
-    if (jobj != NULL) config->fec_encoding = (roc_fec_encoding) get_fec_encoding(env, jobj);
+    if (!read_enum_field(env, jclass, jconfig, SENDER_CONFIG_CLASS, "fecEncoding",
+            FEC_ENCODING_CLASS, &enum_value)) {
+        return false;
+    }
+    result->fec_encoding = (roc_fec_encoding) enum_value;
 
     // fec_block_source_packets
-    config->fec_block_source_packets
-        = get_uint_field_value(env, senderConfigClass, jconfig, "fecBlockSourcePackets", &err);
-    if (err) return err;
+    if (!read_uint_field(env, jclass, jconfig, SENDER_CONFIG_CLASS, "fecBlockSourcePackets",
+            &result->fec_block_source_packets)) {
+        return false;
+    }
 
     // fec_block_repair_packets
-    config->fec_block_repair_packets
-        = get_uint_field_value(env, senderConfigClass, jconfig, "fecBlockRepairPackets", &err);
-    if (err) return err;
+    if (!read_uint_field(env, jclass, jconfig, SENDER_CONFIG_CLASS, "fecBlockRepairPackets",
+            &result->fec_block_repair_packets)) {
+        return false;
+    }
 
     // clock_source
-    jobj = get_object_field(
-        env, senderConfigClass, jconfig, "clockSource", "L" CLOCK_SOURCE_CLASS ";");
-    if (jobj != NULL) config->clock_source = get_clock_source(env, jobj);
+    if (!read_enum_field(env, jclass, jconfig, SENDER_CONFIG_CLASS, "clockSource",
+            CLOCK_SOURCE_CLASS, &enum_value)) {
+        return false;
+    }
+    result->clock_source = (roc_clock_source) enum_value;
 
     // resampler_backend
-    jobj = get_object_field(
-        env, senderConfigClass, jconfig, "resamplerBackend", "L" RESAMPLER_BACKEND_CLASS ";");
-    if (jobj != NULL) config->resampler_backend = get_resampler_backend(env, jobj);
+    if (!read_enum_field(env, jclass, jconfig, SENDER_CONFIG_CLASS, "resamplerBackend",
+            RESAMPLER_BACKEND_CLASS, &enum_value)) {
+        return false;
+    }
+    result->resampler_backend = (roc_resampler_backend) enum_value;
 
     // resampler_profile
-    jobj = get_object_field(
-        env, senderConfigClass, jconfig, "resamplerProfile", "L" RESAMPLER_PROFILE_CLASS ";");
-    if (jobj != NULL)
-        config->resampler_profile = (roc_resampler_profile) get_resampler_profile(env, jobj);
+    if (!read_enum_field(env, jclass, jconfig, SENDER_CONFIG_CLASS, "resamplerProfile",
+            RESAMPLER_PROFILE_CLASS, &enum_value)) {
+        return false;
+    }
+    result->resampler_profile = (roc_resampler_profile) enum_value;
 
-    return 0;
+    return true;
 }

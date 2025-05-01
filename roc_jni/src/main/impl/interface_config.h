@@ -1,11 +1,12 @@
 #pragma once
 
+#include "helpers.h"
+#include "platform.h"
+
 #include <jni.h>
-
-#include "common.h"
-
 #include <roc/config.h>
 
-#define INTERFACE_CONFIG_CLASS PACKAGE_BASE_NAME "/InterfaceConfig"
+#include <stdbool.h>
 
-int interface_config_unmarshal(JNIEnv* env, roc_interface_config* config, jobject jconfig);
+ATTR_NODISCARD bool interface_config_unmarshal(
+    JNIEnv* env, jobject jconfig, roc_interface_config* result);

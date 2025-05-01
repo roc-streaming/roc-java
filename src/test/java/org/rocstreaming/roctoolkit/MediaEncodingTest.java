@@ -26,9 +26,15 @@ class MediaEncodingTest {
 
     private static Stream<Arguments> invalidEncodingArguments() {
         return Stream.of(
-                Arguments.of("rate must not be negative", validBuilder().rate(-1)),
-                Arguments.of("format must not be null", validBuilder().format(null)),
-                Arguments.of("channels must not be null", validBuilder().channels(null))
+                Arguments.of("Invalid MediaEncoding.rate: must not be negative", validBuilder().rate(-1)),
+                Arguments.of("Invalid MediaEncoding.format: must not be null", validBuilder().format(null)),
+                Arguments.of("Invalid MediaEncoding.channels: must not be null", validBuilder().channels(null)),
+                Arguments.of("Invalid MediaEncoding: when 'channels' is MULTITRACK, 'tracks' must be in range [1; 1024]",
+                        validBuilder().channels(ChannelLayout.MULTITRACK).tracks(0)),
+                Arguments.of("Invalid MediaEncoding: when 'channels' is MULTITRACK, 'tracks' must be in range [1; 1024]",
+                        validBuilder().channels(ChannelLayout.MULTITRACK).tracks(1025)),
+                Arguments.of("Invalid MediaEncoding: when 'channels' isn't MULTITRACK, 'tracks' must be zero",
+                        validBuilder().channels(ChannelLayout.STEREO).tracks(1))
         );
     }
 

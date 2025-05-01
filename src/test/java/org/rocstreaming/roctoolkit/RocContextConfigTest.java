@@ -22,8 +22,8 @@ class RocContextConfigTest {
 
     private static Stream<Arguments> invalidConfigArguments() {
         return Stream.of(
-                Arguments.of("maxFrameSize must not be negative", validBuilder().maxFrameSize(-1)),
-                Arguments.of("maxPacketSize must not be negative", validBuilder().maxPacketSize(-1))
+                Arguments.of("Invalid RocContextConfig.maxFrameSize: must not be negative", validBuilder().maxFrameSize(-1)),
+                Arguments.of("Invalid RocContextConfig.maxPacketSize: must not be negative", validBuilder().maxPacketSize(-1))
         );
     }
 

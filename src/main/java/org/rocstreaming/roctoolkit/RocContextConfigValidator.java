@@ -1,14 +1,16 @@
 package org.rocstreaming.roctoolkit;
 
 /**
- * A <code>RocContextConfigValidator</code> adds validation to RocContextConfig builder.
+ * Adds validation to {@link RocContextConfig} builder.
  */
 class RocContextConfigValidator extends RocContextConfig.Builder {
     @Override
     public RocContextConfig build() {
         RocContextConfig config = super.build();
-        Check.notNegative(config.getMaxPacketSize(), "maxPacketSize");
-        Check.notNegative(config.getMaxFrameSize(), "maxFrameSize");
+
+        Check.notNegative(config.getMaxPacketSize(), "RocContextConfig.maxPacketSize");
+        Check.notNegative(config.getMaxFrameSize(), "RocContextConfig.maxFrameSize");
+
         return config;
     }
 }

@@ -4,7 +4,6 @@ import org.awaitility.Duration;
 import org.junit.jupiter.api.Test;
 import org.rocstreaming.roctoolkit.*;
 
-import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -66,7 +65,7 @@ public class RocSenderReceiverTest extends BaseTest {
                 while (running.get()) {
                     try {
                         sender.write(samples);
-                    } catch (IOException e) {
+                    } catch (RocException e) {
                         throw new RuntimeException(e);
                     }
                 }

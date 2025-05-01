@@ -1,11 +1,15 @@
 #pragma once
 
-#include <jni.h>
+#include "platform.h"
 
+#include <jni.h>
 #include <roc/endpoint.h>
 
-#define ENDPOINT_CLASS PACKAGE_BASE_NAME "/Endpoint"
+#include <stdbool.h>
 
-int endpoint_unmarshal(JNIEnv* env, roc_endpoint** endpoint, jobject jendpoint);
+ATTR_NODISCARD bool endpoint_unmarshal(JNIEnv* env, jobject jendpoint, roc_endpoint** result);
 
-void endpoint_set_port(JNIEnv* env, jobject endpoint, int port);
+ATTR_NODISCARD bool endpoint_set_protocol(JNIEnv* env, jobject jendpoint, roc_protocol value);
+ATTR_NODISCARD bool endpoint_set_host(JNIEnv* env, jobject jendpoint, const char* value);
+ATTR_NODISCARD bool endpoint_set_port(JNIEnv* env, jobject jendpoint, int value);
+ATTR_NODISCARD bool endpoint_set_resource(JNIEnv* env, jobject jendpoint, const char* resource);

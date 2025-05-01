@@ -32,7 +32,7 @@ public class RocReceiverTest extends BaseTest {
     }
 
     @AfterEach
-    public void afterEach() throws Exception {
+    public void afterEach() {
         this.context.close();
     }
 
@@ -73,12 +73,12 @@ public class RocReceiverTest extends BaseTest {
     private static Stream<Arguments> invalidCreationArguments() throws Exception {
         return Stream.of(
                 Arguments.of(
-                        "context must not be null",
+                        "Invalid RocContext: must not be null",
                         IllegalArgumentException.class,
                         null,
                         CONFIG),
                 Arguments.of(
-                        "config must not be null",
+                        "Invalid RocReceiverConfig: must not be null",
                         IllegalArgumentException.class,
                         new RocContext(),
                         null)
@@ -112,36 +112,42 @@ public class RocReceiverTest extends BaseTest {
                     .outgoingAddress("0.0.0.0")
                     .build();
             receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://224.0.0.1:0"));
-            Exception exception = assertThrows(Exception.class, () -> receiver.configure(Slot.DEFAULT, Interface.AUDIO_SOURCE, ifaceConfig));
-            assertEquals("Error configuring receiver", exception.getMessage());
+            Exception exception = assertThrows(RocException.class, () -> receiver.configure(Slot.DEFAULT, Interface.AUDIO_SOURCE, ifaceConfig));
+            assertEquals("Failed to configure RocReceiver interface", exception.getMessage());
         }
     }
 
     private static Stream<Arguments> invalidConfigureArguments() {
         return Stream.of(
                 Arguments.of(
-                        "slot must not be null",
+                        "Invalid Slot: must not be null",
                         null,
                         Interface.AUDIO_SOURCE,
-                        "0.0.0.0"),
+                        InterfaceConfig.builder()
+                                .outgoingAddress("0.0.0.0")
+                                .build()),
                 Arguments.of(
-                        "iface must not be null",
+                        "Invalid Interface: must not be null",
                         Slot.DEFAULT,
                         null,
-                        "0.0.0.0")
+                        InterfaceConfig.builder()
+                                .outgoingAddress("0.0.0.0")
+                                .build()),
+                Arguments.of(
+                        "Invalid InterfaceConfig: must not be null",
+                        Slot.DEFAULT,
+                        Interface.AUDIO_SOURCE,
+                        null)
         );
     }
 
     @ParameterizedTest
     @MethodSource("invalidConfigureArguments")
-    public void testInvalidConfigure(String errorMessage, Slot slot, Interface iface, String ip) throws Exception {
+    public void testInvalidConfigure(String errorMessage, Slot slot, Interface iface, InterfaceConfig config) throws Exception {
         try (RocReceiver receiver = new RocReceiver(context, CONFIG)) {
-            InterfaceConfig ifaceConfig = InterfaceConfig.builder()
-                    .multicastGroup(ip)
-                    .build();
             IllegalArgumentException exception = assertThrows(
                     IllegalArgumentException.class,
-                    () -> receiver.configure(slot, iface, ifaceConfig)
+                    () -> receiver.configure(slot, iface, config)
             );
             assertEquals(errorMessage, exception.getMessage());
         }
@@ -175,17 +181,17 @@ public class RocReceiverTest extends BaseTest {
     private static Stream<Arguments> invalidBindArguments() {
         return Stream.of(
                 Arguments.of(
-                        "slot must not be null",
+                        "Invalid Slot: must not be null",
                         null,
                         Interface.AUDIO_SOURCE,
                         new Endpoint("rtsp://0.0.0.0")),
                 Arguments.of(
-                        "iface must not be null",
+                        "Invalid Interface: must not be null",
                         Slot.DEFAULT,
                         null,
                         new Endpoint("rtsp://0.0.0.0")),
                 Arguments.of(
-                        "endpoint must not be null",
+                        "Invalid Endpoint: must not be null",
                         Slot.DEFAULT,
                         Interface.AUDIO_SOURCE,
                         null)
@@ -227,9 +233,9 @@ public class RocReceiverTest extends BaseTest {
                 receiver.bind(slot1, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:0"));
                 receiver.bind(slot2, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:0"));
                 receiver.unlink(slot1);
-                assertThrows(IllegalArgumentException.class, () -> receiver.unlink(slot1));
+                assertThrows(RocException.class, () -> receiver.unlink(slot1));
                 receiver.unlink(slot2);
-                assertThrows(IllegalArgumentException.class, () -> receiver.unlink(slot2));
+                assertThrows(RocException.class, () -> receiver.unlink(slot2));
             });
         }
     }
@@ -251,7 +257,7 @@ public class RocReceiverTest extends BaseTest {
             receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, new Endpoint("rtp+rs8m://127.0.0.1:0"));
             receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, new Endpoint("rs8m://127.0.0.1:0"));
             IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> receiver.read(null));
-            assertEquals("samples must not be null", exception.getMessage());
+            assertEquals("Invalid samples: must not be null", exception.getMessage());
         }
     }
 }

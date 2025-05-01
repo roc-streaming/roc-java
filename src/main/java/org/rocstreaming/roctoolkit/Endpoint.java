@@ -100,7 +100,7 @@ public class Endpoint {
      *
      * @throws IllegalArgumentException  if URI is invalid
      */
-    public Endpoint(String uri) throws IllegalArgumentException {
+    public Endpoint(String uri) {
         nativeParseUri(uri);
     }
 
@@ -121,9 +121,9 @@ public class Endpoint {
      *
      * @throws IllegalArgumentException  if URI components don't form a valid URI
      */
-    public Endpoint(Protocol protocol, String host, int port, String resource) throws IllegalArgumentException {
-        this.protocol = Check.notNull(protocol, "protocol");
-        this.host = Check.notEmpty(host, "host");
+    public Endpoint(Protocol protocol, String host, int port, String resource) {
+        this.protocol = Check.notNull(protocol, "endpoint protocol");
+        this.host = Check.notEmpty(host, "endpoint host");
         this.port = port;
         this.resource = resource;
         nativeValidate();
@@ -164,7 +164,7 @@ public class Endpoint {
         return getUri();
     }
 
-    private native void nativeParseUri(String uri) throws IllegalArgumentException;
+    private native void nativeParseUri(String uri);
     private native String nativeFormatUri();
-    private native void nativeValidate() throws IllegalArgumentException;
+    private native void nativeValidate();
 }

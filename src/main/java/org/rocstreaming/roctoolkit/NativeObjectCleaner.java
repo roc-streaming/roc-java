@@ -82,7 +82,7 @@ class NativeObjectCleaner extends Thread {
      * <p>
      * Remove any phantom reachable {@link NativeObjectPhantomReference} from the
      * {@link NativeObjectCleaner#referenceQueue} associated with this {@code NativeObjectCleaner}
-     * and <code>close</code> it.
+     * and {@code close()} it.
      */
     @Override
     public void run() {

@@ -18,34 +18,31 @@ class NativeObjectCleanerTest extends BaseTest {
         @SuppressWarnings("unused")
         RocSender sender = new RocSender(context, RocSenderTest.CONFIG);
 
-        Exception exception = assertThrows(Exception.class, context::close);
-        assertEquals("Error closing context", exception.getMessage()); // sender still using context
+        Exception exception = assertThrows(IllegalStateException.class, context::close);
+        assertEquals("Can't close RocContext before closing associated RocSender/RocReceiver(s)",
+                exception.getMessage()); // sender still using context
 
         //noinspection UnusedAssignment
         sender = null;
         System.gc();
-        long timeout = TimeUnit.MINUTES.toMillis(3);
-        while (timeout > 0) {
-            Thread.sleep(50);
-            timeout -= 50;
-            try {
-                assertDoesNotThrow(context::close);
-                return;
-            } catch (AssertionFailedError ignore) {
-            }
-            System.gc();
-        }
-        fail("failed to close context because sender wasn't auto closed");
+        await().atMost(Duration.FIVE_MINUTES)
+                .untilAsserted(() -> {
+                    System.gc();
+                    assertDoesNotThrow(context::close);
+                    Thread.sleep(50);
+                });
     }
 
     @Test
     void receiverAutoClosingTest() throws Exception {
         RocContext context = new RocContext();
+
         @SuppressWarnings("unused")
         RocReceiver receiver = new RocReceiver(context, RocReceiverTest.CONFIG);
 
-        Exception exception = assertThrows(Exception.class, context::close);
-        assertEquals("Error closing context", exception.getMessage()); // receiver still using context
+        Exception exception = assertThrows(IllegalStateException.class, context::close);
+        assertEquals("Can't close RocContext before closing associated RocSender/RocReceiver(s)",
+                exception.getMessage()); // receiver still using context
 
         //noinspection UnusedAssignment
         receiver = null;
@@ -54,6 +51,7 @@ class NativeObjectCleanerTest extends BaseTest {
                 .untilAsserted(() -> {
                     System.gc();
                     assertDoesNotThrow(context::close);
+                    Thread.sleep(50);
                 });
     }
 

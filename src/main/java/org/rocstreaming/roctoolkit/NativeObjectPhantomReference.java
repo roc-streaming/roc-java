@@ -64,17 +64,19 @@ class NativeObjectPhantomReference extends PhantomReference<NativeObject> implem
 
     /**
      * Close the native object.
+     *
+     * @throws IllegalStateException   if the {@link NativeObject} cannot be closed because
+     *                                 it still has opened {@link NativeObject} dependencies.
      */
     @Override
-    public synchronized void close() throws Exception {
+    public synchronized void close() {
         if (isOpen) {
             destructor.close(ptr);
             // destructor.close(ptr) could throw exception e.g. if someone tried to close context while
             // sender/receiver still opened.
-            // In such case NativeObjectCleaner try to close it one more time after NativeObject
-            // will be collected by GC
+            // In such case NativeObjectCleaner will try to close it one more time after NativeObject
+            // is collected by GC.
             isOpen = false;
         }
     }
-
 }

@@ -1,0 +1,21 @@
+#pragma once
+
+#define PACKAGE_NAME "org/rocstreaming/roctoolkit"
+
+#define CHANNEL_LAYOUT_CLASS PACKAGE_NAME "/ChannelLayout"
+#define CLOCK_SOURCE_CLASS PACKAGE_NAME "/ClockSource"
+#define CLOCK_SYNC_BACKEND_CLASS PACKAGE_NAME "/ClockSyncBackend"
+#define CLOCK_SYNC_PROFILE_CLASS PACKAGE_NAME "/ClockSyncProfile"
+#define CONTEXT_CONFIG_CLASS PACKAGE_NAME "/RocContextConfig"
+#define ENDPOINT_CLASS PACKAGE_NAME "/Endpoint"
+#define FEC_ENCODING_CLASS PACKAGE_NAME "/FecEncoding"
+#define FORMAT_CLASS PACKAGE_NAME "/Format"
+#define INTERFACE_CONFIG_CLASS PACKAGE_NAME "/InterfaceConfig"
+#define LOG_LEVEL_CLASS PACKAGE_NAME "/RocLogLevel"
+#define MEDIA_ENCODING_CLASS PACKAGE_NAME "/MediaEncoding"
+#define PACKET_ENCODING_CLASS PACKAGE_NAME "/PacketEncoding"
+#define PROTOCOL_CLASS PACKAGE_NAME "/Protocol"
+#define RECEIVER_CONFIG_CLASS PACKAGE_NAME "/RocReceiverConfig"
+#define RESAMPLER_BACKEND_CLASS PACKAGE_NAME "/ResamplerBackend"
+#define RESAMPLER_PROFILE_CLASS PACKAGE_NAME "/ResamplerProfile"
+#define SENDER_CONFIG_CLASS PACKAGE_NAME "/RocSenderConfig"

@@ -1,11 +1,11 @@
 #pragma once
 
+#include "platform.h"
+
 #include <jni.h>
-
-#include "common.h"
-
 #include <roc/config.h>
 
-#define RECEIVER_CONFIG_CLASS PACKAGE_BASE_NAME "/RocReceiverConfig"
+#include <stdbool.h>
 
-int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, jobject jconfig);
+ATTR_NODISCARD bool receiver_config_unmarshal(
+    JNIEnv* env, jobject jconfig, roc_receiver_config* result);

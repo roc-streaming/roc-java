@@ -22,7 +22,10 @@ class RocLogger {
         nativeSetHandler(HANDLER);
         // JVM could be terminated before libroc, so we need to unregister Java callback
         // from libroc before shutting down, to avoid crash.
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> nativeSetHandler(null)));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            nativeSetLevel(RocLogLevel.NONE);
+            nativeSetHandler(null);
+        }));
     }
 
     private RocLogger() {

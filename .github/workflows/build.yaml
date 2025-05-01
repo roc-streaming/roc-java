@@ -58,7 +58,7 @@ jobs:
 
     env:
       # TODO: set to master
-      ROC_REVISION: v0.2.6
+      ROC_REVISION: v0.3.0
 
     steps:
       - name: Checkout
@@ -112,7 +112,7 @@ jobs:
 
     env:
       # TODO: set to master
-      ROC_REVISION: v0.2.6
+      ROC_REVISION: v0.3.0
       JAVA_VERSION: ${{ matrix.jdk }}
       SDK_LEVEL: ${{ matrix.sdk }}
       API_LEVEL: ${{ matrix.api }}
@@ -160,7 +160,7 @@ jobs:
 
     env:
       # TODO: set to master
-      ROC_REVISION: v0.2.6
+      ROC_REVISION: v0.3.0
       SDK_LEVEL: ${{ matrix.sdk }}
       API_LEVEL: ${{ matrix.api }}
       NDK_VERSION: ${{ matrix.ndk }}

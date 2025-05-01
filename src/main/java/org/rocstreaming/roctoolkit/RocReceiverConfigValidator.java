@@ -1,15 +1,17 @@
 package org.rocstreaming.roctoolkit;
 
 /**
- * A <code>RocReceiverConfigValidator</code> adds validation to RocReceiverConfig builder.
+ * Adds validation to {@link RocReceiverConfig} builder.
  */
 class RocReceiverConfigValidator extends RocReceiverConfig.Builder {
     @Override
     public RocReceiverConfig build() {
         RocReceiverConfig config = super.build();
-        Check.notNull(config.getFrameEncoding(), "frameEncoding");
-        Check.notNegative(config.getTargetLatency(), "targetLatency");
-        Check.notNegative(config.getLatencyTolerance(), "latencyTolerance");
+
+        Check.notNull(config.getFrameEncoding(), "RocReceiverConfig.frameEncoding");
+        Check.notNegative(config.getTargetLatency(), "RocReceiverConfig.targetLatency");
+        Check.notNegative(config.getLatencyTolerance(), "RocReceiverConfig.latencyTolerance");
+
         return config;
     }
 }

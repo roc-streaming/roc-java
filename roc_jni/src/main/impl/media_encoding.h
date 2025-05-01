@@ -1,11 +1,11 @@
 #pragma once
 
+#include "platform.h"
+
 #include <jni.h>
-
-#include "common.h"
-
 #include <roc/config.h>
 
-#define MEDIA_ENCODING_CLASS PACKAGE_BASE_NAME "/MediaEncoding"
+#include <stdbool.h>
 
-int media_encoding_unmarshal(JNIEnv* env, roc_media_encoding* encoding, jobject jencoding);
+ATTR_NODISCARD bool media_encoding_unmarshal(
+    JNIEnv* env, jobject jencoding, roc_media_encoding* result);

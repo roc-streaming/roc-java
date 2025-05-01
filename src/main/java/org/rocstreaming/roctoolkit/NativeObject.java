@@ -44,10 +44,11 @@ class NativeObject implements AutoCloseable {
     /**
      * Close the native object and unregister it from the {@link NativeObjectCleaner}.
      *
-     * @throws Exception        if the underlying roc native object cannot be closed.
+     * @throws IllegalStateException    if the underlying roc native object cannot be closed because
+     *                                  it still has opened {@link NativeObject} dependencies.
      */
     @Override
-    public void close() throws Exception {
+    public void close() {
         resource.close();
         resource.clear();
         NATIVE_OBJECT_CLEANER.unregister(resource);

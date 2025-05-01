@@ -8,14 +8,14 @@ class Check {
 
     static <T> T notNull(T value, String name) {
         if (value == null) {
-            throw new IllegalArgumentException(name + " must not be null");
+            throw new IllegalArgumentException("Invalid " + name + ": must not be null");
         }
         return value;
     }
 
     static String notEmpty(String value, String name) {
         if (value == null || value.isEmpty()) {
-            throw new IllegalArgumentException(name + " must not be empty");
+            throw new IllegalArgumentException("Invalid " + name + ": must not be empty");
         }
         return value;
     }
@@ -23,35 +23,35 @@ class Check {
     static Duration notNegative(Duration value, String name) {
         // Null ("unset") duration is fine, it's treated as zero on JNI side.
         if (value != null && value.isNegative()) {
-            throw new IllegalArgumentException(name + " must not be negative");
+            throw new IllegalArgumentException("Invalid " + name + ": must not be negative");
         }
         return value;
     }
 
     static int notNegative(int value, String name) {
         if (value < 0) {
-            throw new IllegalArgumentException(name + " must not be negative");
+            throw new IllegalArgumentException("Invalid " + name + ": must not be negative");
         }
         return value;
     }
 
     static long notNegative(long value, String name) {
         if (value < 0) {
-            throw new IllegalArgumentException(name + " must not be negative");
+            throw new IllegalArgumentException("Invalid " + name + ": must not be negative");
         }
         return value;
     }
 
     static int inRange(int value, int min_value, int max_value, String name) {
         if (value < min_value || value > max_value) {
-            throw new IllegalArgumentException(name + " must be in range [" + min_value + "; " + max_value + "]");
+            throw new IllegalArgumentException("Invalid " + name + ": must be in range [" + min_value + "; " + max_value + "]");
         }
         return value;
     }
 
     static long inRange(long value, long min_value, long max_value, String name) {
         if (value < min_value || value > max_value) {
-            throw new IllegalArgumentException(name + " must be in range [" + min_value + "; " + max_value + "]");
+            throw new IllegalArgumentException("Invalid " + name + ": must be in range [" + min_value + "; " + max_value + "]");
         }
         return value;
     }

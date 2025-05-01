@@ -30,10 +30,10 @@ class RocSenderConfigTest {
 
     private static Stream<Arguments> invalidConfigArguments() {
         return Stream.of(
-                Arguments.of("frameEncoding must not be null", validBuilder().frameEncoding(null)),
-                Arguments.of("packetLength must not be negative", validBuilder().packetLength(Duration.ofNanos(-1))),
-                Arguments.of("fecBlockSourcePackets must not be negative", validBuilder().fecBlockSourcePackets(-1)),
-                Arguments.of("fecBlockRepairPackets must not be negative", validBuilder().fecBlockRepairPackets(-1))
+                Arguments.of("Invalid RocSenderConfig.frameEncoding: must not be null", validBuilder().frameEncoding(null)),
+                Arguments.of("Invalid RocSenderConfig.packetLength: must not be negative", validBuilder().packetLength(Duration.ofNanos(-1))),
+                Arguments.of("Invalid RocSenderConfig.fecBlockSourcePackets: must not be negative", validBuilder().fecBlockSourcePackets(-1)),
+                Arguments.of("Invalid RocSenderConfig.fecBlockRepairPackets: must not be negative", validBuilder().fecBlockRepairPackets(-1))
         );
     }
 

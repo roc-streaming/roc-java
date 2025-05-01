@@ -1,36 +1,48 @@
 #include "media_encoding.h"
-#include "channel_layout.h"
-#include "common.h"
-#include "format.h"
+#include "exceptions.h"
+#include "helpers.h"
+#include "package.h"
 
-int media_encoding_unmarshal(JNIEnv* env, roc_media_encoding* encoding, jobject jencoding) {
-    jclass mediaEncodingClass = NULL;
-    jobject jobj = NULL;
-    int err = 0;
+#include <assert.h>
+#include <string.h>
 
-    mediaEncodingClass = (*env)->FindClass(env, MEDIA_ENCODING_CLASS);
-    assert(mediaEncodingClass != NULL);
+bool media_encoding_unmarshal(JNIEnv* env, jobject jencoding, roc_media_encoding* result) {
+    assert(env);
+    assert(jencoding);
+    assert(result);
 
-    // set all fields to zeros
-    assert(encoding != NULL);
-    memset(encoding, 0, sizeof(*encoding));
+    memset(result, 0, sizeof(*result));
+
+    jclass jclass = find_class(env, MEDIA_ENCODING_CLASS);
+    if (!jclass) {
+        return false;
+    }
+
+    int enum_value = 0;
 
     // rate
-    encoding->rate = get_int_field_value(env, mediaEncodingClass, jencoding, "rate", &err);
-    if (err) return err;
+    if (!read_uint_field(env, jclass, jencoding, MEDIA_ENCODING_CLASS, "rate", &result->rate)) {
+        return false;
+    }
 
     // format
-    jobj = get_object_field(env, mediaEncodingClass, jencoding, "format", "L" FORMAT_CLASS ";");
-    if (jobj != NULL) encoding->format = get_format(env, jobj);
+    if (!read_enum_field(
+            env, jclass, jencoding, MEDIA_ENCODING_CLASS, "format", FORMAT_CLASS, &enum_value)) {
+        return false;
+    }
+    result->format = (roc_format) enum_value;
 
     // channels
-    jobj = get_object_field(
-        env, mediaEncodingClass, jencoding, "channels", "L" CHANNEL_LAYOUT_CLASS ";");
-    if (jobj != NULL) encoding->channels = get_channel_layout(env, jobj);
+    if (!read_enum_field(env, jclass, jencoding, MEDIA_ENCODING_CLASS, "channels",
+            CHANNEL_LAYOUT_CLASS, &enum_value)) {
+        return false;
+    }
+    result->channels = (roc_channel_layout) enum_value;
 
     // tracks
-    encoding->tracks = get_int_field_value(env, mediaEncodingClass, jencoding, "tracks", &err);
-    if (err) return err;
+    if (!read_uint_field(env, jclass, jencoding, MEDIA_ENCODING_CLASS, "tracks", &result->tracks)) {
+        return false;
+    }
 
-    return 0;
+    return true;
 }

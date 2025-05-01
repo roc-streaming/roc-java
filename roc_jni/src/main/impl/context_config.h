@@ -1,11 +1,11 @@
 #pragma once
 
+#include "platform.h"
+
 #include <jni.h>
-
-#include "common.h"
-
 #include <roc/config.h>
 
-#define CONTEXT_CONFIG_CLASS PACKAGE_BASE_NAME "/RocContextConfig"
+#include <stdbool.h>
 
-int context_config_unmarshal(JNIEnv* env, roc_context_config* config, jobject jconfig);
+ATTR_NODISCARD bool context_config_unmarshal(
+    JNIEnv* env, jobject jconfig, roc_context_config* result);

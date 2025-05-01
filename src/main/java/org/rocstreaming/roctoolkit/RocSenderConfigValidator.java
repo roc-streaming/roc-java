@@ -1,16 +1,18 @@
 package org.rocstreaming.roctoolkit;
 
 /**
- * A <code>RocSenderConfigValidator</code> adds validation to RocSenderConfig builder.
+ * Adds validation to {@link RocSenderConfig} builder.
  */
 class RocSenderConfigValidator extends RocSenderConfig.Builder {
     @Override
     public RocSenderConfig build() {
         RocSenderConfig config = super.build();
-        Check.notNull(config.getFrameEncoding(), "frameEncoding");
-        Check.notNegative(config.getPacketLength(), "packetLength");
-        Check.notNegative(config.getFecBlockSourcePackets(), "fecBlockSourcePackets");
-        Check.notNegative(config.getFecBlockRepairPackets(), "fecBlockRepairPackets");
+
+        Check.notNull(config.getFrameEncoding(), "RocSenderConfig.frameEncoding");
+        Check.notNegative(config.getPacketLength(), "RocSenderConfig.packetLength");
+        Check.notNegative(config.getFecBlockSourcePackets(), "RocSenderConfig.fecBlockSourcePackets");
+        Check.notNegative(config.getFecBlockRepairPackets(), "RocSenderConfig.fecBlockRepairPackets");
+
         return config;
     }
 }

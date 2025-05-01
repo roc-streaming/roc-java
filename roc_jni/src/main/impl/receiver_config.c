@@ -1,79 +1,96 @@
 #include "receiver_config.h"
-#include "clock_source.h"
-#include "clock_sync_backend.h"
-#include "clock_sync_profile.h"
-#include "common.h"
 #include "endpoint.h"
-#include "format.h"
+#include "exceptions.h"
+#include "helpers.h"
 #include "media_encoding.h"
-#include "resampler_backend.h"
-#include "resampler_profile.h"
 
-int receiver_config_unmarshal(JNIEnv* env, roc_receiver_config* config, jobject jconfig) {
-    jclass receiverConfigClass = NULL;
-    jobject jobj = NULL;
-    int err = 0;
+#include <assert.h>
+#include <string.h>
 
-    receiverConfigClass = (*env)->FindClass(env, RECEIVER_CONFIG_CLASS);
-    assert(receiverConfigClass != NULL);
+bool receiver_config_unmarshal(JNIEnv* env, jobject jconfig, roc_receiver_config* result) {
+    assert(env);
+    assert(jconfig);
+    assert(result);
 
-    // set all fields to zeros
-    assert(config != NULL);
-    memset(config, 0, sizeof(*config));
+    memset(result, 0, sizeof(*result));
+
+    jclass jclass = find_class(env, RECEIVER_CONFIG_CLASS);
+    if (!jclass) {
+        return false;
+    }
+
+    jobject jencoding = NULL;
+    int enum_value = 0;
 
     // frame_encoding
-    jobj = get_object_field(
-        env, receiverConfigClass, jconfig, "frameEncoding", "L" MEDIA_ENCODING_CLASS ";");
-    if (jobj != NULL) {
-        err = media_encoding_unmarshal(env, &config->frame_encoding, jobj);
-        if (err) return err;
+    if (!read_object_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS, "frameEncoding",
+            MEDIA_ENCODING_CLASS, &jencoding)) {
+        return false;
+    }
+    if (jencoding) {
+        if (!media_encoding_unmarshal(env, jencoding, &result->frame_encoding)) {
+            return false;
+        }
     }
 
     // clock_source
-    jobj = get_object_field(
-        env, receiverConfigClass, jconfig, "clockSource", "L" CLOCK_SOURCE_CLASS ";");
-    if (jobj != NULL) config->clock_source = get_clock_source(env, jobj);
+    if (!read_enum_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS, "clockSource",
+            CLOCK_SOURCE_CLASS, &enum_value)) {
+        return false;
+    }
+    result->clock_source = (roc_clock_source) enum_value;
 
     // clock_sync_backend
-    jobj = get_object_field(
-        env, receiverConfigClass, jconfig, "clockSyncBackend", "L" CLOCK_SYNC_BACKEND_CLASS ";");
-    if (jobj != NULL) config->clock_sync_backend = get_clock_sync_backend(env, jobj);
+    if (!read_enum_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS, "clockSyncBackend",
+            CLOCK_SYNC_BACKEND_CLASS, &enum_value)) {
+        return false;
+    }
+    result->clock_sync_backend = (roc_clock_sync_backend) enum_value;
 
     // clock_sync_profile
-    jobj = get_object_field(
-        env, receiverConfigClass, jconfig, "clockSyncProfile", "L" CLOCK_SYNC_PROFILE_CLASS ";");
-    if (jobj != NULL) config->clock_sync_profile = get_clock_sync_profile(env, jobj);
+    if (!read_enum_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS, "clockSyncProfile",
+            CLOCK_SYNC_PROFILE_CLASS, &enum_value)) {
+        return false;
+    }
+    result->clock_sync_profile = (roc_clock_sync_profile) enum_value;
 
     // resampler_backend
-    jobj = get_object_field(
-        env, receiverConfigClass, jconfig, "resamplerBackend", "L" RESAMPLER_BACKEND_CLASS ";");
-    if (jobj != NULL) config->resampler_backend = get_resampler_backend(env, jobj);
+    if (!read_enum_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS, "resamplerBackend",
+            RESAMPLER_BACKEND_CLASS, &enum_value)) {
+        return false;
+    }
+    result->resampler_backend = (roc_resampler_backend) enum_value;
 
     // resampler_profile
-    jobj = get_object_field(
-        env, receiverConfigClass, jconfig, "resamplerProfile", "L" RESAMPLER_PROFILE_CLASS ";");
-    if (jobj != NULL)
-        config->resampler_profile = (roc_resampler_profile) get_resampler_profile(env, jobj);
+    if (!read_enum_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS, "resamplerProfile",
+            RESAMPLER_PROFILE_CLASS, &enum_value)) {
+        return false;
+    }
+    result->resampler_profile = (roc_resampler_profile) enum_value;
 
     // target_latency
-    config->target_latency
-        = get_duration_field_value(env, receiverConfigClass, jconfig, "targetLatency", &err);
-    if (err) return err;
+    if (!read_unsigned_duration_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS, "targetLatency",
+            &result->target_latency)) {
+        return false;
+    }
 
     // latency_tolerance
-    config->latency_tolerance
-        = get_duration_field_value(env, receiverConfigClass, jconfig, "latencyTolerance", &err);
-    if (err) return err;
+    if (!read_unsigned_duration_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS,
+            "latencyTolerance", &result->latency_tolerance)) {
+        return false;
+    }
 
     // no_playback_timeout
-    config->no_playback_timeout
-        = get_duration_field_value(env, receiverConfigClass, jconfig, "noPlaybackTimeout", &err);
-    if (err) return err;
+    if (!read_signed_duration_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS,
+            "noPlaybackTimeout", &result->no_playback_timeout)) {
+        return false;
+    }
 
     // choppy_playback_timeout
-    config->choppy_playback_timeout = get_duration_field_value(
-        env, receiverConfigClass, jconfig, "choppyPlaybackTimeout", &err);
-    if (err) return err;
+    if (!read_signed_duration_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS,
+            "choppyPlaybackTimeout", &result->choppy_playback_timeout)) {
+        return false;
+    }
 
-    return 0;
+    return true;
 }

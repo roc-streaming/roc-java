@@ -149,7 +149,7 @@ class EndpointTest extends BaseTest {
             params.uri = "";
             params.uriException = IllegalArgumentException.class;
             params.componentsException = IllegalArgumentException.class;
-            params.componentsExceptionMsg = "protocol must not be null";
+            params.componentsExceptionMsg = "Invalid endpoint protocol: must not be null";
             result.add(params);
         }
         {
@@ -159,7 +159,7 @@ class EndpointTest extends BaseTest {
             params.protocol = Protocol.RTSP;
             params.uriException = IllegalArgumentException.class;
             params.componentsException = IllegalArgumentException.class;
-            params.componentsExceptionMsg = "host must not be empty";
+            params.componentsExceptionMsg = "Invalid endpoint host: must not be empty";
             result.add(params);
         }
         {
@@ -170,7 +170,7 @@ class EndpointTest extends BaseTest {
             params.port = 12345;
             params.uriException = IllegalArgumentException.class;
             params.componentsException = IllegalArgumentException.class;
-            params.componentsExceptionMsg = "host must not be empty";
+            params.componentsExceptionMsg = "Invalid endpoint host: must not be empty";
             result.add(params);
         }
         {
@@ -182,7 +182,7 @@ class EndpointTest extends BaseTest {
             params.port = 12345;
             params.uriException = IllegalArgumentException.class;
             params.componentsException = IllegalArgumentException.class;
-            params.componentsExceptionMsg = "host must not be empty";
+            params.componentsExceptionMsg = "Invalid endpoint host: must not be empty";
             result.add(params);
         }
         {
@@ -193,8 +193,8 @@ class EndpointTest extends BaseTest {
             params.host = "192.168.0.1";
             params.port = 655356;
             params.uriException = IllegalArgumentException.class;
-            params.componentsException = Exception.class;
-            params.componentsExceptionMsg = "Invalid roc_endpoint";
+            params.componentsException = IllegalArgumentException.class;
+            params.componentsExceptionMsg = "Invalid endpoint port";
             result.add(params);
         }
         {
@@ -205,8 +205,8 @@ class EndpointTest extends BaseTest {
             params.host = "192.168.0.1";
             params.port = -2;
             params.uriException = IllegalArgumentException.class;
-            params.componentsException = Exception.class;
-            params.componentsExceptionMsg = "Invalid roc_endpoint";
+            params.componentsException = IllegalArgumentException.class;
+            params.componentsExceptionMsg = "Invalid endpoint port";
             result.add(params);
         }
         {
@@ -218,8 +218,8 @@ class EndpointTest extends BaseTest {
             params.port = -1;
             params.resource = "??";
             params.uriException = IllegalArgumentException.class;
-            params.componentsException = Exception.class;
-            params.componentsExceptionMsg = "Invalid roc_endpoint";
+            params.componentsException = IllegalArgumentException.class;
+            params.componentsExceptionMsg = "Invalid endpoint resource";
             result.add(params);
         }
         {
@@ -231,8 +231,8 @@ class EndpointTest extends BaseTest {
             params.port = 12345;
             params.resource = "/path";
             params.uriException = IllegalArgumentException.class;
-            params.componentsException = Exception.class;
-            params.componentsExceptionMsg = "Invalid roc_endpoint";
+            params.componentsException = IllegalArgumentException.class;
+            params.componentsExceptionMsg = "Invalid endpoint uri";
             result.add(params);
         }
         {
@@ -243,8 +243,8 @@ class EndpointTest extends BaseTest {
             params.host = "192.168.0.1";
             params.port = -1;
             params.uriException = IllegalArgumentException.class;
-            params.componentsException = Exception.class;
-            params.componentsExceptionMsg = "Invalid roc_endpoint";
+            params.componentsException = IllegalArgumentException.class;
+            params.componentsExceptionMsg = "Invalid endpoint uri";
             result.add(params);
         }
         return result;

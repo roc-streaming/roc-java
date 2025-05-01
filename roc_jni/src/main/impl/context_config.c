@@ -1,24 +1,31 @@
 #include "context_config.h"
-#include "common.h"
+#include "helpers.h"
+#include "package.h"
 
-#include <roc/config.h>
+#include <assert.h>
+#include <string.h>
 
-int context_config_unmarshal(JNIEnv* env, roc_context_config* conf, jobject jconfig) {
-    jclass contextConfigClass = NULL;
-    int err = 0;
+bool context_config_unmarshal(JNIEnv* env, jobject jconfig, roc_context_config* result) {
+    assert(env);
+    assert(jconfig);
+    assert(result);
 
-    contextConfigClass = (*env)->FindClass(env, CONTEXT_CONFIG_CLASS);
-    assert(contextConfigClass != NULL);
+    memset(result, 0, sizeof(*result));
 
-    memset(conf, 0, sizeof(roc_context_config));
+    jclass jclass = find_class(env, CONTEXT_CONFIG_CLASS);
+    if (!jclass) {
+        return false;
+    }
 
-    conf->max_packet_size
-        = get_uint_field_value(env, contextConfigClass, jconfig, "maxPacketSize", &err);
-    if (err) return err;
+    if (!read_uint_field(env, jclass, jconfig, CONTEXT_CONFIG_CLASS, "maxPacketSize",
+            &result->max_packet_size)) {
+        return false;
+    }
 
-    conf->max_frame_size
-        = get_uint_field_value(env, contextConfigClass, jconfig, "maxFrameSize", &err);
-    if (err) return err;
+    if (!read_uint_field(
+            env, jclass, jconfig, CONTEXT_CONFIG_CLASS, "maxFrameSize", &result->max_frame_size)) {
+        return false;
+    }
 
-    return 0;
+    return true;
 }

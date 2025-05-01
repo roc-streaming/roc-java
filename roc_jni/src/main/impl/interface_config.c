@@ -1,54 +1,40 @@
 #include "interface_config.h"
-#include "common.h"
+#include "exceptions.h"
+#include "helpers.h"
+#include "package.h"
 
-int interface_config_unmarshal(JNIEnv* env, roc_interface_config* config, jobject jconfig) {
-    jclass interfaceConfigClass = NULL;
-    jstring jOutgoingAddress = NULL;
-    const char* outgoingAddress = NULL;
-    jstring jMulticastGroup = NULL;
-    const char* multicastGroup = NULL;
-    int err = 0;
+#include <assert.h>
+#include <string.h>
 
-    interfaceConfigClass = (*env)->FindClass(env, INTERFACE_CONFIG_CLASS);
-    assert(interfaceConfigClass != NULL);
+bool interface_config_unmarshal(JNIEnv* env, jobject jconfig, roc_interface_config* result) {
+    assert(env);
+    assert(jconfig);
+    assert(result);
 
-    // set all fields to zero
-    assert(config != NULL);
-    memset(config, 0, sizeof(*config));
+    memset(result, 0, sizeof(*result));
+
+    jclass jclass = find_class(env, INTERFACE_CONFIG_CLASS);
+    if (!jclass) {
+        return false;
+    }
 
     // outgoing_address
-    jOutgoingAddress = (jstring) get_object_field(
-        env, interfaceConfigClass, jconfig, "outgoingAddress", "Ljava/lang/String;");
-    if (jOutgoingAddress != NULL) {
-        outgoingAddress = (*env)->GetStringUTFChars(env, jOutgoingAddress, 0);
-        if (!outgoingAddress || strlen(outgoingAddress) >= sizeof(config->outgoing_address)) {
-            err = -1;
-            goto out;
-        }
-        strcpy(config->outgoing_address, outgoingAddress);
+    if (!read_string_field(env, jclass, jconfig, INTERFACE_CONFIG_CLASS, "outgoingAddress",
+            result->outgoing_address, sizeof(result->outgoing_address))) {
+        return false;
     }
 
     // multicast_group
-    jMulticastGroup = (jstring) get_object_field(
-        env, interfaceConfigClass, jconfig, "multicastGroup", "Ljava/lang/String;");
-    if (jMulticastGroup != NULL) {
-        multicastGroup = (*env)->GetStringUTFChars(env, jMulticastGroup, 0);
-        if (!multicastGroup || strlen(multicastGroup) >= sizeof(config->multicast_group)) {
-            err = -1;
-            goto out;
-        }
-        strcpy(config->multicast_group, multicastGroup);
+    if (!read_string_field(env, jclass, jconfig, INTERFACE_CONFIG_CLASS, "multicastGroup",
+            result->multicast_group, sizeof(result->multicast_group))) {
+        return false;
     }
 
     // reuse_address
-    config->reuse_address
-        = get_boolean_field_value(env, interfaceConfigClass, jconfig, "reuseAddress", &err);
-    if (err) goto out;
+    if (!read_bool_field(
+            env, jclass, jconfig, INTERFACE_CONFIG_CLASS, "reuseAddress", &result->reuse_address)) {
+        return false;
+    }
 
-out:
-    if (outgoingAddress != NULL)
-        (*env)->ReleaseStringUTFChars(env, jOutgoingAddress, outgoingAddress);
-    if (multicastGroup != NULL) (*env)->ReleaseStringUTFChars(env, jMulticastGroup, multicastGroup);
-
-    return err;
+    return true;
 }

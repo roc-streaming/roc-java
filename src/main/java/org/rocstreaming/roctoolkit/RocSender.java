@@ -1,6 +1,5 @@
 package org.rocstreaming.roctoolkit;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -166,9 +165,9 @@ public class RocSender extends NativeObject {
 
     private static final Logger LOGGER = Logger.getLogger(RocSender.class.getName());
 
-    private static long construct(RocContext context, RocSenderConfig config) throws IllegalArgumentException, Exception {
-        Check.notNull(context, "context");
-        Check.notNull(config, "config");
+    private static long construct(RocContext context, RocSenderConfig config) throws RocException {
+        Check.notNull(context, "RocContext");
+        Check.notNull(config, "RocSenderConfig");
 
         try {
             LOGGER.log(Level.FINE, "entering RocSender(), contextPtr={0}, config={1}",
@@ -184,14 +183,14 @@ public class RocSender extends NativeObject {
         }
     }
 
-    private static void destroy(long ptr, RocContext context) throws Exception {
+    private static void destroy(long ptr, RocContext context) {
         try {
             LOGGER.log(Level.FINE, "entering RocSender.close(), ptr={0}", toHex(ptr));
 
             nativeClose(ptr);
 
             LOGGER.log(Level.FINE, "leaving RocSender.close(), ptr={0}", toHex(ptr));
-        } catch (Exception exc) {
+        } catch (RuntimeException exc) {
             LOGGER.log(Level.SEVERE, "exception in RocSender.close(), ptr={0}, exception={1}",
                     new Object[]{toHex(context.getPtr()), toHex(ptr), exc});
             throw exc;
@@ -206,9 +205,9 @@ public class RocSender extends NativeObject {
      * @param config    should point to an initialized config.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws Exception                  if an error occurred when creating the sender.
+     * @throws RocException               if operation failed.
      */
-    public RocSender(RocContext context, RocSenderConfig config) throws IllegalArgumentException, Exception {
+    public RocSender(RocContext context, RocSenderConfig config) throws RocException {
         super(construct(context, config), context, ptr -> destroy(ptr, context));
     }
 
@@ -231,11 +230,12 @@ public class RocSender extends NativeObject {
      * @param config   settings for the specified interface.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
+     * @throws RocException               if operation failed.
      */
-    public void configure(Slot slot, Interface iface, InterfaceConfig config) throws IllegalArgumentException {
-        Check.notNull(slot, "slot");
-        Check.notNull(iface, "iface");
-        Check.notNull(config, "config");
+    public void configure(Slot slot, Interface iface, InterfaceConfig config) throws RocException {
+        Check.notNull(slot, "Slot");
+        Check.notNull(iface, "Interface");
+        Check.notNull(config, "InterfaceConfig");
 
         try {
             LOGGER.log(Level.FINE, "entering RocSender.configure(), ptr={0}, slot={1}, iface={2}, config={3}",
@@ -272,12 +272,12 @@ public class RocSender extends NativeObject {
      * @param endpoint   endpoint specifies the receiver endpoint.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws IOException                if was error during connect.
+     * @throws RocException               if operation failed.
      */
-    public void connect(Slot slot, Interface iface, Endpoint endpoint) throws IllegalArgumentException, IOException {
-        Check.notNull(slot, "slot");
-        Check.notNull(iface, "iface");
-        Check.notNull(endpoint, "endpoint");
+    public void connect(Slot slot, Interface iface, Endpoint endpoint) throws RocException {
+        Check.notNull(slot, "Slot");
+        Check.notNull(iface, "Interface");
+        Check.notNull(endpoint, "Endpoint");
 
         try {
             LOGGER.log(Level.FINE, "entering RocSender.connect(), ptr={0}, slot={1}, iface={2}, endpoint={3}",
@@ -305,9 +305,10 @@ public class RocSender extends NativeObject {
      * @param slot   specifies the sender slot to delete.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
+     * @throws RocException               if operation failed.
      */
-    public void unlink(Slot slot) throws IllegalArgumentException {
-        Check.notNull(slot, "slot");
+    public void unlink(Slot slot) throws RocException {
+        Check.notNull(slot, "Slot");
 
         try {
             LOGGER.log(Level.FINE, "entering RocSender.unlink(), ptr={0}, slot={1}",
@@ -341,20 +342,20 @@ public class RocSender extends NativeObject {
      * @param samples   array of samples to send.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws IOException                if the sender if there are not enough resources.
+     * @throws RocException               if operation failed.
      */
-    public void write(float[] samples) throws IllegalArgumentException, IOException {
+    public void write(float[] samples) throws RocException {
         Check.notNull(samples, "samples");
 
         nativeWriteFloats(getPtr(), samples);
     }
 
-    private static native long nativeOpen(long contextPtr, RocSenderConfig config) throws IllegalArgumentException, Exception;
-    private static native void nativeClose(long senderPtr) throws IOException;
+    private static native long nativeOpen(long contextPtr, RocSenderConfig config) throws RocException;
+    private static native void nativeClose(long senderPtr);
 
-    private native void nativeConfigure(long senderPtr, int slot, int iface, InterfaceConfig config) throws IllegalArgumentException;
-    private native void nativeConnect(long senderPtr, int slot, int iface, Endpoint endpoint) throws IllegalArgumentException, IOException;
-    private native void nativeUnlink(long senderPtr, int slot) throws IllegalArgumentException;
+    private native void nativeConfigure(long senderPtr, int slot, int iface, InterfaceConfig config) throws RocException;
+    private native void nativeConnect(long senderPtr, int slot, int iface, Endpoint endpoint) throws RocException;
+    private native void nativeUnlink(long senderPtr, int slot) throws RocException;
 
-    private native void nativeWriteFloats(long senderPtr, float[] samples) throws IOException;
+    private native void nativeWriteFloats(long senderPtr, float[] samples) throws RocException;
 }

@@ -22,13 +22,13 @@ public class RocContextTest extends BaseTest {
     @Test
     public void testWithNullConfig() {
         //noinspection resource
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> new RocContext(null));
-        assertEquals("config must not be null", e.getMessage());
+        Exception e = assertThrows(IllegalArgumentException.class, () -> new RocContext(null));
+        assertEquals("Invalid RocContextConfig: must not be null", e.getMessage());
     }
 
     @Test
     public void testCloseWithAttachedSender() {
-        assertThrows(Exception.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             RocSender sender = null;
             try (RocContext context = new RocContext()) {
                 sender = new RocSender(context, RocSenderTest.CONFIG);
@@ -41,7 +41,7 @@ public class RocContextTest extends BaseTest {
 
     @Test
     public void testCloseWithAttachedReceiver() {
-        assertThrows(Exception.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             RocReceiver receiver = null;
             try (RocContext context = new RocContext()) {
                 receiver = new RocReceiver(context, RocReceiverTest.CONFIG);
@@ -71,19 +71,19 @@ public class RocContextTest extends BaseTest {
 
     private static Stream<Arguments> invalidRegisterEncodingArguments() {
         return Stream.of(
-                Arguments.of("encodingId must be in range [1; 127]", -1, validEncoding()),
-                Arguments.of("encodingId must be in range [1; 127]", 0, validEncoding()),
-                Arguments.of("encodingId must be in range [1; 127]", 128, validEncoding()),
-                Arguments.of("encoding must not be null", 100, null),
+                Arguments.of("Invalid encodingId: must be in range [1; 127]", IllegalArgumentException.class, -1, validEncoding()),
+                Arguments.of("Invalid encodingId: must be in range [1; 127]", IllegalArgumentException.class, 0, validEncoding()),
+                Arguments.of("Invalid encodingId: must be in range [1; 127]", IllegalArgumentException.class, 128, validEncoding()),
+                Arguments.of("Invalid MediaEncoding: must not be null", IllegalArgumentException.class, 100, null),
                 // encoding id already registered
-                Arguments.of("Error registering encoding", PacketEncoding.AVP_L16_MONO.getValue(), validEncoding())
+                Arguments.of("Failed to register MediaEncoding", RocException.class, PacketEncoding.AVP_L16_MONO.getValue(), validEncoding())
         );
     }
 
     @ParameterizedTest()
     @MethodSource("invalidRegisterEncodingArguments")
-    public void testInvalidEncoding(String error, int encodingId, MediaEncoding encoding) {
-        Exception e = assertThrows(IllegalArgumentException.class, () -> {
+    public void testInvalidEncoding(String error, Class<? extends Exception> exception, int encodingId, MediaEncoding encoding) {
+        Exception e = assertThrows(exception, () -> {
             try (RocContext context = new RocContext()) {
                 context.registerEncoding(encodingId, encoding);
             }

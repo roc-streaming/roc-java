@@ -30,9 +30,9 @@ class RocReceiverConfigTest {
 
     private static Stream<Arguments> invalidConfigArguments() {
         return Stream.of(
-                Arguments.of("frameEncoding must not be null", validBuilder().frameEncoding(null)),
-                Arguments.of("targetLatency must not be negative", validBuilder().targetLatency(Duration.ofNanos(-1))),
-                Arguments.of("latencyTolerance must not be negative", validBuilder().latencyTolerance(Duration.ofNanos(-1)))
+                Arguments.of("Invalid RocReceiverConfig.frameEncoding: must not be null", validBuilder().frameEncoding(null)),
+                Arguments.of("Invalid RocReceiverConfig.targetLatency: must not be negative", validBuilder().targetLatency(Duration.ofNanos(-1))),
+                Arguments.of("Invalid RocReceiverConfig.latencyTolerance: must not be negative", validBuilder().latencyTolerance(Duration.ofNanos(-1)))
         );
     }
 

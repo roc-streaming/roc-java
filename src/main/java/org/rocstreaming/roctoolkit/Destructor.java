@@ -13,14 +13,14 @@ interface Destructor {
      * user or asynchronously by {@link NativeObjectCleaner}.
      *
      * <p style="color: red;">
-     * Note: It's important that this method is declared <code>static</code> and not as an
+     * Note: It's important that this method is declared {@code static} and not as an
      * instance method for avoiding object resurrection.
      * </p>
      *
      * @param resource      {@link NativeObject#ptr NativeObject.ptr} to be closed.
      *
-     * @throws Exception    if the {@link NativeObject} cannot be closed (for example
-     *                      for still opened {@link NativeObject} dependencies).
+     * @throws IllegalStateException   if the {@link NativeObject} cannot be closed because
+     *                                 it still has opened {@link NativeObject} dependencies.
      */
-    void close(long resource) throws Exception;
+    void close(long resource);
 }

@@ -13,25 +13,15 @@ if(APPLE)
 endif()
 
 add_library(roc_jni SHARED
-    src/main/impl/channel_layout.c
-    src/main/impl/clock_source.c
-    src/main/impl/clock_sync_backend.c
-    src/main/impl/clock_sync_profile.c
-    src/main/impl/common.c
     src/main/impl/context.c
     src/main/impl/context_config.c
     src/main/impl/endpoint.c
-    src/main/impl/fec_encoding.c
-    src/main/impl/format.c
+    src/main/impl/helpers.c
     src/main/impl/interface_config.c
     src/main/impl/logger.c
     src/main/impl/media_encoding.c
-    src/main/impl/packet_encoding.c
-    src/main/impl/protocol.c
     src/main/impl/receiver.c
     src/main/impl/receiver_config.c
-    src/main/impl/resampler_backend.c
-    src/main/impl/resampler_profile.c
     src/main/impl/sender.c
     src/main/impl/sender_config.c
 )
@@ -42,6 +32,8 @@ target_compile_options(roc_jni PRIVATE
     -Wno-system-headers
     -Wno-unused-but-set-variable
     -Wno-unused-parameter
+    # enable assertions (even in release build)
+    -UNDEBUG
 )
 
 if(NOT ANDROID)

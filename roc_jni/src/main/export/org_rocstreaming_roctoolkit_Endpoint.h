@@ -9,26 +9,26 @@ extern "C" {
 #endif
 /*
  * Class:     org_rocstreaming_roctoolkit_Endpoint
- * Method:    getUri
- * Signature: ()Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_getUri
-  (JNIEnv *, jobject);
-
-/*
- * Class:     org_rocstreaming_roctoolkit_Endpoint
- * Method:    init
+ * Method:    nativeParseUri
  * Signature: (Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_init
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_nativeParseUri
   (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     org_rocstreaming_roctoolkit_Endpoint
- * Method:    validate
+ * Method:    nativeFormatUri
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_nativeFormatUri
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     org_rocstreaming_roctoolkit_Endpoint
+ * Method:    nativeValidate
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_validate
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_nativeValidate
   (JNIEnv *, jobject);
 
 #ifdef __cplusplus

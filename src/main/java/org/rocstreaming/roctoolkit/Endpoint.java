@@ -94,12 +94,14 @@ public class Endpoint {
     private String resource;
 
     /**
-     * Create endpoint from uri
+     * Create endpoint from URI
      *
-     * @param uri uri
+     * @param uri   URI to parse
+     *
+     * @throws IllegalArgumentException  if URI is invalid
      */
-    public Endpoint(String uri) {
-        init(uri);
+    public Endpoint(String uri) throws IllegalArgumentException {
+        nativeParseUri(uri);
     }
 
     /**
@@ -115,14 +117,16 @@ public class Endpoint {
      *                 <p>
      *                 If port is set to -1, the standard port for endpoint protocol is used. This is
      *                 allowed only if the protocol defines its standard port.
-     * @param resource resource nullable. Specifies percent-encoded path and query
+     * @param resource resource is nullable. Specifies percent-encoded path and query
+     *
+     * @throws IllegalArgumentException  if URI components don't form a valid URI
      */
-    public Endpoint(Protocol protocol, String host, int port, String resource) {
+    public Endpoint(Protocol protocol, String host, int port, String resource) throws IllegalArgumentException {
         this.protocol = Check.notNull(protocol, "protocol");
         this.host = Check.notEmpty(host, "host");
         this.port = port;
         this.resource = resource;
-        validate();
+        nativeValidate();
     }
 
     /**
@@ -138,19 +142,29 @@ public class Endpoint {
      *                 <p>
      *                 If port is set to -1, the standard port for endpoint protocol is used. This is
      *                 allowed only if the protocol defines its standard port.
+     *
+     * @throws IllegalArgumentException  if URI components don't form a valid URI
      */
     public Endpoint(Protocol protocol, String host, int port) {
         this(protocol, host, port, null);
     }
 
+    /**
+     * Get string URI describing this endpoint.
+     */
+    public String getUri() {
+        return nativeFormatUri();
+    }
+
+    /**
+     * Get string URI describing this endpoint.
+     */
     @Override
     public String toString() {
         return getUri();
     }
 
-    public native String getUri();
-
-    private native void init(String uri) throws IllegalArgumentException;
-
-    private native void validate() throws IllegalArgumentException;
+    private native void nativeParseUri(String uri) throws IllegalArgumentException;
+    private native String nativeFormatUri();
+    private native void nativeValidate() throws IllegalArgumentException;
 }

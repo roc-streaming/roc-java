@@ -134,7 +134,7 @@ void endpoint_set_resource(JNIEnv* env, jobject endpoint, const char* buf) {
     (*env)->SetObjectField(env, endpoint, attrId, (*env)->NewStringUTF(env, buf));
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_init(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_nativeParseUri(
     JNIEnv* env, jobject thisObj, jstring juri) {
     jclass endpointClass = NULL;
     roc_endpoint* endpoint = NULL;
@@ -226,7 +226,7 @@ out:
     }
 }
 
-JNIEXPORT jstring JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_getUri(
+JNIEXPORT jstring JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_nativeFormatUri(
     JNIEnv* env, jobject thisObj) {
     roc_endpoint* endpoint = NULL;
     jstring juri = NULL;
@@ -263,7 +263,7 @@ out:
     return juri;
 }
 
-JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_validate(
+JNIEXPORT void JNICALL Java_org_rocstreaming_roctoolkit_Endpoint_nativeValidate(
     JNIEnv* env, jobject thisObj) {
     roc_endpoint* endpoint = NULL;
     char* uri = NULL;

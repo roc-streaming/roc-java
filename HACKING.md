@@ -17,6 +17,11 @@ Run tests:
 ./gradlew test
 ```
 
+Run tests and print logs:
+```
+./gradlew test --info
+```
+
 Generate documentation:
 ```
 ./gradlew javadoc

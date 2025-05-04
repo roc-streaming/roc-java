@@ -49,7 +49,7 @@ public class MediaEncoding {
     private int tracks;
 
     /**
-     * Construct lombok builder for {@link MediaEncoding}.
+     * Construct builder for {@link MediaEncoding}.
      */
     public static MediaEncoding.Builder builder() {
         return new MediaEncodingValidator();

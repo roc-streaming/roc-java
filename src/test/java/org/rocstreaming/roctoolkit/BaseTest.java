@@ -18,7 +18,14 @@ public class BaseTest {
         }
 
         originalLogLevel = RocLogger.LOGGER.getLevel();
-        RocLogger.LOGGER.setLevel(Level.OFF);
+
+        String gradleLogLevel = System.getProperty("org.gradle.logging.level");
+
+        if (gradleLogLevel == null || gradleLogLevel.equals("INFO") || gradleLogLevel.equals("DEBUG")) {
+            RocLogger.LOGGER.setLevel(Level.FINE);
+        } else {
+            RocLogger.LOGGER.setLevel(Level.OFF);
+        }
     }
 
     @AfterAll

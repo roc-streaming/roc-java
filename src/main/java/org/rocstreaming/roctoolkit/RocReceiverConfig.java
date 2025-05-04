@@ -108,7 +108,7 @@ public class RocReceiverConfig {
     private Duration choppyPlaybackTimeout;
 
     /**
-     * Construct lombok builder for {@link RocReceiverConfig}.
+     * Construct builder for {@link RocReceiverConfig}.
      */
     public static RocReceiverConfig.Builder builder() {
         return new RocReceiverConfigValidator();

@@ -131,7 +131,7 @@ public class RocSenderConfig {
     private ResamplerProfile resamplerProfile;
 
     /**
-     * Construct lombok builder for {@link RocSenderConfig}.
+     * Construct builder for {@link RocSenderConfig}.
      */
     public static RocSenderConfig.Builder builder() {
         return new RocSenderConfigValidator();

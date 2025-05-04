@@ -78,7 +78,7 @@ public class InterfaceConfig {
     private boolean reuseAddress;
 
     /**
-     * Construct lombok builder for {@link InterfaceConfig}.
+     * Construct builder for {@link InterfaceConfig}.
      */
     public static InterfaceConfig.Builder builder() {
         return new InterfaceConfigValidator();

@@ -37,7 +37,7 @@ public class RocContextConfig {
     private int maxFrameSize;
 
     /**
-     * Construct lombok builder for {@link RocContextConfig}.
+     * Construct builder for {@link RocContextConfig}.
      */
     public static RocContextConfig.Builder builder() {
         return new RocContextConfigValidator();

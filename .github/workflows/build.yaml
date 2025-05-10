@@ -82,8 +82,9 @@ jobs:
       - name: Upload test coverage
         if: ${{ github.repository_owner == 'roc-streaming' && matrix.jacoco == 'yes' }}
         id: jacoco
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
 
   # build for Android on Linux (with Docker)

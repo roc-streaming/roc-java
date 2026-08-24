@@ -57,8 +57,7 @@ jobs:
     runs-on: ${{ matrix.image }}
 
     env:
-      # TODO: set to master
-      ROC_REVISION: v0.4.0
+      ROC_REVISION: master
 
     steps:
       - name: Checkout
@@ -111,8 +110,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     env:
-      # TODO: set to master
-      ROC_REVISION: v0.4.0
+      ROC_REVISION: master
       JAVA_VERSION: ${{ matrix.jdk }}
       SDK_LEVEL: ${{ matrix.sdk }}
       API_LEVEL: ${{ matrix.api }}
@@ -159,8 +157,7 @@ jobs:
     runs-on: macos-13
 
     env:
-      # TODO: set to master
-      ROC_REVISION: v0.4.0
+      ROC_REVISION: master
       SDK_LEVEL: ${{ matrix.sdk }}
       API_LEVEL: ${{ matrix.api }}
       NDK_VERSION: ${{ matrix.ndk }}

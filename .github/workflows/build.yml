@@ -97,17 +97,17 @@ jobs:
           - jdk: 21
             sdk: 34
             api: 29
-            ndk_r: 26d
+            ndk-major: 26d
             ndk: 26.3.11579264
 
           # oldest supported JDK, SDK, and NDK
           - jdk: 17
             sdk: 31
             api: 29
-            ndk_r: 21e
+            ndk-major: 21e
             ndk: 21.4.7075529
 
-    name: android/linux-jdk${{ matrix.jdk }}-sdk${{ matrix.sdk }}-ndk${{ matrix.ndk_r }}
+    name: android/linux-jdk${{ matrix.jdk }}-sdk${{ matrix.sdk }}-ndk${{ matrix.ndk-major }}
     runs-on: ubuntu-24.04
 
     env:
@@ -135,7 +135,7 @@ jobs:
           - jdk: 21
             sdk: 34
             api: 29
-            ndk_r: 26d
+            ndk-major: 26d
             ndk: 26.3.11579264
             cmdline_tools: 10406996
             build_tools: 35.0.0
@@ -147,15 +147,15 @@ jobs:
           - jdk: 17
             sdk: 31
             api: 29
-            ndk_r: 21e
-            ndk: 21.4.7075529
+            ndk-major: 25
+            ndk: 25.2.9519653
             cmdline_tools: 10406996
-            build_tools: 28.0.3
-            cmake: 3.10.2.4988404
+            build_tools: 30.0.3
+            cmake: 3.22.1
             avd_image: default
             avd_arch: x86_64
 
-    name: android/osx-jdk${{ matrix.jdk }}-sdk${{ matrix.sdk }}-ndk${{ matrix.ndk_r }}
+    name: android/osx-jdk${{ matrix.jdk }}-sdk${{ matrix.sdk }}-ndk${{ matrix.ndk-major }}
     runs-on: macos-13
 
     env:

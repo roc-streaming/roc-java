@@ -3,4 +3,4 @@
 set -euxo pipefail
 
 brew install \
-     scons ragel gengetopt libuv speexdsp sox cpputest ninja
+     scons ragel gengetopt libuv speexdsp sox libsndfile cpputest

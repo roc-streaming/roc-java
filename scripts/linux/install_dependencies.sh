@@ -13,6 +13,7 @@ sudo apt-get install -y g++ \
      libpulse-dev \
      libspeexdsp-dev \
      libsox-dev \
+     libsndfile1-dev \
      libcpputest-dev \
      libtool \
      intltool \
@@ -20,4 +21,5 @@ sudo apt-get install -y g++ \
      automake \
      make \
      cmake \
+     meson \
      ninja-build

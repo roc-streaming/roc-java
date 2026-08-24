@@ -2,20 +2,20 @@
 
 set -euxo pipefail
 
-if [ ! -z "${ANDROID_NDK_ROOT:-}" ]
-then
-    ndk_root="${ANDROID_NDK_ROOT}"
-elif [ ! -z "${ANDROID_SDK_ROOT:-}" ]
+if [ ! -z "${NDK_VERSION:-}" ] && [ ! -z "${ANDROID_SDK_ROOT:-}" ]
 then
     ndk_root="${ANDROID_SDK_ROOT}/ndk/${NDK_VERSION}"
-elif [ ! -z "${ANDROID_HOME:-}" ]
+elif [ ! -z "${NDK_VERSION:-}" ] && [ ! -z "${ANDROID_HOME:-}" ]
 then
     ndk_root="${ANDROID_HOME}/ndk/${NDK_VERSION}"
+elif [ ! -z "${ANDROID_NDK_ROOT:-}" ]
+then
+    ndk_root="${ANDROID_NDK_ROOT}"
 fi
 
 case "$OSTYPE" in
     darwin*)
-        toolchain="${ndk_root}/toolchains/llvm/prebuilt/darwin-$(uname -m)/bin"
+        toolchain="${ndk_root}/toolchains/llvm/prebuilt/darwin-x86_64/bin"
         ;;
     linux*)
         toolchain="${ndk_root}/toolchains/llvm/prebuilt/linux-$(uname -m)/bin"

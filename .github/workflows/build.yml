@@ -154,7 +154,7 @@ jobs:
             avd_arch: x86_64
 
     name: android/osx-jdk${{ matrix.jdk }}-sdk${{ matrix.sdk }}-ndk${{ matrix.ndk-major }}
-    runs-on: macos-latest
+    runs-on: macos-15-intel
 
     env:
       ROC_REVISION: master

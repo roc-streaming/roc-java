@@ -4,13 +4,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Sender node.
+ * Sender peer.
  * <p>
  * Sender gets an audio stream from the user, encodes it into network packets, and transmits them
  * to a remote receiver.
- *
- *
- * <h2>Context</h2>
+ * <p>
+ * <b>Context</b>
  * <p>
  * Sender is automatically attached to a context when opened and detached from it when closed.
  * The user should not close the context until the sender is closed.
@@ -18,9 +17,8 @@ import java.util.logging.Logger;
  * Sender work consists of two parts: stream encoding and packet transmission. The encoding part
  * is performed in the sender itself, and the transmission part is performed in the context
  * network worker threads.
- *
- *
- * <h2>Life cycle</h2>
+ * <p>
+ * <b>Life cycle</b>
  * <p>
  * <ul>
  *   <li>A sender is created using {@link RocSender()}.</li>
@@ -33,16 +31,15 @@ import java.util.logging.Logger;
  *       The sender encodes the stream into packets and send to connected receiver(s).</li>
  *   <li>The sender is destroyed using {@link RocSender#close()}.</li>
  * </ul>
- *
- *
- * <h2>Slots, interfaces, and endpoints</h2>
+ * <p>
+ * <b>Slots, interfaces, and endpoints</b>
  * <p>
  * Sender has one or multiple <b>slots</b>, which may be independently bound or connected. Slots
  * may be used to connect sender to multiple receivers. Slots are numbered from zero and are
  * created automatically. In simple cases just use {@code ROC_SLOT_DEFAULT}.
  * <p>
  * Each slot has its own set of <em>interfaces</em>, one per each type defined in
- * {@link Interface}. The interface defines the type of the communication with the remote node
+ * {@link Interface}. The interface defines the type of the communication with the remote peer
  * and the set of the protocols supported by it.
  * <p>
  * Supported actions with the interface:
@@ -73,9 +70,8 @@ import java.util.logging.Logger;
  * Slots can be added and removed at any time on fly and from any thread. It is safe to do it
  * from another thread concurrently with writing frames. Operations with slots won't block
  * concurrent writes.
- *
- *
- * <h2>FEC scheme</h2>
+ * <p>
+ * <b>FEC schemes</b>
  * <p>
  * If {@link Interface#CONSOLIDATED} is used, it automatically creates all necessary transport
  * interfaces and the user should not bother about them.
@@ -94,18 +90,33 @@ import java.util.logging.Logger;
  * The protocols for the two interfaces should correspond to each other and to the FEC scheme.
  * For example, if {@link FecEncoding#RS8M} is used, the protocols should be
  * {@link Protocol#RTP_RS8M_SOURCE} and {@link Protocol#RS8M_REPAIR}.
- *
- *
- * <h2>Sample rate</h2>
  * <p>
- * If the sample rate of the user frames and the sample rate of the network packets are
- * different, the sender employs resampler to convert one rate to another.
+ * <b>Transcoding</b>
  * <p>
- * Resampling is a quite time-consuming operation. The user can choose between several resampler
- * profiles providing different compromises between CPU consumption and quality.
- *
- *
- * <h2>Clock source</h2>
+ * If encoding of sender frames and network packets are different, sender automatically performs
+ * all necessary transcoding.
+ * <p>
+ * <b>Latency tuning and bounding</b>
+ * <p>
+ * Usually latency tuning and bounding is done on receiver side, but it's possible to disable it
+ * on receiver and enable on sender. It is useful if receiver is does not support it or does not
+ * have enough CPU to do it with good quality. This feature requires use of {@link Protocol#RTCP}
+ * to deliver necessary latency metrics from receiver to sender.
+ * <p>
+ * If latency tuning is enabled (which is by default disabled on sender), sender monitors latency
+ * and adjusts connection clock to keep latency close to the target value. The user can configure
+ * how the latency is measured, how smooth is the tuning, and the target value.
+ * <p>
+ * If latency bounding is enabled (which is also by default disabled on sender), sender also
+ * ensures that latency lies within allowed boundaries, and restarts connection otherwise. The
+ * user can configure those boundaries.
+ * <p>
+ * To adjust connection clock, sender uses resampling with a scaling factor slightly above or
+ * below 1.0. Since resampling may be a quite time-consuming operation, the user can choose
+ * between several resampler backends and profiles providing different compromises between CPU
+ * consumption, quality, and precision.
+ * <p>
+ * <b>Clock source</b>
  * <p>
  * Sender should encode samples at a constant rate that is configured when the sender is created.
  * There are two ways to accomplish this:
@@ -123,9 +134,8 @@ import java.util.logging.Logger;
  *       might have slightly different clocks, and the difference will eventually lead to an
  *       underrun or an overrun.</li>
  * </ul>
- *
- *
- * <h2>Thread safety</h2>
+ * <p>
+ * <b>Thread safety</b>
  * <p>
  * Can be used concurrently.
  *
@@ -214,23 +224,23 @@ public class RocSender extends NativeObject {
     /**
      * Set sender interface configuration.
      * <p>
-     * Updates configuration of specified interface of specified slot. If
-     * called, the call should be done before calling roc_sender_bind() or
-     * {@link RocSender#connect()} for the same interface.
+     * Updates configuration of specified interface of specified slot. If called, the call
+     * should be done before calling roc_sender_bind() or {@link RocSender#connect()} for the
+     * same interface.
      * <p>
      * Automatically initializes slot with given index if it's used first time.
      * <p>
-     * If an error happens during configure, the whole slot is disabled and
-     * marked broken. The slot index remains reserved. The user is responsible
-     * for removing the slot using {@link RocSender#unlink()}, after which slot
-     * index can be reused.
+     * If an error happens during configure, the whole slot is disabled and marked broken.
+     * The slot index remains reserved. The user is responsible for removing the slot using
+     * {@link RocSender#unlink()}, after which slot index can be reused.
      *
-     * @param slot     slot specifies the sender slot.
-     * @param iface    iface specifies the sender interface.
-     * @param config   settings for the specified interface.
+     * @param slot     specifies the sender slot index.
+     * @param iface    specifies the sender interface.
+     * @param config   should be an initialized config.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws RocException               if operation failed.
+     * @throws RocException               if slot is already bound or connected, or operation
+     *                                    failed.
      */
     public void configure(Slot slot, Interface iface, InterfaceConfig config) throws RocException {
         Check.notNull(slot, "Slot");
@@ -254,25 +264,24 @@ public class RocSender extends NativeObject {
     /**
      * Connect the sender interface to a remote receiver endpoint.
      * <p>
-     * Checks that the endpoint is valid and supported by the interface,
-     * allocates a new outgoing port, and connects it to the remote endpoint.
+     * Checks that the endpoint is valid and supported by the interface, allocates a new
+     * outgoing port, and connects it to the remote endpoint.
      * <p>
-     * Each slot's interface can be bound or connected only once. May be called
-     * multiple times for different slots or interfaces.
+     * Each slot's interface can be bound or connected only once. May be called multiple
+     * times for different slots or interfaces.
      * <p>
      * Automatically initializes slot with given index if it's used first time.
      * <p>
-     * If an error happens during connect, the whole slot is disabled and marked
-     * broken. The slot index remains reserved. The user is responsible for
-     * removing the slot using {@link RocSender#unlink()}, after which slot
-     * index can be reused.
+     * If an error happens during connect, the whole slot is disabled and marked broken. The
+     * slot index remains reserved. The user is responsible for removing the slot using
+     * {@link RocSender#unlink()}, after which slot index can be reused.
      *
-     * @param slot       slot specifies the sender slot.
-     * @param iface      iface specifies the sender interface.
-     * @param endpoint   endpoint specifies the receiver endpoint.
+     * @param slot       specifies the sender slot.
+     * @param iface      specifies the sender interface.
+     * @param endpoint   specifies the receiver endpoint.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws RocException               if operation failed.
+     * @throws RocException               if resource allocation fails or operation failed.
      */
     public void connect(Slot slot, Interface iface, Endpoint endpoint) throws RocException {
         Check.notNull(slot, "Slot");
@@ -296,16 +305,15 @@ public class RocSender extends NativeObject {
     /**
      * Delete sender slot.
      * <p>
-     * Disconnects, unbinds, and removes all slot interfaces and removes the
-     * slot. All associated connections to remote nodes are properly terminated.
+     * Disconnects, unbinds, and removes all slot interfaces and removes the slot. All
+     * associated connections to remote peers are properly terminated.
      * <p>
-     * After unlinking the slot, it can be re-created again by re-using slot
-     * index.
+     * After unlinking the slot, it can be re-created again by re-using slot index.
      *
      * @param slot   specifies the sender slot to delete.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws RocException               if operation failed.
+     * @throws RocException               if the slot does not exist or operation failed.
      */
     public void unlink(Slot slot) throws RocException {
         Check.notNull(slot, "Slot");
@@ -327,22 +335,22 @@ public class RocSender extends NativeObject {
     /**
      * Encode samples to packets and transmit them to the receiver.
      * <p>
-     * Encodes samples to packets and enqueues them for transmission by the
-     * network worker thread of the context.
+     * Encodes samples to packets and enqueues them for transmission by the network worker
+     * thread of the context.
      * <p>
-     * If {@link ClockSource#INTERNAL} is used, the function blocks until it's
-     * time to transmit the samples according to the configured sample rate. The
-     * function returns after encoding and enqueuing the packets, without
-     * waiting when the packets are actually transmitted.
+     * If {@link ClockSource#INTERNAL} is used, the function blocks until it's time to
+     * transmit the samples according to the configured sample rate. The function returns
+     * after encoding and enqueuing the packets, without waiting when the packets are
+     * actually transmitted.
      * <p>
-     * Until the sender is connected to at least one receiver, the stream is
-     * just dropped. If the sender is connected to multiple receivers, the
-     * stream is duplicated to each of them.
+     * Until the sender is connected to at least one receiver, the stream is just dropped. If
+     * the sender is connected to multiple receivers, the stream is duplicated to each of
+     * them.
      *
-     * @param samples   array of samples to send.
+     * @param samples   array of samples which will be fully copied into the sender.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws RocException               if operation failed.
+     * @throws RocException               if resource allocation fails or operation failed.
      */
     public void write(float[] samples) throws RocException {
         Check.notNull(samples, "samples");

@@ -40,19 +40,19 @@ bool receiver_config_unmarshal(JNIEnv* env, jobject jconfig, roc_receiver_config
     }
     result->clock_source = (roc_clock_source) enum_value;
 
-    // clock_sync_backend
-    if (!read_enum_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS, "clockSyncBackend",
-            CLOCK_SYNC_BACKEND_CLASS, &enum_value)) {
+    // latency_tuner_backend
+    if (!read_enum_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS, "latencyTunerBackend",
+            LATENCY_TUNER_BACKEND_CLASS, &enum_value)) {
         return false;
     }
-    result->clock_sync_backend = (roc_clock_sync_backend) enum_value;
+    result->latency_tuner_backend = (roc_latency_tuner_backend) enum_value;
 
-    // clock_sync_profile
-    if (!read_enum_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS, "clockSyncProfile",
-            CLOCK_SYNC_PROFILE_CLASS, &enum_value)) {
+    // latency_tuner_profile
+    if (!read_enum_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS, "latencyTunerProfile",
+            LATENCY_TUNER_PROFILE_CLASS, &enum_value)) {
         return false;
     }
-    result->clock_sync_profile = (roc_clock_sync_profile) enum_value;
+    result->latency_tuner_profile = (roc_latency_tuner_profile) enum_value;
 
     // resampler_backend
     if (!read_enum_field(env, jclass, jconfig, RECEIVER_CONFIG_CLASS, "resamplerBackend",

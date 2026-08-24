@@ -78,6 +78,20 @@ bool sender_config_unmarshal(JNIEnv* env, jobject jconfig, roc_sender_config* re
     }
     result->clock_source = (roc_clock_source) enum_value;
 
+    // latency_tuner_backend
+    if (!read_enum_field(env, jclass, jconfig, SENDER_CONFIG_CLASS, "latencyTunerBackend",
+            LATENCY_TUNER_BACKEND_CLASS, &enum_value)) {
+        return false;
+    }
+    result->latency_tuner_backend = (roc_latency_tuner_backend) enum_value;
+
+    // latency_tuner_profile
+    if (!read_enum_field(env, jclass, jconfig, SENDER_CONFIG_CLASS, "latencyTunerProfile",
+            LATENCY_TUNER_PROFILE_CLASS, &enum_value)) {
+        return false;
+    }
+    result->latency_tuner_profile = (roc_latency_tuner_profile) enum_value;
+
     // resampler_backend
     if (!read_enum_field(env, jclass, jconfig, SENDER_CONFIG_CLASS, "resamplerBackend",
             RESAMPLER_BACKEND_CLASS, &enum_value)) {
@@ -91,6 +105,18 @@ bool sender_config_unmarshal(JNIEnv* env, jobject jconfig, roc_sender_config* re
         return false;
     }
     result->resampler_profile = (roc_resampler_profile) enum_value;
+
+    // target_latency
+    if (!read_unsigned_duration_field(env, jclass, jconfig, SENDER_CONFIG_CLASS, "targetLatency",
+            &result->target_latency)) {
+        return false;
+    }
+
+    // latency_tolerance
+    if (!read_unsigned_duration_field(env, jclass, jconfig, SENDER_CONFIG_CLASS,
+            "latencyTolerance", &result->latency_tolerance)) {
+        return false;
+    }
 
     return true;
 }

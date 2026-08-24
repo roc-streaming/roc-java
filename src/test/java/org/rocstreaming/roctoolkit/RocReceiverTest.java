@@ -56,6 +56,8 @@ public class RocReceiverTest extends BaseTest {
                                 .build()
                 )
                 .clockSource(ClockSource.INTERNAL)
+                .latencyTunerBackend(LatencyTunerBackend.NIQ)
+                .latencyTunerProfile(LatencyTunerProfile.RESPONSIVE)
                 .resamplerBackend(ResamplerBackend.BUILTIN)
                 .resamplerProfile(ResamplerProfile.HIGH)
                 .targetLatency(Duration.ofNanos(1000))

@@ -28,12 +28,29 @@ class RocSenderConfigTest {
         assertDoesNotThrow(() -> validBuilder().build());
     }
 
+    @Test
+    public void testNativeEnumValues() {
+        assertEquals(0, ClockSource.DEFAULT.value);
+        assertEquals(1, ClockSource.EXTERNAL.value);
+        assertEquals(2, ClockSource.INTERNAL.value);
+
+        assertEquals(0, LatencyTunerBackend.DEFAULT.value);
+        assertEquals(2, LatencyTunerBackend.NIQ.value);
+
+        assertEquals(0, LatencyTunerProfile.DEFAULT.value);
+        assertEquals(1, LatencyTunerProfile.INTACT.value);
+        assertEquals(2, LatencyTunerProfile.RESPONSIVE.value);
+        assertEquals(3, LatencyTunerProfile.GRADUAL.value);
+    }
+
     private static Stream<Arguments> invalidConfigArguments() {
         return Stream.of(
                 Arguments.of("Invalid RocSenderConfig.frameEncoding: must not be null", validBuilder().frameEncoding(null)),
                 Arguments.of("Invalid RocSenderConfig.packetLength: must not be negative", validBuilder().packetLength(Duration.ofNanos(-1))),
                 Arguments.of("Invalid RocSenderConfig.fecBlockSourcePackets: must not be negative", validBuilder().fecBlockSourcePackets(-1)),
-                Arguments.of("Invalid RocSenderConfig.fecBlockRepairPackets: must not be negative", validBuilder().fecBlockRepairPackets(-1))
+                Arguments.of("Invalid RocSenderConfig.fecBlockRepairPackets: must not be negative", validBuilder().fecBlockRepairPackets(-1)),
+                Arguments.of("Invalid RocSenderConfig.targetLatency: must not be negative", validBuilder().targetLatency(Duration.ofNanos(-1))),
+                Arguments.of("Invalid RocSenderConfig.latencyTolerance: must not be negative", validBuilder().latencyTolerance(Duration.ofNanos(-1)))
         );
     }
 

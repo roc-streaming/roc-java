@@ -25,6 +25,7 @@ public class RocSenderTest extends BaseTest {
                             .channels(ChannelLayout.STEREO)
                             .build()
             )
+            .packetEncoding(PacketEncoding.AVP_L16_STEREO)
             .build();
     private final int SINE_RATE = 440;
     private final int SINE_SAMPLES = (SAMPLE_RATE * 5);
@@ -84,8 +85,12 @@ public class RocSenderTest extends BaseTest {
                 .fecBlockSourcePackets(10)
                 .fecBlockRepairPackets(10)
                 .clockSource(ClockSource.INTERNAL)
+                .latencyTunerBackend(LatencyTunerBackend.NIQ)
+                .latencyTunerProfile(LatencyTunerProfile.INTACT)
                 .resamplerBackend(ResamplerBackend.BUILTIN)
                 .resamplerProfile(ResamplerProfile.HIGH)
+                .targetLatency(Duration.ofNanos(1000))
+                .latencyTolerance(Duration.ofNanos(500))
                 .build();
         assertDoesNotThrow(() -> {
             //noinspection EmptyTryBlock

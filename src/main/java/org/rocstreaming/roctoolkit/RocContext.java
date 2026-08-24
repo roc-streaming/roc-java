@@ -9,29 +9,24 @@ import java.util.logging.Logger;
  * Context contains memory pools and network worker threads, shared among objects attached to the
  * context. It is allowed both to create a separate context for every object, or to create a
  * single context shared between multiple objects.
- *
- *
- * <h2>Life cycle</h2>
+ * <p>
+ * <b>Life cycle</b>
  * <p>
  * A context is created using {@link RocContext()} and destroyed using
  * {@link RocContext#close()}. Objects can be attached and detached to an opened context at any
  * moment from any thread. However, the user should ensure that the context is not closed until
  * there are no objects attached to the context.
- *
- *
- * <h2>Thread safety</h2>
  * <p>
- * Can be used concurrently.
- *
- *
- * <h2>Auto closing</h2>
+ * <b>Thread safety</b>
+ * <p>
+ * Can be used concurrently
+ * <p>
+ * <b>Auto closing</b>
  * <p>
  * {@code RocContext} class implements {@link AutoCloseable}, so if it is used in a
  * try-with-resources statement, the object is closed automatically at the end of the statement.
- *
- *
- * @see {@link RocSender}
- * @see {@link RocReceiver}
+ * <p>
+ * @see {@link RocSender}, {@link RocReceiver}
  */
 public class RocContext extends NativeObject {
 
@@ -110,11 +105,12 @@ public class RocContext extends NativeObject {
      * <p>
      * In case of RTP, encoding id is mapped directly to payload type field (PT).
      *
-     * @param encodingId   is numeric encoding identifier in range {@code [1; 127]}.
-     * @param encoding     is encoding specification to be associated with this id.
+     * @param encodingId   should be encoding identifier in range {@code [1; 127]}.
+     * @param encoding     should be valid encoding specification.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws RocException               if operation failed.
+     * @throws RocException               if encoding with given identifier already exists or
+     *                                    operation failed.
      */
     public void registerEncoding(int encodingId, MediaEncoding encoding) throws RocException {
         Check.inRange(encodingId, 1, 127, "encodingId");

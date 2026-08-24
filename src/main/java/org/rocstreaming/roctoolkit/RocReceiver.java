@@ -4,13 +4,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Receiver node.
+ * Receiver peer.
  * <p>
  * Receiver gets the network packets from multiple senders, decodes audio streams from them,
  * mixes multiple streams into a single stream, and returns it to the user.
- *
- *
- * <h2>Context</h2>
+ * <p>
+ * <b>Context</b>
  * <p>
  * Receiver is automatically attached to a context when opened and detached from it when closed.
  * The user should not close the context until the receiver is closed.
@@ -18,9 +17,8 @@ import java.util.logging.Logger;
  * Receiver work consists of two parts: packet reception and stream decoding. The decoding part
  * is performed in the receiver itself, and the reception part is performed in the context
  * network worker threads.
- *
- *
- * <h2>Life cycle</h2>
+ * <p>
+ * <b>Life cycle</b>
  * <p>
  * <ul>
  *   <li>A receiver is created using {@link RocReceiver()}.</li>
@@ -33,16 +31,15 @@ import java.util.logging.Logger;
  *       Receiver returns the mixed stream from all connected senders.</li>
  *   <li>The receiver is destroyed using {@link RocReceiver#close()}.</li>
  * </ul>
- *
- *
- * <h2>Slots, interfaces, and endpoints</h2>
+ * <p>
+ * <b>Slots, interfaces, and endpoints</b>
  * <p>
  * Receiver has one or multiple <b>slots</b>, which may be independently bound or connected.
  * Slots may be used to bind receiver to multiple addresses. Slots are numbered from zero and are
  * created automatically. In simple cases just use {@code ROC_SLOT_DEFAULT}.
  * <p>
  * Each slot has its own set of <em>interfaces</em>, one per each type defined in
- * {@link Interface}. The interface defines the type of the communication with the remote node
+ * {@link Interface}. The interface defines the type of the communication with the remote peer
  * and the set of the protocols supported by it.
  * <p>
  * Supported actions with the interface:
@@ -73,9 +70,8 @@ import java.util.logging.Logger;
  * Slots can be added and removed at any time on fly and from any thread. It is safe to do it
  * from another thread concurrently with reading frames. Operations with slots won't block
  * concurrent reads.
- *
- *
- * <h2>FEC scheme</h2>
+ * <p>
+ * <b>FEC schemes</b>
  * <p>
  * If {@link Interface#CONSOLIDATED} is used, it automatically creates all necessary transport
  * interfaces and the user should not bother about them.
@@ -94,49 +90,56 @@ import java.util.logging.Logger;
  * The protocols for the two interfaces should correspond to each other and to the FEC scheme.
  * For example, if {@link FecEncoding#RS8M} is used, the protocols should be
  * {@link Protocol#RTP_RS8M_SOURCE} and {@link Protocol#RS8M_REPAIR}.
- *
- *
- * <h2>Sessions</h2>
  * <p>
- * Receiver creates a session object for every sender connected to it. Sessions can appear and
- * disappear at any time. Multiple sessions can be active at the same time.
+ * <b>Connections</b>
  * <p>
- * A session is identified by the sender address. A session may contain multiple packet streams
- * sent to different receiver ports. If the sender employs FEC, the session will contain source
- * and repair packet streams. Otherwise, the session will contain a single source packet stream.
+ * Receiver creates a connection object for every sender connected to it. Connections can appear
+ * and disappear at any time. Multiple connections can be active at the same time.
  * <p>
- * A session is created automatically on the reception of the first packet from a new address and
- * destroyed when there are no packets during a timeout. A session is also destroyed on other
- * events like a large latency underrun or overrun or broken playback, but if the sender
- * continues to send packets, it will be created again shortly.
- *
- *
- * <h2>Mixing</h2>
+ * A connection may contain multiple streams sent to different receiver ports. If the sender
+ * employs FEC, connection usually has source, repair, and control streams. Otherwise, connection
+ * usually has source and control streams.
  * <p>
- * Receiver mixes audio streams from all currently active sessions into a single output stream.
+ * Connection is created automatically on the reception of the first packet from a new sender,
+ * and terminated when there are no packets during a timeout. Connection can also be terminated
+ * on other events like a large latency underrun or overrun or continous stuttering, but if the
+ * sender continues to send packets, connection will be created again shortly.
  * <p>
- * The output stream continues no matter how much active sessions there are at the moment. In
- * particular, if there are no sessions, the receiver produces a stream with all zeros.
+ * <b>Mixing</b>
  * <p>
- * Sessions can be added and removed from the output stream at any time, probably in the middle
- * of a frame.
- *
- *
- * <h2>Sample rate</h2>
+ * Receiver mixes audio streams from all currently active connections into a single output
+ * stream.
  * <p>
- * Every session may have a different sample rate. And even if nominally all of them are of the
- * same rate, device frequencies usually differ by a few tens of Hertz.
+ * The output stream continues no matter how much active connections there are at the moment. In
+ * particular, if there are no connections, the receiver produces a stream with all zeros.
  * <p>
- * Receiver compensates these differences by adjusting the rate of every session stream to the
- * rate of the receiver output stream using a per-session resampler. The frequencies factor
- * between the sender and the receiver clocks is calculated dynamically for every session based
- * on the session incoming packet queue size.
+ * Connections can be added and removed from the output stream at any time, probably in the
+ * middle of a frame.
  * <p>
- * Resampling is a quite time-consuming operation. The user can choose between several resampler
- * profiles providing different compromises between CPU consumption and quality.
- *
- *
- * <h2>Clock source</h2>
+ * <b>Transcoding</b>
+ * <p>
+ * Every connection may have a different sample rate, channel layout, and encoding.
+ * <p>
+ * Before mixing, receiver automatically transcodes all incoming streams to the format of
+ * receiver frames.
+ * <p>
+ * <b>Latency tuning and bounding</b>
+ * <p>
+ * If latency tuning is enabled (which is by default enabled on receiver), receiver monitors
+ * latency of each connection and adjusts per-connection clock to keep latency close to the
+ * target value. The user can configure how the latency is measured, how smooth is the tuning,
+ * and the target value.
+ * <p>
+ * If latency bounding is enabled (which is also by default enabled on receiver), receiver also
+ * ensures that latency lies within allowed boundaries, and terminates connection otherwise. The
+ * user can configure those boundaries.
+ * <p>
+ * To adjust connection clock, receiver uses resampling with a scaling factor slightly above or
+ * below 1.0. Since resampling may be a quite time-consuming operation, the user can choose
+ * between several resampler backends and profiles providing different compromises between CPU
+ * consumption, quality, and precision.
+ * <p>
+ * <b>Clock source</b>
  * <p>
  * Receiver should decode samples at a constant rate that is configured when the receiver is
  * created. There are two ways to accomplish this:
@@ -154,9 +157,8 @@ import java.util.logging.Logger;
  *       different clocks, and the difference will eventually lead to an underrun or an
  *       overrun.</li>
  * </ul>
- *
- *
- * <h2>Thread safety</h2>
+ * <p>
+ * <b>Thread safety</b>
  * <p>
  * Can be used concurrently.
  *
@@ -245,23 +247,23 @@ public class RocReceiver extends NativeObject {
     /**
      * Set receiver interface configuration.
      * <p>
-     * Updates configuration of specified interface of specified slot. If
-     * called, the call should be done before calling {@link RocReceiver#bind()}
-     * or roc_receiver_connect() for the same interface.
+     * Updates configuration of specified interface of specified slot. If called, the call
+     * should be done before calling {@link RocReceiver#bind()} or roc_receiver_connect() for
+     * the same interface.
      * <p>
      * Automatically initializes slot with given index if it's used first time.
      * <p>
-     * If an error happens during configure, the whole slot is disabled and
-     * marked broken. The slot index remains reserved. The user is responsible
-     * for removing the slot using {@link RocReceiver#unlink()}, after which
-     * slot index can be reused.
+     * If an error happens during configure, the whole slot is disabled and marked broken.
+     * The slot index remains reserved. The user is responsible for removing the slot using
+     * {@link RocReceiver#unlink()}, after which slot index can be reused.
      *
      * @param slot     specifies the receiver slot.
      * @param iface    specifies the receiver interface.
-     * @param config   specifies settings for the specified interface.
+     * @param config   should be an initialized config.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws RocException               if operation failed.
+     * @throws RocException               if slot is already bound or connected, or operation
+     *                                    failed.
      */
     public void configure(Slot slot, Interface iface, InterfaceConfig config) throws RocException {
         Check.notNull(slot, "Slot");
@@ -285,29 +287,29 @@ public class RocReceiver extends NativeObject {
     /**
      * Bind the receiver interface to a local endpoint.
      * <p>
-     * Checks that the endpoint is valid and supported by the interface,
-     * allocates a new ingoing port, and binds it to the local endpoint.
+     * Checks that the endpoint is valid and supported by the interface, allocates a new
+     * ingoing port, and binds it to the local endpoint.
      * <p>
-     * Each slot's interface can be bound or connected only once. May be called
-     * multiple times for different slots or interfaces.
+     * Each slot's interface can be bound or connected only once. May be called multiple
+     * times for different slots or interfaces.
      * <p>
      * Automatically initializes slot with given index if it's used first time.
      * <p>
-     * If an error happens during bind, the whole slot is disabled and marked
-     * broken. The slot index remains reserved. The user is responsible for
-     * removing the slot using {@link RocReceiver#unlink()}, after which slot
-     * index can be reused.
+     * If an error happens during bind, the whole slot is disabled and marked broken. The
+     * slot index remains reserved. The user is responsible for removing the slot using
+     * {@link RocReceiver#unlink()}, after which slot index can be reused.
      * <p>
-     * If {@code endpoint} has explicitly set zero port, the receiver is bound
-     * to a randomly chosen ephemeral port. If the function succeeds, the actual
-     * port to which the receiver was bound is written back to {@code endpoint}.
+     * If {@code endpoint} has explicitly set zero port, the receiver is bound to a randomly
+     * chosen ephemeral port. If the function succeeds, the actual port to which the receiver
+     * was bound is written back to {@code endpoint}.
      *
      * @param slot      specifies the receiver slot.
      * @param iface     specifies the receiver interface.
      * @param endpoint  specifies the receiver endpoint.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws RocException               if operation failed.
+     * @throws RocException               if the address can't be bound, resource allocation
+     *                                    fails, or operation failed.
      */
     public void bind(Slot slot, Interface iface, Endpoint endpoint) throws RocException {
         Check.notNull(slot, "Slot");
@@ -331,16 +333,15 @@ public class RocReceiver extends NativeObject {
     /**
      * Delete receiver slot.
      * <p>
-     * Disconnects, unbinds, and removes all slot interfaces and removes the
-     * slot. All associated connections to remote nodes are properly terminated.
+     * Disconnects, unbinds, and removes all slot interfaces and removes the slot. All
+     * associated connections to remote peers are properly terminated.
      * <p>
-     * After unlinking the slot, it can be re-created again by re-using slot
-     * index.
+     * After unlinking the slot, it can be re-created again by re-using slot index.
      *
      * @param slot   specifies the receiver slot to delete.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws RocException               if operation failed.
+     * @throws RocException               if the slot does not exist or operation failed.
      */
     public void unlink(Slot slot) throws RocException {
         Check.notNull(slot, "Slot");
@@ -362,23 +363,21 @@ public class RocReceiver extends NativeObject {
     /**
      * Read samples from the receiver.
      * <p>
-     * Reads retrieved network packets, decodes packets, routes packets to
-     * sessions, repairs losses, extracts samples, adjusts sample rate and
-     * channel layout, compensates clock drift, mixes samples from all sessions,
-     * and finally stores samples into the provided frame.
+     * Reads retrieved network packets, decodes packets, repairs losses, extracts samples,
+     * adjusts sample rate and channel layout, compensates clock drift, mixes samples from
+     * all connections, and finally stores samples into the provided frame.
      * <p>
-     * If {@link ClockSource#INTERNAL} is used, the function blocks until it's
-     * time to decode the samples according to the configured sample rate.
+     * If {@link ClockSource#INTERNAL} is used, the function blocks until it's time to decode
+     * the samples according to the configured sample rate.
      * <p>
-     * Until the receiver is connected to at least one sender, it produces
-     * silence. If the receiver is connected to multiple senders, it mixes their
-     * streams into one.
+     * Until the receiver is connected to at least one sender, it produces silence. If the
+     * receiver is connected to multiple senders, it mixes their streams into one.
      *
      * @param samples   should point to an initialized {@code float} array which will be
-     *                  filled with samples.
+     *                  fully filled with samples.
      *
      * @throws IllegalArgumentException   if the arguments are invalid.
-     * @throws RocException               if operation failed.
+     * @throws RocException               if resource allocation fails or operation failed.
      */
     public void read(float[] samples) throws RocException {
         Check.notNull(samples, "samples");

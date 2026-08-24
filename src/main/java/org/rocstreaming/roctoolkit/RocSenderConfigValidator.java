@@ -12,6 +12,8 @@ class RocSenderConfigValidator extends RocSenderConfig.Builder {
         Check.notNegative(config.getPacketLength(), "RocSenderConfig.packetLength");
         Check.notNegative(config.getFecBlockSourcePackets(), "RocSenderConfig.fecBlockSourcePackets");
         Check.notNegative(config.getFecBlockRepairPackets(), "RocSenderConfig.fecBlockRepairPackets");
+        Check.notNegative(config.getTargetLatency(), "RocSenderConfig.targetLatency");
+        Check.notNegative(config.getLatencyTolerance(), "RocSenderConfig.latencyTolerance");
 
         return config;
     }

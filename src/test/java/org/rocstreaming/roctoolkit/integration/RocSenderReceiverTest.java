@@ -28,6 +28,7 @@ public class RocSenderReceiverTest extends BaseTest {
                             .channels(ChannelLayout.STEREO)
                             .build()
             )
+            .packetEncoding(PacketEncoding.AVP_L16_STEREO)
             .clockSource(ClockSource.INTERNAL)
             .build();
 

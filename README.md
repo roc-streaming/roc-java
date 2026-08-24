@@ -48,6 +48,7 @@ try (RocContext context = new RocContext()) {
                         .channels(ChannelLayout.STEREO)
                         .build()
         )
+        .packetEncoding(PacketEncoding.AVP_L16_STEREO)
         .fecEncoding(FecEncoding.RS8M)
         .clockSource(ClockSource.INTERNAL)
         .build();
@@ -55,9 +56,11 @@ try (RocContext context = new RocContext()) {
     try (RocSender sender = new RocSender(context, config)) {
         Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://192.168.0.1:10001");
         Endpoint repairEndpoint = new Endpoint("rs8m://192.168.0.1:10002");
+        Endpoint controlEndpoint = new Endpoint("rtcp://192.168.0.1:10003");
 
         sender.connect(Slot.DEFAULT, Interface.AUDIO_SOURCE, sourceEndpoint);
         sender.connect(Slot.DEFAULT, Interface.AUDIO_REPAIR, repairEndpoint);
+        sender.connect(Slot.DEFAULT, Interface.AUDIO_CONTROL, controlEndpoint);
 
         while (/* not stopped */) {
             float[] samples = /* generate samples */
@@ -87,10 +90,12 @@ try (RocContext context = new RocContext()) {
 
     try (RocReceiver receiver = new RocReceiver(context, config)) {
         Endpoint sourceEndpoint = new Endpoint("rtp+rs8m://0.0.0.0:10001");
-        Endpoint repairEndpoint = new Endpoint("rs8m://0.0.0.0:10001");
+        Endpoint repairEndpoint = new Endpoint("rs8m://0.0.0.0:10002");
+        Endpoint controlEndpoint = new Endpoint("rtcp://0.0.0.0:10003");
 
         receiver.bind(Slot.DEFAULT, Interface.AUDIO_SOURCE, sourceEndpoint);
         receiver.bind(Slot.DEFAULT, Interface.AUDIO_REPAIR, repairEndpoint);
+        receiver.bind(Slot.DEFAULT, Interface.AUDIO_CONTROL, controlEndpoint);
 
         while (/* not stopped */) {
             float[] samples = new float[320];

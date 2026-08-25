@@ -1,6 +1,6 @@
 # Developer instructions
 
-## Desktop gradle targets
+## Server/desktop gradle targets
 
 Build JAR:
 ```

@@ -169,7 +169,7 @@ If libroc is not in default path you can specify `ROC_INCLUDE_PATH` (path to roc
 
 Additional compilation and linking flags can be specified respectively with `CFLAGS` and `LDFLAGS` gradle system variables.
 
-JAR is located at `build/libs`. It expected that `libroc` shared library is present on system.
+JAR is located at `build/libs`. The JAR expects that `libroc` shared library is present on system at runtime.
 
 ## Build AAR for Android (docker way)
 

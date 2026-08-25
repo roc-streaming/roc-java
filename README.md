@@ -190,7 +190,7 @@ This will pull docker image, install dependencies inside container, and run buil
 ./scripts/android_docker.sh build
 ```
 
-AAR is located at `android/roc-android/build/outputs/aar`. It contains `libroc` built for all Android architectures.
+AAR is located at `android/roc-android/build/outputs/aar`. AAR includes native `libroc.so` built for all Android architectures.
 
 ## Build AAR for Android (manual way)
 
@@ -230,7 +230,7 @@ cd android
 ./gradlew build
 ```
 
-AAR is located at `android/roc-android/build/outputs/aar`. It contains `libroc` built for all Android architectures.
+AAR is located at `android/roc-android/build/outputs/aar`. AAR includes native `libroc.so` built for all Android architectures.
 
 ## Android build variables
 

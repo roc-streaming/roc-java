@@ -152,7 +152,7 @@ Add dependency to project ([versions](https://search.maven.org/artifact/org.roc-
 implementation 'org.roc-streaming.roctoolkit:roc-android:<VERSION>'
 ```
 
-## Build JAR for desktop
+## Build JAR for server/desktop
 
 Install JDK 17 or higher.
 
